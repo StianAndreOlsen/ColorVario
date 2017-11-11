@@ -1,0 +1,6 @@
+syntax: glob
+Debug/*
+debug/*
+Release/*
+release/*
+*/Thumbs.db
