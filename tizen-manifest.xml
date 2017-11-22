@@ -3,7 +3,7 @@
     <author/>
     <profile name="wearable"/>
     <ui-application appid="no.kystsoft.vario" exec="kystsoftvario" multiple="false" nodisplay="false" taskmanage="true" type="capp">
-        <label>kystsoftvario</label>
+        <label>Kystsoft Vario</label>
         <icon>kystsoftvario.png</icon>
     </ui-application>
     <feature name="http://tizen.org/feature/screen.size.all"/>

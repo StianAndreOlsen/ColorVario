@@ -2,10 +2,10 @@
 #define KYSTSOFT_VARIOMETER_H
 
 #include "SampleAverager.h"
+#include "VarioSound.h"
 #include <dali-toolkit/dali-toolkit.h>
 #include <audio_io.h>
 #include <sensor.h>
-#include "VarioSound.h"
 
 namespace Kystsoft {
 
@@ -21,7 +21,6 @@ public:
 	void setAltitudeLabel(Dali::Toolkit::TextLabel* label) { altitudeLabel = label; }
 	float currentAltitude() const { return lastAltitude; }
 	void onPressureChange(unsigned long long timestamp, float pressure);
-	void onAudioRequested();
 	void onAudioRequested(size_t bytesRequested);
 private:
 	bool turnSoundOn();
@@ -33,10 +32,10 @@ private:
 	Dali::Toolkit::TextLabel* altitudeLabel = nullptr;
 	sensor_listener_h pressureListener = nullptr;
 	audio_out_h audioOutput = nullptr;
-	size_t tonePointsPlayed = 0;
-	size_t silencePointsPlayed = 0;
 	unsigned long long lastTimestamp = 0;
 	float lastAltitude = 0;
+	float lastCyclePhase = 0;
+	float lastTonePhase = 0;
 };
 
 } // namespace Kystsoft

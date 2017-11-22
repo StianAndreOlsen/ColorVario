@@ -59,15 +59,16 @@ void Kystsoft::VarioSound::setClimb(float climb)
 	}
 
 	// find current point interval
-	for (i = 0; i < points.size() - 2; ++i)
-		if (currentClimb <= points[i+1].climb)
-			break;
+	if (points.size() > 2)
+		for (i = 0; i < points.size() - 2; ++i)
+			if (currentClimb <= points[i+1].climb)
+				break;
 }
 
 float Kystsoft::VarioSound::frequency() const
 {
 	if (points.empty())
-		return 0;
+		return defaultFrequency();
 	if (points.size() < 2)
 		return points[0].frequency;
 	float x1 = points[i].climb;
@@ -81,7 +82,7 @@ float Kystsoft::VarioSound::frequency() const
 float Kystsoft::VarioSound::period() const
 {
 	if (points.empty())
-		return 0;
+		return defaultPeriod();
 	if (points.size() < 2)
 		return points[0].period;
 	float x1 = points[i].climb;
@@ -95,7 +96,7 @@ float Kystsoft::VarioSound::period() const
 float Kystsoft::VarioSound::duty() const
 {
 	if (points.empty())
-		return 0;
+		return defaultDuty();
 	if (points.size() < 2)
 		return points[0].duty;
 	float x1 = points[i].climb;
@@ -104,4 +105,31 @@ float Kystsoft::VarioSound::duty() const
 	float y2 = points[i+1].duty;
 	float x = currentClimb;
 	return y1 + (y2 - y1) / (x2 - x1) * (x - x1);
+}
+
+float Kystsoft::VarioSound::defaultFrequency() const
+{
+	if (isClimbSoundOn())
+		return std::max(600 + currentClimb * (1800 - 600) / 10, 600.0f);
+	if (isSinkSoundOn())
+		return std::max(400 + currentClimb * (400 - 200) / 10, 200.0f);
+	return 500;
+}
+
+float Kystsoft::VarioSound::defaultPeriod() const
+{
+	if (isClimbSoundOn())
+		return std::max(0.5f + currentClimb * (0.05f - 0.5f) / 10, 0.05f);
+	if (isSinkSoundOn())
+		return std::max(0.5f + currentClimb * (0.5f - 1.0f) / 10, 0.5f);
+	return 0.5f;
+}
+
+float Kystsoft::VarioSound::defaultDuty() const
+{
+	if (isClimbSoundOn())
+		return currentClimb > 0 ? 0.5f : 0.05f;
+	if (isSinkSoundOn())
+		return currentClimb < -3.5f ? 1.0f : 0.9f;
+	return 1.0f;
 }

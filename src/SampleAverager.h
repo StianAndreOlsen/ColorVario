@@ -1,5 +1,5 @@
-#ifndef KYSTSOFT_SAMPLE_AVERAGER_H
-#define KYSTSOFT_SAMPLE_AVERAGER_H
+#ifndef KYSTSOFT_SAMPLEAVERAGER_H
+#define KYSTSOFT_SAMPLEAVERAGER_H
 
 #include <cstddef>
 #include <numeric>
@@ -23,4 +23,4 @@ private:
 
 } // namespace Kystsoft
 
-#endif // KYSTSOFT_SAMPLE_AVERAGER_H
+#endif // KYSTSOFT_SAMPLEAVERAGER_H
