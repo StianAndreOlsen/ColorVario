@@ -1,76 +1,53 @@
 #include "Variometer.h"
-#include <sstream>
-#include <vector>
+#include <cmath>
 
-namespace {
-
-void pressureCallback(sensor_h /*sensor*/, sensor_event_s* event, void* user_data)
+Kystsoft::Variometer::Variometer()
+	: pressureListener(SENSOR_PRESSURE)
+	, averageClimb(5)
+	, averageAltitude(5)
+	, audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_U8)
 {
-	Kystsoft::Variometer* vario = static_cast<Kystsoft::Variometer*>(user_data);
-	if (vario)
-		vario->onPressureChange(event->timestamp, event->values[0]);
+//	pressureListener.setInterval(100);
+	pressureListener.setAttribute(SENSOR_ATTRIBUTE_PAUSE_POLICY, SENSOR_PAUSE_NONE);
+	pressureListener.eventSignal().connect(this, &Variometer::onPressureSensorEvent);
+	audioOutput.setStreamWriter([this](AudioOutput& audioOutput, size_t bytesRequested)
+	{
+		onAudioRequested(audioOutput, bytesRequested);
+	});
 }
 
-void audioCallback(audio_out_h /*handle*/, size_t nbytes, void* user_data)
-{
-	Kystsoft::Variometer* vario = static_cast<Kystsoft::Variometer*>(user_data);
-	if (vario)
-		vario->onAudioRequested(nbytes);
-}
-
-} // namespace
-
-int Kystsoft::Variometer::start()
+void Kystsoft::Variometer::start()
 {
 	if (isStarted())
-		return 0;
-
-	// start pressure sensor listener
-	bool supported = false;
-	if (sensor_is_supported(SENSOR_PRESSURE, &supported) != SENSOR_ERROR_NONE || !supported)
-		return 1;
-	sensor_h pressureSensor = nullptr;
-	if (sensor_get_default_sensor(SENSOR_PRESSURE, &pressureSensor) != SENSOR_ERROR_NONE)
-		return 2;
-	if (sensor_create_listener(pressureSensor, &pressureListener) != SENSOR_ERROR_NONE)
-		return 3;
-	if (sensor_listener_set_event_cb(pressureListener, 100, pressureCallback, this) != SENSOR_ERROR_NONE)
-		return 4;
-	if (sensor_listener_start(pressureListener) != SENSOR_ERROR_NONE)
-		return 5;
+		return;
+	pressureListener.start();
 
 	// start sound
-	const int sampleRate = 44100; // standard CD sample rate
-	if (audio_out_create_new(sampleRate, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_U8, &audioOutput) != AUDIO_IO_ERROR_NONE)
-		return 6;
-	if (audio_out_set_stream_cb(audioOutput, audioCallback, this) != AUDIO_IO_ERROR_NONE)
-		return 7;
-	if (sound.isSoundOn() && !turnSoundOn())
-		return 8;
-
-	return 0;
+	if (sound.isSoundOn())
+		turnSoundOn();
 }
 
 void Kystsoft::Variometer::stop()
 {
 	if (!isStarted())
 		return;
-
-	// stop pressure sensor listener
-	sensor_listener_stop(pressureListener);
-	sensor_destroy_listener(pressureListener);
-	pressureListener = nullptr;
+	pressureListener.stop();
 
 	// stop sound
 	if (sound.isSoundOn())
 		turnSoundOff();
-	audio_out_unset_stream_cb(audioOutput);
-	audio_out_destroy(audioOutput);
-	audioOutput = nullptr;
 }
 
-void Kystsoft::Variometer::onPressureChange(unsigned long long timestamp, float pressure)
+void Kystsoft::Variometer::onPressureSensorEvent(sensor_event_s* event)
 {
+	// get timestamp and pressure
+	uint64_t timestamp = event->timestamp;
+	float pressure = event->values[0];
+
+	// save old values
+	float oldClimb = averageClimb;
+	float oldAltitude = averageAltitude;
+
 	// calculate altitude
 	// TODO: Consider getting actual temperature from sensor
 //	float t0 = 15; // reference temperature [°C]
@@ -82,50 +59,45 @@ void Kystsoft::Variometer::onPressureChange(unsigned long long timestamp, float 
 	// TODO: Consider using the below library function when available in version 4.0
 //	sensor_util_get_altitude(pressure, p0, t0, &altitude);
 	averageAltitude += altitude;
+	float newAltitude = averageAltitude;
 
 	// calculate climb
 	float seconds = (timestamp - lastTimestamp) / 1000000.0f;
 	float climb = (altitude - lastAltitude) / seconds;
 	climb = 12 + (pressure - 260) * (-12 - 12) / (1260 - 260); // TODO: Remove after debugging
 	averageClimb += climb;
-
-	// turn sound on or off
-	bool soundWasOn = sound.isSoundOn();
-	sound.setClimb(averageClimb);
-	bool soundIsOn = sound.isSoundOn();
-	if (!soundWasOn && soundIsOn)
-		turnSoundOn();
-	else if (soundWasOn && !soundIsOn)
-		turnSoundOff();
-
-	// update labels
-	if (climbLabel)
-	{
-		std::ostringstream os;
-		os.setf(std::ios::fixed);
-		os.precision(2); // TODO: Reduce to 1?
-		os << averageClimb << " m/s";
-		climbLabel->SetProperty(Dali::Toolkit::TextLabel::Property::TEXT, os.str());
-	}
-	if (altitudeLabel)
-	{
-		std::ostringstream os;
-		os.setf(std::ios::fixed);
-		os.precision(2); // TODO: Reduce to 0?
-		os << averageAltitude << " m";
-		altitudeLabel->SetProperty(Dali::Toolkit::TextLabel::Property::TEXT, os.str());
-	}
+	float newClimb = averageClimb;
 
 	// save values
 	lastTimestamp = timestamp;
 	lastAltitude = altitude;
+
+	// TODO: Consider skipping the inequality test
+	if (newClimb != oldClimb)
+	{
+		// turn sound on or off
+		bool soundWasOn = sound.isSoundOn();
+		sound.setClimb(newClimb);
+		bool soundIsOn = sound.isSoundOn();
+		if (!soundWasOn && soundIsOn)
+			turnSoundOn();
+		else if (soundWasOn && !soundIsOn)
+			turnSoundOff();
+
+		climbSignl.emit(newClimb);
+	}
+
+	// TODO: Consider skipping the inequality test
+	if (newAltitude != oldAltitude)
+	{
+		altitudeSignl.emit(newAltitude);
+	}
 }
 
-void Kystsoft::Variometer::onAudioRequested(size_t bytesRequested)
+void Kystsoft::Variometer::onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested)
 {
 	// get sample rate
-	int sampleRate = 0;
-	audio_out_get_sample_rate(audioOutput, &sampleRate);
+	int sampleRate = audioOutput.sampleRate();
 
 	// get sound characteristics
 	float frequency = sound.frequency();
@@ -164,22 +136,17 @@ void Kystsoft::Variometer::onAudioRequested(size_t bytesRequested)
 	lastTonePhase = tonePhase;
 
 	// play sound
-	audio_out_write(audioOutput, points.data(), bytesRequested);
+	audioOutput.write(points);
 }
 
-bool Kystsoft::Variometer::turnSoundOn()
+void Kystsoft::Variometer::turnSoundOn()
 {
-	if (audio_out_prepare(audioOutput) == AUDIO_IO_ERROR_NONE)
-	{
-		lastCyclePhase = 0;
-		lastTonePhase = 0;
-		return true;
-	}
-	return false;
+	lastCyclePhase = 0;
+	lastTonePhase = 0;
+	audioOutput.prepare();
 }
 
-bool Kystsoft::Variometer::turnSoundOff()
+void Kystsoft::Variometer::turnSoundOff()
 {
-	audio_out_flush(audioOutput); // TODO: Required?
-	return audio_out_unprepare(audioOutput) == AUDIO_IO_ERROR_NONE;
+	audioOutput.unprepare();
 }

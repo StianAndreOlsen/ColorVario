@@ -1,4 +1,5 @@
 #include "VarioController.h"
+#include <sstream>
 
 Kystsoft::VarioController::VarioController(Dali::Application& application)
 	: app(application)
@@ -26,7 +27,6 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 //	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::BLUE);
 	climbLabel.SetBackgroundColor(Dali::Vector4(1.0f, 215.0f / 255.0f, 0.0f, 1.0f));
 	stage.Add(climbLabel);
-	vario.setClimbLabel(&climbLabel);
 
 	// create altitude label
 	altitudeLabel = Dali::Toolkit::TextLabel::New("0 m");
@@ -37,11 +37,14 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 	altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::VERTICAL_ALIGNMENT, "CENTER");
 	altitudeLabel.SetBackgroundColor(Dali::Vector4(1.0f, 165.0f / 255.0f, 0.0f, 1.0f));
 	stage.Add(altitudeLabel);
-	vario.setAltitudeLabel(&altitudeLabel);
 
-	// connect to touch & key event signals
+	// connect to stage signals
 	stage.TouchSignal().Connect(this, &VarioController::onTouch);
 	stage.KeyEventSignal().Connect(this, &VarioController::onKeyEvent);
+
+	// connect to variometer signals
+	vario.climbSignal().connect(this, &VarioController::setClimb);
+	vario.altitudeSignal().connect(this, &VarioController::setAltitude);
 
 	// start variometer
 	vario.start();
@@ -66,4 +69,22 @@ void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
 		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
 			app.Quit();
 	}
+}
+
+void Kystsoft::VarioController::setClimb(float climb)
+{
+	std::ostringstream os;
+	os.setf(std::ios::fixed);
+	os.precision(2); // TODO: Reduce to 1?
+	os << climb << " m/s";
+	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT, os.str());
+}
+
+void Kystsoft::VarioController::setAltitude(float altitude)
+{
+	std::ostringstream os;
+	os.setf(std::ios::fixed);
+	os.precision(2); // TODO: Reduce to 0?
+	os << altitude << " m";
+	altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT, os.str());
 }

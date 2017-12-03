@@ -1,38 +1,39 @@
 #ifndef KYSTSOFT_VARIOMETER_H
 #define KYSTSOFT_VARIOMETER_H
 
-#include "SampleAverager.h"
+#include "AudioOutput.h"
+#include "Averager.h"
+#include "SensorListener.h"
 #include "VarioSound.h"
-#include <dali-toolkit/dali-toolkit.h>
-#include <audio_io.h>
-#include <sensor.h>
 
 namespace Kystsoft {
 
 class Variometer
 {
 public:
-	Variometer() : averageClimb(10), averageAltitude(10) {}
-	~Variometer() { stop(); }
-	int start();
+	Variometer();
+	Variometer(const Variometer& other) = delete;
+	Variometer& operator=(const Variometer& rhs) = delete;
+	~Variometer() { stop(); } // TODO: Fix as noexcept
+	bool isStarted() const { return pressureListener.isStarted(); }
+	void start();
 	void stop();
-	bool isStarted() const { return pressureListener != nullptr; }
-	void setClimbLabel(Dali::Toolkit::TextLabel* label) { climbLabel = label; }
-	void setAltitudeLabel(Dali::Toolkit::TextLabel* label) { altitudeLabel = label; }
-	float currentAltitude() const { return lastAltitude; }
-	void onPressureChange(unsigned long long timestamp, float pressure);
-	void onAudioRequested(size_t bytesRequested);
+//	void toggleStartStop() { pressureListener.toggleStartStop(); } // TODO: If audio is removed, this is sufficient
+	const Signal<float>& climbSignal() const { return climbSignl; }
+	const Signal<float>& altitudeSignal() const { return altitudeSignl; }
 private:
-	bool turnSoundOn();
-	bool turnSoundOff();
+	void onPressureSensorEvent(sensor_event_s* event);
+	void onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested);
+	void turnSoundOn();
+	void turnSoundOff();
+	SensorListener pressureListener;
 	VarioSound sound;
-	SampleAverager averageClimb;
-	SampleAverager averageAltitude;
-	Dali::Toolkit::TextLabel* climbLabel = nullptr;
-	Dali::Toolkit::TextLabel* altitudeLabel = nullptr;
-	sensor_listener_h pressureListener = nullptr;
-	audio_out_h audioOutput = nullptr;
-	unsigned long long lastTimestamp = 0;
+	Averager averageClimb;
+	Averager averageAltitude;
+	Signal<float> climbSignl;
+	Signal<float> altitudeSignl;
+	AudioOutput audioOutput;
+	uint64_t lastTimestamp = 0;
 	float lastAltitude = 0;
 	float lastCyclePhase = 0;
 	float lastTonePhase = 0;
