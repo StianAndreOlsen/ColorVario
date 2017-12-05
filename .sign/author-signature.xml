@@ -4,11 +4,15 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fkystsoftvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>XhTnJcuGjqXNvVJGfs+CLtCJsuEFOK1ismITy6B2TaY=</DigestValue>
+<DigestValue>q0BAcoLDuMspWq5uZUqEYEa1zbErgOimWRDcK8hrYWM=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fkystsoftvario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>/NbB9PSF6ve1WHU5FvWGqnJ0pU42IU48WyShdxumgs8=</DigestValue>
+<DigestValue>zGkxTeMluxfIzKmxHLCk4OhrM5+RrbuLTlGquECLurU=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fkystsoftvario1.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>zGkxTeMluxfIzKmxHLCk4OhrM5+RrbuLTlGquECLurU=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -23,9 +27,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-Y3vyZXMYtsSIOlgROZiO4Ii43CT/Yf16Kcch20nP46I9Yp9bSayABUQKqzPdtJSjBIaC4INn7UgU
-bdpExU/J/xyO3gulKEq2KKrFgqE0HkslpDPxoCgYgRSHGKOnw713PBm7jHO2DHIpHICJsY2Vj0nf
-GCHz3aFiwI7tFYb55Jk=
+FjWNlqpJ3c2USxBMMWytnD3D6WfmhkM6mvQ5uFBivFSmAsmSJTFsWJYBf0MxNECLzDzMMWpQsB41
+vda+vV0CxAS24cZleQxNKb22ilIu/9S6uyH/ftJTTahLX0OTx3KvMC1xGbXh+zNpU0Z5zJkfHHqV
+z4J7f+jKIxKduCHwmqE=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

@@ -4,7 +4,7 @@
 Kystsoft::VarioController::VarioController(Dali::Application& application)
 	: app(application)
 {
-	// connect to the application's init signal
+	// connect the application's init signal
 	app.InitSignal().Connect(this, &VarioController::create);
 }
 
@@ -13,7 +13,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 {
 	// get a handle to the stage
 	Dali::Stage stage = Dali::Stage::GetCurrent();
-	stage.SetBackgroundColor(Dali::Color::GREEN);
+//	stage.SetBackgroundColor(Dali::Color::GREEN);
 	Dali::Vector2 stageSize = stage.GetSize();
 
 	// create climb label
@@ -21,11 +21,12 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 	climbLabel.SetSize(stageSize.width, stageSize.height / 4);
 	climbLabel.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
 	climbLabel.SetPosition(0, stageSize.height / 4);
+	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::POINT_SIZE, 15);
 	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::HORIZONTAL_ALIGNMENT, "CENTER");
 	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::VERTICAL_ALIGNMENT, "CENTER");
-	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::POINT_SIZE, 15);
-//	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::BLUE);
-	climbLabel.SetBackgroundColor(Dali::Vector4(1.0f, 215.0f / 255.0f, 0.0f, 1.0f));
+	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
+//	climbLabel.SetBackgroundColor(Dali::Vector4(1.0f, 215.0f / 255.0f, 0.0f, 1.0f));
+//	climbLabel.SetBackgroundColor(Dali::Color::BLACK);
 	stage.Add(climbLabel);
 
 	// create altitude label
@@ -35,15 +36,18 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 	altitudeLabel.SetPosition(0, stageSize.height / 2);
 	altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::HORIZONTAL_ALIGNMENT, "CENTER");
 	altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::VERTICAL_ALIGNMENT, "CENTER");
-	altitudeLabel.SetBackgroundColor(Dali::Vector4(1.0f, 165.0f / 255.0f, 0.0f, 1.0f));
+	altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
+//	altitudeLabel.SetBackgroundColor(Dali::Vector4(1.0f, 165.0f / 255.0f, 0.0f, 1.0f));
+//	altitudeLabel.SetBackgroundColor(Dali::Color::BLACK);
 	stage.Add(altitudeLabel);
 
-	// connect to stage signals
+	// connect stage signals
 	stage.TouchSignal().Connect(this, &VarioController::onTouch);
 	stage.KeyEventSignal().Connect(this, &VarioController::onKeyEvent);
 
-	// connect to variometer signals
+	// connect variometer signals
 	vario.climbSignal().connect(this, &VarioController::setClimb);
+	vario.climbSignal().connect(&sound, &VarioSound::setClimb);
 	vario.altitudeSignal().connect(this, &VarioController::setAltitude);
 
 	// start variometer
@@ -53,12 +57,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 void Kystsoft::VarioController::onTouch(const Dali::TouchData& touch)
 {
 	if (touch.GetPointCount() > 0 && touch.GetState(0) == Dali::PointState::FINISHED)
-	{
-		if (vario.isStarted())
-			vario.stop();
-		else
-			vario.start();
-	}
+		sound.toggleMuteUnmute();
 }
 
 void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)

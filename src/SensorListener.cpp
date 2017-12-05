@@ -3,7 +3,7 @@
 
 void Kystsoft::SensorListener::start()
 {
-	if (isStarted())
+	if (started)
 		return;
 	int error = sensor_listener_start(listener);
 	if (error != SENSOR_ERROR_NONE)
@@ -13,7 +13,7 @@ void Kystsoft::SensorListener::start()
 
 void Kystsoft::SensorListener::stop()
 {
-	if (!isStarted())
+	if (!started)
 		return;
 	int error = sensor_listener_stop(listener);
 	if (error != SENSOR_ERROR_NONE)
@@ -23,7 +23,7 @@ void Kystsoft::SensorListener::stop()
 
 void Kystsoft::SensorListener::toggleStartStop()
 {
-	if (isStarted())
+	if (started)
 		stop();
 	else
 		start();
@@ -58,9 +58,9 @@ void Kystsoft::SensorListener::create(Sensor sensor)
 	}
 }
 
-void Kystsoft::SensorListener::sensorEventCallback(sensor_h /*sensor*/, sensor_event_s* event, void* user_data)
+void Kystsoft::SensorListener::sensorEventCallback(sensor_h sensor, sensor_event_s* event, void* user_data)
 {
 	SensorListener* listener = static_cast<SensorListener*>(user_data);
 	if (listener != nullptr)
-		listener->onSensorEvent(event);
+		listener->onSensorEvent(sensor, event);
 }

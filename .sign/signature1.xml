@@ -4,15 +4,19 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>glJSwLCJTdRkBl5OYdFoM6uAZxgpdQTHaWuL/zhoKwI=</DigestValue>
+<DigestValue>4Km6pu3jEfkOieRK2zpCkbx53W97JjsFjeORJZFznlI=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fkystsoftvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>XhTnJcuGjqXNvVJGfs+CLtCJsuEFOK1ismITy6B2TaY=</DigestValue>
+<DigestValue>q0BAcoLDuMspWq5uZUqEYEa1zbErgOimWRDcK8hrYWM=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fkystsoftvario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>/NbB9PSF6ve1WHU5FvWGqnJ0pU42IU48WyShdxumgs8=</DigestValue>
+<DigestValue>zGkxTeMluxfIzKmxHLCk4OhrM5+RrbuLTlGquECLurU=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fkystsoftvario1.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>zGkxTeMluxfIzKmxHLCk4OhrM5+RrbuLTlGquECLurU=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -27,9 +31,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-AL33iyUVF/PJj3KLqrP/suXJtVZDsEV6+BjzBEh0IIGAzs/u5T53NVmjHdybLoWQnFVvhsMiaBqW
-qTxk1QIrrIOm2icabyIv0PJHtl5gg/yq4o1f9A/qH4yRqQKwHkVCY9TSxu11i7sH5r1qVRx9hJvI
-X3CN+kIbnrmQinhE1yY=
+UO/krV4uz6+BC+t4hBouDq5xmIOK3O+0GlGFZr7k9CbqXSEJfSkI9/tBEkXcLTbwaItfes0Zwxzh
+ep+SNxf7DtG3+Exw/Z6VkGZIk2Ay7Bxb/HHhO/zs0U/ow/tcQLNlHyyeDc8VZsbjcQ7u6P5VzsQ3
+xR96PZmB+T6qpqjP2fA=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

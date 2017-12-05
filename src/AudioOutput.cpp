@@ -25,30 +25,42 @@ void Kystsoft::AudioOutput::setSoundStreamInfo(sound_stream_info_h streamInfo)
 
 void Kystsoft::AudioOutput::prepare()
 {
+	if (prepared)
+		return;
 	int error = audio_out_prepare(output);
 	if (error != AUDIO_IO_ERROR_NONE)
 		throw FunctionError("audio_out_prepare", error);
+	prepared = true;
 }
 
 void Kystsoft::AudioOutput::unprepare()
 {
+	if (!prepared)
+		return;
 	int error = audio_out_unprepare(output);
 	if (error != AUDIO_IO_ERROR_NONE)
 		throw FunctionError("audio_out_unprepare", error);
+	prepared = false;
 }
 
 void Kystsoft::AudioOutput::pause()
 {
+	if (paused)
+		return;
 	int error = audio_out_pause(output);
 	if (error != AUDIO_IO_ERROR_NONE)
 		throw FunctionError("audio_out_pause", error);
+	paused = true;
 }
 
 void Kystsoft::AudioOutput::resume()
 {
+	if (!paused)
+		return;
 	int error = audio_out_resume(output);
 	if (error != AUDIO_IO_ERROR_NONE)
 		throw FunctionError("audio_out_resume", error);
+	paused = false;
 }
 
 void Kystsoft::AudioOutput::drain()

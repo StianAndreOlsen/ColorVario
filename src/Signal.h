@@ -18,6 +18,8 @@
 // signal object is invoked. Any argument passed to emit()
 // will be passed to the given functions.
 
+namespace Kystsoft {
+
 template <typename... Args>
 class Signal
 {
@@ -38,21 +40,21 @@ public:
 
 	// connect a member function
 	template<typename T>
-	ConnectionId connect(T* inst, void (T::*func)(Args...)) const
+	ConnectionId connect(T* instance, void (T::*function)(Args...)) const
 	{
 		return connect([=](Args... args)
 		{
-			(inst->*func)(args...);
+			(instance->*function)(args...);
 		});
 	}
 
 	// connect a const member function
 	template<typename T>
-	ConnectionId connect(T* inst, void (T::*func)(Args...) const) const
+	ConnectionId connect(T* instance, void (T::*function)(Args...) const) const
 	{
 		return connect([=](Args... args)
 		{
-			(inst->*func)(args...);
+			(instance->*function)(args...);
 		});
 	}
 
@@ -79,5 +81,7 @@ private:
 	mutable std::map<ConnectionId, std::function<void(Args...)>> slots;
 	mutable ConnectionId nextId = 0;
 };
+
+} // namespace Kystsoft
 
 #endif // KYSTSOFT_SIGNAL_H

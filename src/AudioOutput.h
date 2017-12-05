@@ -1,8 +1,8 @@
 #ifndef KYSTSOFT_AUDIOOUTPUT_H
 #define KYSTSOFT_AUDIOOUTPUT_H
 
+#include "Callback.h"
 #include <audio_io.h>
-#include <functional>
 #include <vector>
 
 namespace Kystsoft {
@@ -15,9 +15,11 @@ public:
 	AudioOutput& operator=(const AudioOutput& rhs) = delete;
 	~AudioOutput() noexcept { audio_out_destroy(output); }
 	operator audio_out_h() const { return output; }
-	void setSoundStreamInfo(sound_stream_info_h streamInfo);
+	void setSoundStreamInfo(sound_stream_info_h streamInfo); // TODO: Figure out what this function does
+	bool isPrepared() const { return prepared; }
 	void prepare();
 	void unprepare();
+	bool isPaused() const { return paused; }
 	void pause();
 	void resume();
 	void drain();
@@ -29,13 +31,15 @@ public:
 	audio_channel_e channel() const;
 	audio_sample_type_e sampleType() const;
 	sound_type_e soundType() const;
-	using StreamWriter = std::function<void(AudioOutput& audioOutput, size_t bytesRequested)>;
-	void setStreamWriter(StreamWriter writer) { streamWriter = writer; }
+	using WriteCallback = Callback<AudioOutput&, size_t>;
+	const WriteCallback& writeCallback() const { return writeCb; }
 private:
 	static void streamWriteCallback(audio_out_h handle, size_t nbytes, void* user_data);
-	void onStreamWrite(size_t bytesRequested) { streamWriter(*this, bytesRequested); }
+	void onStreamWrite(size_t bytesRequested) { writeCb.execute(*this, bytesRequested); }
 	audio_out_h output = nullptr;
-	StreamWriter streamWriter;
+	bool prepared = false;
+	bool paused = false;
+	WriteCallback writeCb;
 };
 
 } // namespace Kystsoft
