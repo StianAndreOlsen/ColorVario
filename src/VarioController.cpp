@@ -13,8 +13,14 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 {
 	// get a handle to the stage
 	Dali::Stage stage = Dali::Stage::GetCurrent();
-//	stage.SetBackgroundColor(Dali::Color::GREEN);
 	Dali::Vector2 stageSize = stage.GetSize();
+
+	// create background
+	background = Dali::Toolkit::Control::New();
+	background.SetSize(stageSize.width, stageSize.height);
+	background.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
+	background.SetPosition(0, 0);
+	stage.Add(background);
 
 	// create climb label
 	climbLabel = Dali::Toolkit::TextLabel::New("0 m/s");
@@ -25,9 +31,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::HORIZONTAL_ALIGNMENT, "CENTER");
 	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::VERTICAL_ALIGNMENT, "CENTER");
 	climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
-//	climbLabel.SetBackgroundColor(Dali::Vector4(1.0f, 215.0f / 255.0f, 0.0f, 1.0f));
-//	climbLabel.SetBackgroundColor(Dali::Color::BLACK);
-	stage.Add(climbLabel);
+	background.Add(climbLabel);
 
 	// create altitude label
 	altitudeLabel = Dali::Toolkit::TextLabel::New("0 m");
@@ -37,9 +41,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 	altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::HORIZONTAL_ALIGNMENT, "CENTER");
 	altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::VERTICAL_ALIGNMENT, "CENTER");
 	altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
-//	altitudeLabel.SetBackgroundColor(Dali::Vector4(1.0f, 165.0f / 255.0f, 0.0f, 1.0f));
-//	altitudeLabel.SetBackgroundColor(Dali::Color::BLACK);
-	stage.Add(altitudeLabel);
+	background.Add(altitudeLabel);
 
 	// connect stage signals
 	stage.TouchSignal().Connect(this, &VarioController::onTouch);
@@ -70,8 +72,30 @@ void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
 	}
 }
 
+void Kystsoft::VarioController::setBackgroundColor(const Color& color)
+{
+	// radial gradient
+	Dali::Property::Map map;
+	map[Dali::Toolkit::Visual::Property::TYPE] = Dali::Toolkit::Visual::GRADIENT;
+	map[Dali::Toolkit::GradientVisual::Property::CENTER] = Dali::Vector2(0, 0);
+	map[Dali::Toolkit::GradientVisual::Property::RADIUS] = 0.5f;
+	Dali::Property::Array stopOffsets;
+	stopOffsets.PushBack(0.0f);
+	stopOffsets.PushBack(0.7f);
+	stopOffsets.PushBack(1.0f);
+	map[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
+	Dali::Property::Array stopColors;
+	stopColors.PushBack(color.withLightness(0.08f));
+	stopColors.PushBack(color.withLightness(0.12f));
+	stopColors.PushBack(color);
+	map[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
+	background.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, map);
+}
+
 void Kystsoft::VarioController::setClimb(float climb)
 {
+	setBackgroundColor(color(climb));
+
 	std::ostringstream os;
 	os.setf(std::ios::fixed);
 	os.precision(2); // TODO: Reduce to 1?

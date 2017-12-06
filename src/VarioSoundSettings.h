@@ -27,9 +27,9 @@ public:
 	float frequency(float climb) const;
 	float period(float climb) const;
 	float duty(float climb) const;
-	float defaultFrequency(float climb) const;
-	float defaultPeriod(float climb) const;
-	float defaultDuty(float climb) const;
+	static float defaultFrequency(float climb);
+	static float defaultPeriod(float climb);
+	static float defaultDuty(float climb);
 private:
 	size_t soundPointInterval(float climb) const;
 	float climbSoundOn = -0.5f;

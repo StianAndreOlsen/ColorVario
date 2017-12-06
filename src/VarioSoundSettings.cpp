@@ -80,21 +80,21 @@ float Kystsoft::VarioSoundSettings::duty(float climb) const
 	return y1 + (y2 - y1) / (x2 - x1) * (x - x1);
 }
 
-float Kystsoft::VarioSoundSettings::defaultFrequency(float climb) const
+float Kystsoft::VarioSoundSettings::defaultFrequency(float climb)
 {
 	if (climb < 0)
 		return std::max(400 + climb * (400 - 200) / 10, 200.0f);
 	return std::min(600 + climb * (1800 - 600) / 10, 1800.0f);
 }
 
-float Kystsoft::VarioSoundSettings::defaultPeriod(float climb) const
+float Kystsoft::VarioSoundSettings::defaultPeriod(float climb)
 {
 	if (climb < 0)
 		return std::min(0.5f + climb * (0.5f - 1.0f) / 10, 1.0f);
 	return std::max(0.5f + climb * (0.05f - 0.5f) / 10, 0.05f);
 }
 
-float Kystsoft::VarioSoundSettings::defaultDuty(float climb) const
+float Kystsoft::VarioSoundSettings::defaultDuty(float climb)
 {
 	if (climb < -1)
 		return climb < -3.5f ? 1.0f : 0.9f;
