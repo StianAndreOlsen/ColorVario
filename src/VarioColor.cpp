@@ -21,11 +21,12 @@ Kystsoft::Color Kystsoft::VarioColor::color(float climb) const
 	float x = climb;
 	float x1 = colorPoints[i].climb;
 	float x2 = colorPoints[i+1].climb;
+	// TODO: Choose the best color model for color interpolation
 	float y1 = colorPoints[i].color.hue();
 	float y2 = colorPoints[i+1].color.hue();
 	float H = y1 + (y2 - y1) / (x2 - x1) * (x - x1);
-	y1 = colorPoints[i].color.saturation();
-	y2 = colorPoints[i+1].color.saturation();
+	y1 = colorPoints[i].color.saturationHSL();
+	y2 = colorPoints[i+1].color.saturationHSL();
 	float S = y1 + (y2 - y1) / (x2 - x1) * (x - x1);
 	y1 = colorPoints[i].color.lightness();
 	y2 = colorPoints[i+1].color.lightness();
@@ -38,16 +39,31 @@ Kystsoft::Color Kystsoft::VarioColor::color(float climb) const
 
 Kystsoft::Color Kystsoft::VarioColor::defaultColor(float climb)
 {
-	// https://en.wikipedia.org/wiki/Logistic_function
+	// hue(climb) (https://en.wikipedia.org/wiki/Logistic_function)
 	float k = 0.5f; // curve steepness
-//	float H = 300 / (1 + std::exp(k * climb)) - 30;
-//	if (H < 0)
-//		H += 360;
-	float H = 120 / (1 + std::exp(-k * climb));
-	float S = 1.0f;
-	float L = 0.5f;
-	return Color::fromHSLA(H,S,L);
-//	return Color::fromHSLA(0.0f, 0.5f, 0.5f);
+
+	// blue - green - red
+	float H = 300 / (1 + std::exp(k * climb)) - 30;
+	if (H < 0)
+		H += 360;
+
+	// red - yellow - green
+//	float H = 120 / (1 + std::exp(-k * climb));
+
+	// HSL color model
+//	float S = 1.0f; // saturation
+//	float L = 0.5f; // lightness
+//	return Color::fromHSLA(H,S,L);
+
+	// HSV color model
+//	float S = 1.0f; // saturation
+//	float V = 0.5f; // value
+//	return Color::fromHSVA(H,S,V);
+
+	// HCY color model
+	float C = 1.0f; // chroma
+	float Y = 0.5f; // luma
+	return Color::fromHCYA(H,C,Y);
 }
 
 size_t Kystsoft::VarioColor::colorPointInterval(float climb) const

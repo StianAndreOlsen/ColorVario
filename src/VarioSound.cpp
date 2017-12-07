@@ -1,125 +1,115 @@
 #include "VarioSound.h"
-#include <cmath>
+#include <algorithm>
 
 Kystsoft::VarioSound::VarioSound()
-	: audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_U8)
 {
-	audioOutput.writeCallback().connect(this, &VarioSound::onAudioRequested);
+	// add the default sound points
+	addSoundPoint(-10.00f,  201.4f, 0.847f, 1.00f);
+	addSoundPoint( -8.92f,  202.7f, 0.844f, 1.00f);
+	addSoundPoint( -7.83f,  205.5f, 0.839f, 1.00f);
+	addSoundPoint( -6.75f,  211.1f, 0.831f, 1.00f);
+	addSoundPoint( -5.67f,  222.1f, 0.816f, 1.00f);
+	addSoundPoint( -4.58f,  243.5f, 0.790f, 1.00f);
+	addSoundPoint( -3.50f,  283.9f, 0.748f, 1.00f);
+	addSoundPoint( -3.49f,  284.4f, 0.748f, 0.90f);
+	addSoundPoint( -2.67f,  335.1f, 0.700f, 0.90f);
+	addSoundPoint( -1.83f,  409.7f, 0.636f, 0.90f);
+	addSoundPoint( -1.00f,  508.7f, 0.557f, 0.90f);
+	addSoundPoint( -0.99f,  510.0f, 0.556f, 0.05f);
+	addSoundPoint(  0.00f,  650.0f, 0.450f, 0.06f);
+	addSoundPoint(  0.01f,  651.7f, 0.449f, 0.50f);
+	addSoundPoint(  1.00f,  817.9f, 0.343f, 0.50f);
+	addSoundPoint(  2.00f,  980.6f, 0.250f, 0.50f);
+	addSoundPoint(  3.00f, 1133.8f, 0.179f, 0.50f);
+	addSoundPoint(  4.00f, 1273.9f, 0.130f, 0.50f);
+	addSoundPoint(  5.00f, 1398.7f, 0.098f, 0.50f);
+	addSoundPoint(  6.00f, 1507.5f, 0.078f, 0.50f);
+	addSoundPoint(  7.00f, 1600.3f, 0.067f, 0.50f);
+	addSoundPoint(  8.00f, 1678.2f, 0.060f, 0.50f);
+	addSoundPoint(  9.00f, 1742.6f, 0.056f, 0.50f);
+	addSoundPoint( 10.00f, 1795.2f, 0.053f, 0.50f);
 }
 
-void Kystsoft::VarioSound::mute()
+void Kystsoft::VarioSound::sortSoundPoints()
 {
-	if (muted)
-		return;
-	muted = true;
-	if (isSoundOn())
-		turnAudioOff();
+	std::sort(soundPoints.begin(), soundPoints.end());
 }
 
-void Kystsoft::VarioSound::unmute()
+float Kystsoft::VarioSound::frequency(float climb) const
 {
-	if (!muted)
-		return;
-	muted = false;
-	if (isSoundOn())
-		turnAudioOn();
+	if (soundPoints.empty())
+		return defaultFrequency(climb);
+	if (soundPoints.size() < 2)
+		return soundPoints[0].frequency;
+	size_t i = soundPointInterval(climb);
+	float x = climb;
+	float x1 = soundPoints[i].climb;
+	float x2 = soundPoints[i+1].climb;
+	float y1 = soundPoints[i].frequency;
+	float y2 = soundPoints[i+1].frequency;
+	return y1 + (y2 - y1) / (x2 - x1) * (x - x1);
 }
 
-void Kystsoft::VarioSound::toggleMuteUnmute()
+float Kystsoft::VarioSound::period(float climb) const
 {
-	if (muted)
-		unmute();
-	else
-		mute();
+	if (soundPoints.empty())
+		return defaultPeriod(climb);
+	if (soundPoints.size() < 2)
+		return soundPoints[0].period;
+	size_t i = soundPointInterval(climb);
+	float x = climb;
+	float x1 = soundPoints[i].climb;
+	float x2 = soundPoints[i+1].climb;
+	float y1 = soundPoints[i].period;
+	float y2 = soundPoints[i+1].period;
+	return y1 + (y2 - y1) / (x2 - x1) * (x - x1);
 }
 
-void Kystsoft::VarioSound::setClimb(float climb)
+float Kystsoft::VarioSound::duty(float climb) const
 {
-	if (currentClimb == climb)
-		return;
-	float previousClimb = currentClimb;
-	currentClimb = climb;
+	if (soundPoints.empty())
+		return defaultDuty(climb);
+	if (soundPoints.size() < 2)
+		return soundPoints[0].duty;
+	size_t i = soundPointInterval(climb);
+	float x = climb;
+	float x1 = soundPoints[i].climb;
+	float x2 = soundPoints[i+1].climb;
+	float y1 = soundPoints[i].duty;
+	float y2 = soundPoints[i+1].duty;
+	return y1 + (y2 - y1) / (x2 - x1) * (x - x1);
+}
 
-	// sound on or off
-	bool soundWasOn = isSoundOn();
-	if (currentClimb > previousClimb)
+float Kystsoft::VarioSound::defaultFrequency(float climb)
+{
+	if (climb < 0)
+		return std::max(400 + climb * (400 - 200) / 10, 200.0f);
+	return std::min(600 + climb * (1800 - 600) / 10, 1800.0f);
+}
+
+float Kystsoft::VarioSound::defaultPeriod(float climb)
+{
+	if (climb < 0)
+		return std::min(0.5f + climb * (0.5f - 1.0f) / 10, 1.0f);
+	return std::max(0.5f + climb * (0.05f - 0.5f) / 10, 0.05f);
+}
+
+float Kystsoft::VarioSound::defaultDuty(float climb)
+{
+	if (climb < -1)
+		return climb < -3.5f ? 1.0f : 0.9f;
+	return climb > 0 ? 0.5f : 0.05f;
+}
+
+size_t Kystsoft::VarioSound::soundPointInterval(float climb) const
+{
+	if (soundPoints.size() > 2)
 	{
-		if (isSinkSoundOn() && currentClimb >= sound.sinkSoundOffThreshold())
-			soundOn = 0; // turn off sink sound
-		if (isSoundOff() && currentClimb >= sound.climbSoundOnThreshold())
-			soundOn = 1; // turn on climb sound
+		size_t i = 0;
+		for (; i < soundPoints.size() - 2; ++i)
+			if (climb <= soundPoints[i+1].climb)
+				return i;
+		return i;
 	}
-	else // remember that equality is tested at function start
-	{
-		if (isClimbSoundOn() && currentClimb <= sound.climbSoundOffThreshold())
-			soundOn = 0; // turn off climb sound
-		if (isSoundOff() && currentClimb <= sound.sinkSoundOnThreshold())
-			soundOn = -1; // turn on sink sound
-	}
-	bool soundIsOn = isSoundOn();
-
-	// audio on or off
-	if (!soundWasOn && soundIsOn)
-		turnAudioOn();
-	else if (soundWasOn && !soundIsOn)
-		turnAudioOff();
-}
-
-void Kystsoft::VarioSound::turnAudioOn()
-{
-	if (muted)
-		return;
-	lastCyclePhase = 0;
-	lastTonePhase = 0;
-	audioOutput.prepare();
-}
-
-void Kystsoft::VarioSound::turnAudioOff()
-{
-	audioOutput.unprepare();
-}
-
-void Kystsoft::VarioSound::onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested)
-{
-	// get sample rate
-	int sampleRate = audioOutput.sampleRate();
-
-	// get sound characteristics
-	float frequency = sound.frequency(currentClimb);
-	float period = sound.period(currentClimb);
-	float duty = sound.duty(currentClimb);
-
-	// calculate number of points in a full cycle
-	uint32_t cyclePointCount = uint32_t(sampleRate * period);
-
-	// create sound and silence points
-	size_t pointCount = bytesRequested; // 8-bit audio --> number of points equals number of bytes
-	std::vector<uint8_t> points(pointCount, INT8_MAX);
-	float cyclePhase = 0;
-	float tonePhase = 0;
-	for (size_t i = 0; i < pointCount; ++i)
-	{
-		cyclePhase = lastCyclePhase + float(i) / cyclePointCount;
-		if (cyclePhase >= 1)
-			cyclePhase -= int(cyclePhase); // keep below 1
-		if (cyclePhase < duty)
-		{
-			float x = lastTonePhase + i * frequency / sampleRate;
-//			float y = std::sin(2 * 3.14159265359f * x); // sine wave (https://en.wikipedia.org/wiki/Sine_wave)
-			float y = 2 * (x - std::floor(x + 0.5f)); // sawtooth wave (https://en.wikipedia.org/wiki/Sawtooth_wave)
-//			float y = 2 * std::abs(2 * (x + 0.25f - std::floor(x + 0.75f))) - 1; // triangle wave (https://en.wikipedia.org/wiki/Triangle_wave)
-//			float y = 2 * (2 * std::floor(x) - std::floor(2 * x)) + 1; // square wave (https://en.wikipedia.org/wiki/Square_wave)
-			points[i] = uint8_t(y * INT8_MAX + INT8_MAX);
-			tonePhase = x - int(x); // keep below 1
-		}
-		else
-		{
-			lastTonePhase = tonePhase = 0;
-		}
-	}
-	lastCyclePhase = cyclePhase;
-	lastTonePhase = tonePhase;
-
-	// play sound
-	audioOutput.write(points);
+	return 0;
 }

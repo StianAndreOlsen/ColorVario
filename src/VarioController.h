@@ -1,9 +1,9 @@
 #ifndef KYSTSOFT_VARIOCONTROLLER_H
 #define KYSTSOFT_VARIOCONTROLLER_H
 
+#include "VarioAudio.h"
 #include "VarioColor.h"
 #include "Variometer.h"
-#include "VarioSound.h"
 #include <dali-toolkit/dali-toolkit.h>
 
 namespace Kystsoft {
@@ -24,7 +24,7 @@ private:
 	Dali::Toolkit::TextLabel climbLabel;
 	Dali::Toolkit::TextLabel altitudeLabel;
 	Variometer vario;
-	VarioSound sound;
+	VarioAudio audio;
 	VarioColor color;
 };
 

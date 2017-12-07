@@ -49,7 +49,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 
 	// connect variometer signals
 	vario.climbSignal().connect(this, &VarioController::setClimb);
-	vario.climbSignal().connect(&sound, &VarioSound::setClimb);
+	vario.climbSignal().connect(&audio, &VarioAudio::setClimb);
 	vario.altitudeSignal().connect(this, &VarioController::setAltitude);
 
 	// start variometer
@@ -59,7 +59,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 void Kystsoft::VarioController::onTouch(const Dali::TouchData& touch)
 {
 	if (touch.GetPointCount() > 0 && touch.GetState(0) == Dali::PointState::FINISHED)
-		sound.toggleMuteUnmute();
+		audio.toggleMuteUnmute();
 }
 
 void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
@@ -74,6 +74,18 @@ void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
 
 void Kystsoft::VarioController::setBackgroundColor(const Color& color)
 {
+	// darker center colors
+//	float H = color.hue();
+//	float S = color.saturationHSL();
+//	float A = color.alpha();
+//	Color color0 = Color::fromHSLA(H, S, 0.08f, A);
+//	Color color1 = Color::fromHSLA(H, S, 0.12f, A);
+	float H = color.hue();
+	float C = color.chroma();
+	float A = color.alpha();
+	Color color0 = Color::fromHCYA(H, C, 0.08f, A);
+	Color color1 = Color::fromHCYA(H, C, 0.12f, A);
+
 	// radial gradient
 	Dali::Property::Map map;
 	map[Dali::Toolkit::Visual::Property::TYPE] = Dali::Toolkit::Visual::GRADIENT;
@@ -85,8 +97,8 @@ void Kystsoft::VarioController::setBackgroundColor(const Color& color)
 	stopOffsets.PushBack(1.0f);
 	map[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
 	Dali::Property::Array stopColors;
-	stopColors.PushBack(color.withLightness(0.08f));
-	stopColors.PushBack(color.withLightness(0.12f));
+	stopColors.PushBack(color0);
+	stopColors.PushBack(color1);
 	stopColors.PushBack(color);
 	map[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
 	background.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, map);
