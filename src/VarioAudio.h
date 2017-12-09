@@ -16,8 +16,8 @@ public:
 	void mute();
 	void unmute();
 	void toggleMuteUnmute();
-	void setSoundSettings(const VarioSound& settings) { sound = settings; }
-	const VarioSound& soundSettings() const { return sound; }
+	void setVarioSound(const VarioSound& varioSound) { sound = varioSound; }
+	const VarioSound& varioSound() const { return sound; }
 	void setClimb(float climb);
 private:
 	void turnAudioOn();

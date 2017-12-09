@@ -6,7 +6,7 @@ Kystsoft::Variometer::Variometer()
 	, averageClimb(5)
 	, averageAltitude(5)
 {
-//	pressureListener.setInterval(100); // TODO: Debug and check the default interval
+	pressureListener.setInterval(100);
 	pressureListener.setAttribute(SENSOR_ATTRIBUTE_PAUSE_POLICY, SENSOR_PAUSE_NONE);
 	pressureListener.eventSignal().connect(this, &Variometer::onPressureSensorEvent);
 }
@@ -24,7 +24,7 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	float p0 = 1013.25f; // reference pressure [hPa]
 //	float altitude = (std::pow(p0 / pressure, 1 / 5.257f) - 1) * (273.15f + t0) / 0.0065f; // https://physics.stackexchange.com/questions/333475/how-to-calculate-altitude-from-current-temperature-and-pressure
 	float altitude = (1 - std::pow(pressure / p0, 0.190284f)) * 145366.45f; // https://en.wikipedia.org/wiki/Pressure_altitude
-	altitude *= 0.3048f; // convert from ft to m
+	altitude *= 0.3048f; // convert from feet to meter
 	// TODO: Consider using the below library function when available in version 4.0
 //	sensor_util_get_altitude(pressure, p0, t0, &altitude);
 	averageAltitude += altitude;
