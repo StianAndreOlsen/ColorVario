@@ -10,7 +10,7 @@ struct VarioColorPoint
 {
 	float climb = 0; // vertical speed [m/s]
 	Color color;
-	VarioColorPoint(float c, const Color& clr) : climb(c), color(clr) {}
+	VarioColorPoint(float clmb, const Color& clr) : climb(clmb), color(clr) {}
 	bool load(std::istream& is, char delimiter = '\t');
 	void save(std::ostream& os, char delimiter = '\t') const;
 	bool operator<(const VarioColorPoint& other) const

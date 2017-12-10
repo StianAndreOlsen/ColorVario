@@ -11,13 +11,13 @@ Kystsoft::VarioSound::VarioSound()
 	addSoundPoint( -5.67f,  222.1f, 0.816f, 1.00f);
 	addSoundPoint( -4.58f,  243.5f, 0.790f, 1.00f);
 	addSoundPoint( -3.50f,  283.9f, 0.748f, 1.00f);
-	addSoundPoint( -3.49f,  284.4f, 0.748f, 0.90f);
+	addSoundPoint( -3.50f,  283.9f, 0.748f, 0.90f);
 	addSoundPoint( -2.67f,  335.1f, 0.700f, 0.90f);
 	addSoundPoint( -1.83f,  409.7f, 0.636f, 0.90f);
 	addSoundPoint( -1.00f,  508.7f, 0.557f, 0.90f);
-	addSoundPoint( -0.99f,  510.0f, 0.556f, 0.05f);
-	addSoundPoint(  0.00f,  650.0f, 0.450f, 0.06f);
-	addSoundPoint(  0.01f,  651.7f, 0.449f, 0.50f);
+	addSoundPoint( -1.00f,  508.7f, 0.557f, 0.05f);
+	addSoundPoint(  0.00f,  650.0f, 0.450f, 0.05f);
+	addSoundPoint(  0.00f,  650.0f, 0.450f, 0.50f);
 	addSoundPoint(  1.00f,  817.9f, 0.343f, 0.50f);
 	addSoundPoint(  2.00f,  980.6f, 0.250f, 0.50f);
 	addSoundPoint(  3.00f, 1133.8f, 0.179f, 0.50f);
@@ -30,6 +30,7 @@ Kystsoft::VarioSound::VarioSound()
 	addSoundPoint( 10.00f, 1795.2f, 0.053f, 0.50f);
 }
 
+// TODO: Consider removing
 void Kystsoft::VarioSound::sortSoundPoints()
 {
 	std::sort(soundPoints.begin(), soundPoints.end());

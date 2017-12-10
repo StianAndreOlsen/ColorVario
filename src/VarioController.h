@@ -26,6 +26,7 @@ private:
 	Variometer vario;
 	VarioAudio audio;
 	VarioColor color;
+	Color currentColor;
 };
 
 } // namespace Kystsoft

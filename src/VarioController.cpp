@@ -58,7 +58,16 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		vario.altitudeSignal().connect(this, &VarioController::setAltitude);
 
 		// start variometer
-		vario.start();
+		try
+		{
+			vario.start();
+		}
+		catch (std::exception& e)
+		{
+			dlog(DLOG_ERROR) << e.what();
+			climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT, "No pressure");
+			altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT, "signal!");
+		}
 	}
 	catch (std::exception& e)
 	{
@@ -74,16 +83,19 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 
 void Kystsoft::VarioController::onTouch(const Dali::TouchData& touch)
 {
-	// exceptions does not propagate to main, probably because we are in a different thread
 	try
 	{
 		if (touch.GetPointCount() > 0 && touch.GetState(0) == Dali::PointState::FINISHED)
-			audio.toggleMuteUnmute();
+		{
+			if (vario.isStarted())
+				audio.toggleMuteUnmute();
+			else
+				vario.start();
+		}
 	}
 	catch (std::exception& e)
 	{
 		dlog(DLOG_ERROR) << e.what();
-		// no reason to quit due to audio problems
 	}
 }
 
@@ -99,6 +111,10 @@ void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
 
 void Kystsoft::VarioController::setBackgroundColor(const Color& color)
 {
+	if (color == currentColor)
+		return;
+	currentColor = color;
+
 	// radial gradient
 	Dali::Property::Map map;
 	map[Dali::Toolkit::Visual::Property::TYPE] = Dali::Toolkit::Visual::GRADIENT;

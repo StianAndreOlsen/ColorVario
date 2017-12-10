@@ -3,9 +3,22 @@
 
 Kystsoft::VarioColor::VarioColor()
 {
-	// TODO: Consider adding default color points
+	// add the default sound points
+	addColorPoint(-10.0f, Color(  0,   0, 255)); // blue
+	addColorPoint( -3.5f, Color(  0,   0, 255)); // blue
+	addColorPoint( -3.5f, Color(  0, 255, 255)); // cyan
+	addColorPoint( -1.5f, Color(  0, 255, 255)); // cyan
+	addColorPoint( -1.5f, Color(  0, 255,   0)); // green
+	addColorPoint(  0.0f, Color(  0, 255,   0)); // green
+	addColorPoint(  0.0f, Color(255, 255,   0)); // yellow
+	addColorPoint(  1.5f, Color(255, 255,   0)); // yellow
+	addColorPoint(  1.5f, Color(255, 165,   0)); // orange
+	addColorPoint(  3.5f, Color(255, 165,   0)); // orange
+	addColorPoint(  3.5f, Color(255,   0,   0)); // red
+	addColorPoint( 10.0f, Color(255,   0,   0)); // red
 }
 
+// TODO: Consider removing
 void Kystsoft::VarioColor::sortColorPoints()
 {
 	std::sort(colorPoints.begin(), colorPoints.end());
@@ -21,8 +34,6 @@ Kystsoft::Color Kystsoft::VarioColor::color(float climb) const
 	float x = climb;
 	float x1 = colorPoints[i].climb;
 	float x2 = colorPoints[i+1].climb;
-	// TODO: Choose the best color model for color interpolation
-	// TODO: Consider skipping interpolation and use the specified color in an interval
 	float y1 = colorPoints[i].color.hue();
 	float y2 = colorPoints[i+1].color.hue();
 	float H = y1 + (y2 - y1) / (x2 - x1) * (x - x1);
