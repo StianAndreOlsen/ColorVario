@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="3.0" package="no.kystsoft.vario" version="1.0.0">
+<manifest xmlns="http://tizen.org/ns/packages" api-version="3.0" package="no.kystsoft.colorvario" version="1.0.0">
     <author/>
     <profile name="wearable"/>
-    <ui-application appid="no.kystsoft.vario" exec="kystsoftvario" multiple="false" nodisplay="false" taskmanage="true" type="capp">
-        <label>Kystsoft Vario</label>
-        <icon>kystsoftvario.png</icon>
+    <ui-application appid="no.kystsoft.colorvario" exec="colorvario" multiple="false" nodisplay="false" taskmanage="true" type="capp">
+        <label>Color Vario</label>
+        <icon>colorvario.png</icon>
         <background-category value="sensor"/>
     </ui-application>
     <feature name="http://tizen.org/feature/screen.size.all"/>
     <feature name="http://tizen.org/feature/sensor.barometer.wakeup">true</feature>
+    <feature name="http://tizen.org/feature/location.gps">true</feature>
     <feature name="http://tizen.org/feature/sensor.barometer">true</feature>
+    <feature name="http://tizen.org/feature/location">true</feature>
 </manifest>

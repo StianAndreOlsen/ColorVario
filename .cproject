@@ -16,11 +16,11 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="kystsoftvario" buildArtefactType="org.tizen.nativecore.buildArtefactType.app" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.tizen.nativecore.buildArtefactType.app,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;" id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1148141574" name="Debug" parent="org.tizen.nativecore.config.sbi.gcc45.app.debug">
+				<configuration artifactName="colorvario" buildArtefactType="org.tizen.nativecore.buildArtefactType.app" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.tizen.nativecore.buildArtefactType.app,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;" id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1148141574" name="Debug" parent="org.tizen.nativecore.config.sbi.gcc45.app.debug">
 					<folderInfo id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1148141574." name="/" resourcePath="">
 						<toolChain id="org.tizen.nativecore.toolchain.sbi.gcc45.app.debug.454901296" name="Tizen Native Toolchain" superClass="org.tizen.nativecore.toolchain.sbi.gcc45.app.debug">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="org.tizen.nativeide.target.sbi.gnu.platform.base.393369636" osList="linux,win32" superClass="org.tizen.nativeide.target.sbi.gnu.platform.base"/>
-							<builder autoBuildTarget="all" buildPath="${workspace_loc:/KystsoftVario}/Debug" enableAutoBuild="true" id="org.tizen.nativecore.target.sbi.gnu.builder.876948222" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Tizen Application Builder" superClass="org.tizen.nativecore.target.sbi.gnu.builder"/>
+							<builder autoBuildTarget="all" buildPath="${workspace_loc:/ColorVario}/Debug" enableAutoBuild="true" id="org.tizen.nativecore.target.sbi.gnu.builder.876948222" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Tizen Application Builder" superClass="org.tizen.nativecore.target.sbi.gnu.builder"/>
 							<tool command="i386-linux-gnueabi-ar.exe" id="org.tizen.nativecore.tool.sbi.gnu.archiver.2082060489" name="Archiver" superClass="org.tizen.nativecore.tool.sbi.gnu.archiver"/>
 							<tool command="clang++.exe" id="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler.1482396675" name="C++ Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.optimization.level.2044566148" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
@@ -304,11 +304,11 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="kystsoftvario" buildArtefactType="org.tizen.nativecore.buildArtefactType.app" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.tizen.nativecore.buildArtefactType.app,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;" id="org.tizen.nativecore.config.sbi.gcc45.app.release.877179803" name="Release" parent="org.tizen.nativecore.config.sbi.gcc45.app.release">
+				<configuration artifactName="colorvario" buildArtefactType="org.tizen.nativecore.buildArtefactType.app" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.tizen.nativecore.buildArtefactType.app,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;" id="org.tizen.nativecore.config.sbi.gcc45.app.release.877179803" name="Release" parent="org.tizen.nativecore.config.sbi.gcc45.app.release">
 					<folderInfo id="org.tizen.nativecore.config.sbi.gcc45.app.release.877179803." name="/" resourcePath="">
 						<toolChain id="org.tizen.nativecore.toolchain.sbi.gcc45.app.release.1320809437" name="Tizen Native Toolchain" superClass="org.tizen.nativecore.toolchain.sbi.gcc45.app.release">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="org.tizen.nativeide.target.sbi.gnu.platform.base.2248804" osList="linux,win32" superClass="org.tizen.nativeide.target.sbi.gnu.platform.base"/>
-							<builder buildPath="${workspace_loc:/KystsoftVario}/Release" id="org.tizen.nativecore.target.sbi.gnu.builder.1896436238" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Tizen Application Builder" superClass="org.tizen.nativecore.target.sbi.gnu.builder"/>
+							<builder buildPath="${workspace_loc:/ColorVario}/Release" id="org.tizen.nativecore.target.sbi.gnu.builder.1896436238" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Tizen Application Builder" superClass="org.tizen.nativecore.target.sbi.gnu.builder"/>
 							<tool command="i386-linux-gnueabi-ar.exe" id="org.tizen.nativecore.tool.sbi.gnu.archiver.1458096455" name="Archiver" superClass="org.tizen.nativecore.tool.sbi.gnu.archiver"/>
 							<tool command="clang++.exe" id="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler.2105894183" name="C++ Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.optimization.level.1157672293" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
@@ -568,7 +568,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="KystsoftVario.org.tizen.nativecore.target.sbi.gcc45.app.1575386966" name="Tizen Native Application" projectType="org.tizen.nativecore.target.sbi.gcc45.app"/>
+		<project id="ColorVario.org.tizen.nativecore.target.sbi.gcc45.app.1575386966" name="Tizen Native Application" projectType="org.tizen.nativecore.target.sbi.gcc45.app"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -582,10 +582,10 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/KystsoftVario"/>
+			<resource resourceType="PROJECT" workspacePath="/ColorVario"/>
 		</configuration>
 		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/KystsoftVario"/>
+			<resource resourceType="PROJECT" workspacePath="/ColorVario"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>

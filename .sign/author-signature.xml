@@ -2,17 +2,21 @@
 <SignedInfo>
 <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></CanonicalizationMethod>
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
-<Reference URI="bin%2Fkystsoftvario">
+<Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>AqFKPuzOgVTvjTVy6Y8Qni+D2TfHOCGeeu/ZKkIpbk0=</DigestValue>
+<DigestValue>bOPAXNEqAdhQoj2vEB5i1T7vQ6kJpz2hYPqFbrR2wmk=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fkystsoftvario.png">
+<Reference URI="shared%2Fres%2FGeoid.dat">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fcolorvario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>S6JIFzlxHxQkzX+JDXXaIepaA3wAJ95kk2+NUpcqthg=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>6c4/dGMho3xRgct+FZAfnl9wFoM10FGCJ5/kFDcTQrM=</DigestValue>
+<DigestValue>+aPiz2KfOeWRKf8HM7rdnnWqfoDqBzqLz56GL4RLTHY=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -23,9 +27,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-AhsIzI0IVUSq6VC/VM8joHPW5D+DriS6OCt4xlbHqOhiBc9ctwmUEwBXzZuhCUTwq2lSg/TO7IQ2
-NPRp/ks6HfBIst+QczkhOpIoaDxq6udJ/Ne1B0z/aEf4PboysMKelseOJrUomJCU8BtBjh8tk7O/
-e8wq2wsyEvxj9nn+Pr8=
+YjSt2oy6XO+BV0Gv5RAVx3p11ZxqZ+HKDI84sfO5yq9NRZmGzdFWuMVblF7Tavt+Xf0bf0vjeQG6
+ou8ThD7a6zYuvo7y4tMT3HXSZKAZsbl2aa9alTrM6ULIq3NJvqXVRiieqO7w6DzYDS/ipu7ZmSHM
+vvYVBWvxrfdFsolE7Xw=
 </SignatureValue>
 <KeyInfo>
 <X509Data>
