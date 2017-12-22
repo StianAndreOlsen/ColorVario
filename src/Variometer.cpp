@@ -17,16 +17,17 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	uint64_t timestamp = event->timestamp;
 	float pressure = event->values[0];
 
-	// calculate altitude
-	// TODO: Consider getting actual temperature from sensor
-//	float t0 = 15; // reference temperature [°C]
-	// TODO: Consider letting the user calibrate the height by changing the reference pressure
-	float p0 = 1013.25f; // reference pressure [hPa]
-//	float altitude = (std::pow(p0 / pressure, 1 / 5.257f) - 1) * (273.15f + t0) / 0.0065f; // https://physics.stackexchange.com/questions/333475/how-to-calculate-altitude-from-current-temperature-and-pressure
-	float altitude = (1 - std::pow(pressure / p0, 0.190284f)) * 145366.45f; // https://en.wikipedia.org/wiki/Pressure_altitude
+	// calculate reference pressure (calibrate altimeter)
+	if (currentAltitude > -6.4e+6f)
+	{
+		currentAltitude /= 0.3048f; // convert from meter to feet
+		referencePressure = pressure / std::pow(1 - currentAltitude / 145366.45f, 1 / 0.190284f);
+		currentAltitude = -6.5e+6f;
+	}
+
+	// calculate altitude (https://en.wikipedia.org/wiki/Pressure_altitude)
+	float altitude = (1 - std::pow(pressure / referencePressure, 0.190284f)) * 145366.45f;
 	altitude *= 0.3048f; // convert from feet to meter
-	// TODO: Consider using the below library function when available in version 4.0
-//	sensor_util_get_altitude(pressure, p0, t0, &altitude);
 	averageAltitude += altitude;
 
 	// calculate climb

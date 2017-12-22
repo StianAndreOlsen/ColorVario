@@ -16,11 +16,14 @@ public:
 	void start() { pressureListener.start(); }
 	void stop() { pressureListener.stop(); }
 	void toggleStartStop() { pressureListener.toggleStartStop(); }
+	void setCurrentAltitude(float altitude) { currentAltitude = altitude; } // calibrates the altimeter
 	const Signal<float>& climbSignal() const { return climbSignl; }
 	const Signal<float>& altitudeSignal() const { return altitudeSignl; }
 private:
 	void onPressureSensorEvent(Sensor sensor, sensor_event_s* event);
 	SensorListener pressureListener;
+	float currentAltitude = -6.5e+6f; // smaller than the radius of earth
+	float referencePressure = 1013.25f; // https://en.wikipedia.org/wiki/Standard_conditions_for_temperature_and_pressure
 	uint64_t lastTimestamp = 0;
 	float lastAltitude = 0;
 	Averager averageClimb;

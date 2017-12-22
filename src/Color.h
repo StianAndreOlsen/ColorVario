@@ -1,6 +1,7 @@
 #ifndef KYSTSOFT_COLOR_H
 #define KYSTSOFT_COLOR_H
 
+#include "algorithm.h"
 #include <dali/dali.h>
 #include <limits>
 
@@ -18,10 +19,10 @@ struct Color : public Dali::Vector4
 	// G is green
 	// B is blue
 	// A is alpha
-	float red() const { return clamp(r, 0, 1); }
-	float green() const { return clamp(g, 0, 1); }
-	float blue() const { return clamp(b, 0, 1); }
-	float alpha() const { return clamp(a, 0, 1); }
+	float red() const { return std::clamp(r, 0.0f, 1.0f); }
+	float green() const { return std::clamp(g, 0.0f, 1.0f); }
+	float blue() const { return std::clamp(b, 0.0f, 1.0f); }
+	float alpha() const { return std::clamp(a, 0.0f, 1.0f); }
 
 	// color properties (https://en.wikipedia.org/wiki/HSL_and_HSV)
 	float maximum() const { return std::max({red(), green(), blue()}); }
@@ -68,7 +69,6 @@ struct Color : public Dali::Vector4
 
 	// helper functions
 	static float hue6(float H); // converts hue to a value in [0,6)
-	static float clamp(float v, float lo, float hi); // TODO: Use std::clamp instead when available in C++17
 	static void HCtoRGB(float H, float C, float* R, float* G, float* B);
 };
 

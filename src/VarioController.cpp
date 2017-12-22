@@ -1,5 +1,7 @@
 #include "VarioController.h"
+#include "AppFunctions.h"
 #include "dlog.h"
+#include "LocationManager.h"
 #include <exception>
 #include <sstream>
 
@@ -45,7 +47,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		altitudeLabel.SetPosition(0, stageSize.height / 2);
 		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::HORIZONTAL_ALIGNMENT, "CENTER");
 		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::VERTICAL_ALIGNMENT, "CENTER");
-		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
+		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::RED);
 		background.Add(altitudeLabel);
 
 		// connect stage signals
@@ -56,6 +58,20 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		vario.climbSignal().connect(this, &VarioController::setClimb);
 		vario.climbSignal().connect(&audio, &VarioAudio::setClimb);
 		vario.altitudeSignal().connect(this, &VarioController::setAltitude);
+
+		// create, connect and start gps
+		try
+		{
+			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS);
+			gps->loadGeoid(appSharedResourcePath() + "Geoid.dat");
+			gps->locationSignal().connect(this, &VarioController::onLocationUpdated);
+			gps->start();
+		}
+		catch (std::exception& e)
+		{
+			dlog(DLOG_ERROR) << e.what();
+			gps.reset(); // destroy gps
+		}
 
 		// start variometer
 		try
@@ -107,6 +123,21 @@ void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
 		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
 			app.Quit();
 	}
+}
+
+void Kystsoft::VarioController::onLocationUpdated(const Location& location)
+{
+	vario.setCurrentAltitude(location.altitude);
+	if (location.vertical < 10)
+	{
+		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
+		gps.reset(); // destroy gps
+	}
+	else if (location.vertical < 100)
+	{
+		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::YELLOW);
+	}
+	// TODO: Destroy gps after a certain amount of time
 }
 
 void Kystsoft::VarioController::setBackgroundColor(const Color& color)

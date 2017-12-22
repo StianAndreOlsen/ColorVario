@@ -1,6 +1,8 @@
 #ifndef KYSTSOFT_APPFUNCTIONS_H
 #define KYSTSOFT_APPFUNCTIONS_H
 
+#include <string>
+
 namespace Kystsoft {
 
 std::string appId();

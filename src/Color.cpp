@@ -38,9 +38,9 @@ float Kystsoft::Color::saturationHSL() const
 Kystsoft::Color Kystsoft::Color::fromHSLA(float H, float S, float L, float A /*= 1*/)
 {
 	H = hue6(H);
-	S = clamp(S, 0, 1);
-	L = clamp(L, 0, 1);
-	A = clamp(A, 0, 1);
+	S = std::clamp(S, 0.0f, 1.0f);
+	L = std::clamp(L, 0.0f, 1.0f);
+	A = std::clamp(A, 0.0f, 1.0f);
 	float C = (1 - std::fabs(2 * L - 1)) * S;
 	float R = 0, G = 0, B = 0;
 	HCtoRGB(H, C, &R, &G, &B);
@@ -62,9 +62,9 @@ float Kystsoft::Color::saturationHSV() const
 Kystsoft::Color Kystsoft::Color::fromHSVA(float H, float S, float V, float A /*= 1*/)
 {
 	H = hue6(H);
-	S = clamp(S, 0, 1);
-	V = clamp(V, 0, 1);
-	A = clamp(A, 0, 1);
+	S = std::clamp(S, 0.0f, 1.0f);
+	V = std::clamp(V, 0.0f, 1.0f);
+	A = std::clamp(A, 0.0f, 1.0f);
 	float C = V * S;
 	float R = 0, G = 0, B = 0;
 	HCtoRGB(H, C, &R, &G, &B);
@@ -86,9 +86,9 @@ float Kystsoft::Color::saturationHSI() const
 Kystsoft::Color Kystsoft::Color::fromHSIA(float H, float S, float I, float A /*= 1*/)
 {
 	H = hue6(H);
-	S = clamp(S, 0, 1);
-	I = clamp(I, 0, 1);
-	A = clamp(A, 0, 1);
+	S = std::clamp(S, 0.0f, 1.0f);
+	I = std::clamp(I, 0.0f, 1.0f);
+	A = std::clamp(A, 0.0f, 1.0f);
 	float Z = 1 - std::fabs(std::fmod(H, 2) - 1);
 	float C = 3 * I * S / (1 + Z);
 	float R = 0, G = 0, B = 0;
@@ -101,9 +101,9 @@ Kystsoft::Color Kystsoft::Color::fromHSIA(float H, float S, float I, float A /*=
 Kystsoft::Color Kystsoft::Color::fromHCYA(float H, float C, float Y, float A /*= 1*/)
 {
 	H = hue6(H);
-	C = clamp(C, 0, 1);
-	Y = clamp(Y, 0, 1);
-	A = clamp(A, 0, 1);
+	C = std::clamp(C, 0.0f, 1.0f);
+	Y = std::clamp(Y, 0.0f, 1.0f);
+	A = std::clamp(A, 0.0f, 1.0f);
 	float R = 0, G = 0, B = 0;
 	HCtoRGB(H, C, &R, &G, &B);
 	float m = Y - luma(R,G,B);
@@ -118,15 +118,6 @@ float Kystsoft::Color::hue6(float H)
 	if (H < 0)
 		H += 360;
 	return H / 60;
-}
-
-float Kystsoft::Color::clamp(float v, float lo, float hi)
-{
-	if (v < lo)
-		return lo;
-	if (v > hi)
-		return hi;
-	return v;
 }
 
 void Kystsoft::Color::HCtoRGB(float H, float C, float* R, float* G, float* B)
