@@ -1,5 +1,5 @@
 #include "SensorListener.h"
-#include "FunctionError.h"
+#include "TizenError.h"
 
 void Kystsoft::SensorListener::start()
 {
@@ -7,7 +7,7 @@ void Kystsoft::SensorListener::start()
 		return;
 	int error = sensor_listener_start(listener);
 	if (error != SENSOR_ERROR_NONE)
-		throw FunctionError("sensor_listener_start", error);
+		throw TizenError("sensor_listener_start", error);
 	started = true;
 }
 
@@ -17,7 +17,7 @@ void Kystsoft::SensorListener::stop()
 		return;
 	int error = sensor_listener_stop(listener);
 	if (error != SENSOR_ERROR_NONE)
-		throw FunctionError("sensor_listener_stop", error);
+		throw TizenError("sensor_listener_stop", error);
 	started = false;
 }
 
@@ -33,28 +33,28 @@ void Kystsoft::SensorListener::setInterval(uint32_t interval_ms)
 {
 	int error = sensor_listener_set_interval(listener, interval_ms);
 	if (error != SENSOR_ERROR_NONE)
-		throw FunctionError("sensor_listener_set_interval", error);
+		throw TizenError("sensor_listener_set_interval", error);
 }
 
 void Kystsoft::SensorListener::setAttribute(sensor_attribute_e attribute, int value)
 {
 	int error = sensor_listener_set_attribute_int(listener, attribute, value);
 	if (error != SENSOR_ERROR_NONE)
-		throw FunctionError("sensor_listener_set_attribute_int", error);
+		throw TizenError("sensor_listener_set_attribute_int", error);
 }
 
 void Kystsoft::SensorListener::create(Sensor sensor)
 {
 	int error = sensor_create_listener(sensor, &listener);
 	if (error != SENSOR_ERROR_NONE)
-		throw FunctionError("sensor_create_listener", error);
+		throw TizenError("sensor_create_listener", error);
 
 	error = sensor_listener_set_event_cb(listener, 0, sensorEventCallback, this);
 	if (error != SENSOR_ERROR_NONE)
 	{
 		sensor_destroy_listener(listener);
 		listener = nullptr;
-		throw FunctionError("sensor_listener_set_event_cb", error);
+		throw TizenError("sensor_listener_set_event_cb", error);
 	}
 }
 

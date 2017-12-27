@@ -10,6 +10,7 @@ std::string appName();
 std::string appVersion();
 std::string appDataPath();
 std::string appResourcePath();
+std::string appSharedDataPath();
 std::string appSharedResourcePath();
 
 } // namespace Kystsoft

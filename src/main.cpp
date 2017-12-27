@@ -5,12 +5,13 @@
 
 int main(int argc, char *argv[])
 {
-	Kystsoft::dlog(DLOG_DEBUG) << "Hello!";
 	try
 	{
+		Kystsoft::dlog(DLOG_DEBUG) << "Hello!";
 		Dali::Application application = Dali::Application::New(&argc, &argv);
 		Kystsoft::VarioController controller(application);
 		application.MainLoop();
+		Kystsoft::dlog(DLOG_DEBUG) << "Goodbye!";
 	}
 	catch (std::exception& e)
 	{
@@ -22,6 +23,5 @@ int main(int argc, char *argv[])
 		Kystsoft::dlog(DLOG_FATAL) << "Unknown error";
 		return 2;
 	}
-	Kystsoft::dlog(DLOG_DEBUG) << "Goodbye!";
 	return 0;
 }

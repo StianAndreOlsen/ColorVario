@@ -1,18 +1,18 @@
 #include "LocationManager.h"
-#include "FunctionError.h"
+#include "TizenError.h"
 
 Kystsoft::LocationManager::LocationManager(location_method_e method, int interval /*= 1*/)
 {
 	int error = location_manager_create(method, &manager);
 	if (error != LOCATIONS_ERROR_NONE)
-		throw FunctionError("location_manager_create", error);
+		throw TizenError("location_manager_create", error);
 
 	error = location_manager_set_position_updated_cb(manager, positionUpdated, interval, this);
 	if (error != LOCATIONS_ERROR_NONE)
 	{
 		location_manager_destroy(manager);
 		manager = nullptr;
-		throw FunctionError("location_manager_set_position_updated_cb", error);
+		throw TizenError("location_manager_set_position_updated_cb", error);
 	}
 }
 
@@ -22,7 +22,7 @@ void Kystsoft::LocationManager::start()
 		return;
 	int error = location_manager_start(manager);
 	if (error != LOCATIONS_ERROR_NONE)
-		throw FunctionError("location_manager_start", error);
+		throw TizenError("location_manager_start", error);
 	started = true;
 }
 
@@ -32,7 +32,7 @@ void Kystsoft::LocationManager::stop()
 		return;
 	int error = location_manager_stop(manager);
 	if (error != LOCATIONS_ERROR_NONE)
-		throw FunctionError("location_manager_stop", error);
+		throw TizenError("location_manager_stop", error);
 	started = false;
 }
 
@@ -67,7 +67,7 @@ void Kystsoft::LocationManager::onPositionUpdated()
 		&location.timestamp
 	);
 	if (error != LOCATIONS_ERROR_NONE)
-		throw FunctionError("location_manager_get_last_location", error);
+		throw TizenError("location_manager_get_last_location", error);
 	location.speed /= 3.6f; // convert from km/h to m/s
 	location.climb /= 3.6f; // convert from km/h to m/s
 	if (datum == GeodeticDatum::Geoid)

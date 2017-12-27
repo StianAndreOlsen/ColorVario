@@ -131,7 +131,8 @@ void Kystsoft::VarioController::onLocationUpdated(const Location& location)
 	if (location.vertical < 10)
 	{
 		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
-		gps.reset(); // destroy gps
+		gps->stop(); // TODO: Figure out a way of destroying the gps when not needed
+//		gps.reset(); // destroy gps // Note: Cannot destroy gps here, since this is called from the gps signal
 	}
 	else if (location.vertical < 100)
 	{
