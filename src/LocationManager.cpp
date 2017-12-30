@@ -54,6 +54,8 @@ void Kystsoft::LocationManager::positionUpdated(double /*latitude*/, double /*lo
 void Kystsoft::LocationManager::onPositionUpdated()
 {
 	Location location;
+	// TODO: Debug and check the difference between the two functions below
+//	int error = location_manager_get_location(manager,
 	int error = location_manager_get_last_location(manager,
 		&location.altitude,
 		&location.latitude,

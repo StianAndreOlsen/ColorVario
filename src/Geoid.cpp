@@ -39,7 +39,7 @@ double Kystsoft::Geoid::height(double latitude, double longitude) const
 		return 0;
 
 	// normalize coordinates
-	double x = (longitude - -180) / (180 - -180);
+	double x = (longitude - -0) / (360 - -0);
 	double y = (latitude - -90) / (90 - -90);
 	x = x - std::floor(x);
 	y = std::clamp(y, 0.0, 1.0);

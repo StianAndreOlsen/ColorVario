@@ -17,6 +17,7 @@ public:
 	~LocationManager() noexcept { location_manager_destroy(manager); }
 	operator location_manager_h() const { return manager; }
 	bool loadGeoid(const std::string& fileName) { return geoid.load(fileName); }
+	double geoidHeight(double latitude, double longitude) const { return geoid.height(latitude, longitude); }
 	GeodeticDatum geodeticDatum() const { return datum; }
 	void setGeodeticDatum(GeodeticDatum geodeticDatum) { datum = geodeticDatum; }
 	bool isStarted() const { return started; }

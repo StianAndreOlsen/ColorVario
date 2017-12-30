@@ -1,6 +1,7 @@
 #ifndef KYSTSOFT_VARIOCONTROLLER_H
 #define KYSTSOFT_VARIOCONTROLLER_H
 
+#include "Display.h"
 #include "LocationManager.h"
 #include "VarioAudio.h"
 #include "VarioColor.h"
@@ -26,6 +27,7 @@ private:
 	Dali::Toolkit::Control background;
 	Dali::Toolkit::TextLabel climbLabel;
 	Dali::Toolkit::TextLabel altitudeLabel;
+	Display display;
 	std::unique_ptr<LocationManager> gps;
 	Variometer vario;
 	VarioAudio audio;

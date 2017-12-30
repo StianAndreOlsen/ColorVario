@@ -54,6 +54,10 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		stage.TouchSignal().Connect(this, &VarioController::onTouch);
 		stage.KeyEventSignal().Connect(this, &VarioController::onKeyEvent);
 
+		// control the display
+		display.setMaxBrightness();
+		display.lock();
+
 		// connect variometer signals
 		vario.climbSignal().connect(this, &VarioController::setClimb);
 		vario.climbSignal().connect(&audio, &VarioAudio::setClimb);
@@ -62,7 +66,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		// create, connect and start gps
 		try
 		{
-			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS);
+			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS, 5); // TODO: Discuss if 5 seconds is an ok interval
 			gps->loadGeoid(appSharedResourcePath() + "Geoid.dat");
 			gps->locationSignal().connect(this, &VarioController::onLocationUpdated);
 			gps->start();
@@ -128,17 +132,18 @@ void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
 void Kystsoft::VarioController::onLocationUpdated(const Location& location)
 {
 	vario.setCurrentAltitude(location.altitude);
-	if (location.vertical < 10)
+	// TODO: Use vertical accuracy when reliable
+//	if (location.vertical < 10)
+	if (location.horizontal < 10)
 	{
 		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
-		gps->stop(); // TODO: Figure out a way of destroying the gps when not needed
-//		gps.reset(); // destroy gps // Note: Cannot destroy gps here, since this is called from the gps signal
+		gps->stop(); // Note: Cannot destroy the GPS here, since this function is called from the GPS signal
 	}
-	else if (location.vertical < 100)
+//	else if (location.vertical < 100)
+	else if (location.horizontal < 100)
 	{
 		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::YELLOW);
 	}
-	// TODO: Destroy gps after a certain amount of time
 }
 
 void Kystsoft::VarioController::setBackgroundColor(const Color& color)
@@ -178,6 +183,10 @@ void Kystsoft::VarioController::setClimb(float climb)
 
 void Kystsoft::VarioController::setAltitude(float altitude)
 {
+	// TODO: Figure out a better place to destroy the GPS, or get used to this! ;-)
+	if (gps && !gps->isStarted())
+		gps.reset(); // destroy gps
+
 	std::ostringstream os;
 	os.setf(std::ios::fixed);
 	os.precision(0);
