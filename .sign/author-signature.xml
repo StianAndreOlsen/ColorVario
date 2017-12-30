@@ -4,7 +4,7 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>41YgJK707hZ1cWJcjJT/+PPbcHZK6SERIyC098E5PBA=</DigestValue>
+<DigestValue>JPjqQiZf2v3ygZnXFE7k0mXmAggNzrxMwyaySYkavzs=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FGeoid.dat">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -12,7 +12,7 @@
 </Reference>
 <Reference URI="shared%2Fres%2Fcolorvario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>6MO6+StlZmx/Ruaz/5LE7JGfnjQHJUGP/3sbdPg9ZtI=</DigestValue>
+<DigestValue>hObDzOD/8ZUgKrN+9XOyHhLR7aSfFEoeC+n6fLJmgTk=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -27,9 +27,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-BIMSeD7r4v/s8DoCjciGhat3SUrw8S8ZBEYAr8H1YkLXvtGjUdLRBXq/JoehK3r+9G76RtdiGem/
-Za+zb56zTzY4Wk+WzOR57SMxn/GWwpf8hmia0PlxiiCNQrQ+XbxTKeD5VzawMyvNGjShy1m/k7eV
-tD6YQA1l/tHRlWfC/OQ=
+RtTGHBNGmDc7b2JIx9hSA0g6IpE3J0jUuLnKnIkJR/DCDv79eAyBRSzyLYkRXEg0hzn5TxHSkWaK
+Of4drv1//0SaaFWWL6yBP9GPHlHsbTaI6WYfao6S/mHYxPH7+ZKdb2wc4egHvqDJyn9hpbU3lOjD
+/3BMbTUvPqf8sIXrLc4=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

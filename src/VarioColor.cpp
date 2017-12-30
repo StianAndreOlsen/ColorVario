@@ -4,18 +4,30 @@
 Kystsoft::VarioColor::VarioColor()
 {
 	// add the default sound points
-	addColorPoint(-10.0f, Color(  0,   0, 255)); // blue
-	addColorPoint( -3.5f, Color(  0,   0, 255)); // blue
-	addColorPoint( -3.5f, Color(  0, 255, 255)); // cyan
-	addColorPoint( -1.5f, Color(  0, 255, 255)); // cyan
-	addColorPoint( -1.5f, Color(  0, 255,   0)); // green
-	addColorPoint(  0.0f, Color(  0, 255,   0)); // green
-	addColorPoint(  0.0f, Color(255, 255,   0)); // yellow
-	addColorPoint(  1.5f, Color(255, 255,   0)); // yellow
-	addColorPoint(  1.5f, Color(255, 165,   0)); // orange
-	addColorPoint(  3.5f, Color(255, 165,   0)); // orange
-	addColorPoint(  3.5f, Color(255,   0,   0)); // red
-	addColorPoint( 10.0f, Color(255,   0,   0)); // red
+	// red to green
+	addColorPoint(-10.0f, Color(255,   0, 255)); // magenta
+	addColorPoint( -4.0f, Color(255,   0, 255)); // magenta
+	addColorPoint( -4.0f, Color(255,   0,   0)); // red
+	addColorPoint( -2.0f, Color(255,   0,   0)); // red
+	addColorPoint( -1.0f, Color(  0,   0,   0)); // black
+	addColorPoint(  0.0f, Color(  0,   0,   0)); // black
+	addColorPoint(  1.0f, Color(  0, 255,   0)); // green
+	addColorPoint(  3.0f, Color(  0, 255,   0)); // green
+	addColorPoint(  3.0f, Color(  0, 255, 255)); // cyan
+	addColorPoint( 10.0f, Color(  0, 255, 255)); // cyan
+	// blue to red
+//	addColorPoint(-10.0f, Color(  0,   0, 255)); // blue
+//	addColorPoint( -3.5f, Color(  0,   0, 255)); // blue
+//	addColorPoint( -3.5f, Color(  0, 255, 255)); // cyan
+//	addColorPoint( -1.5f, Color(  0, 255, 255)); // cyan
+//	addColorPoint( -1.5f, Color(  0, 255,   0)); // green
+//	addColorPoint(  0.0f, Color(  0, 255,   0)); // green
+//	addColorPoint(  0.0f, Color(255, 255,   0)); // yellow
+//	addColorPoint(  1.5f, Color(255, 255,   0)); // yellow
+//	addColorPoint(  1.5f, Color(255, 165,   0)); // orange
+//	addColorPoint(  3.5f, Color(255, 165,   0)); // orange
+//	addColorPoint(  3.5f, Color(255,   0,   0)); // red
+//	addColorPoint( 10.0f, Color(255,   0,   0)); // red
 }
 
 // TODO: Consider removing
@@ -36,6 +48,24 @@ Kystsoft::Color Kystsoft::VarioColor::color(float climb) const
 	float x2 = colorPoints[i+1].climb;
 	float y1 = colorPoints[i].color.hue();
 	float y2 = colorPoints[i+1].color.hue();
+	if (y1 == Color::hueUndefined || y2 == Color::hueUndefined)
+	{
+		// interpolate RGBA values
+		y1 = colorPoints[i].color.red();
+		y2 = colorPoints[i+1].color.red();
+		float R = y1 + (y2 - y1) / (x2 - x1) * (x - x1);
+		y1 = colorPoints[i].color.green();
+		y2 = colorPoints[i+1].color.green();
+		float G = y1 + (y2 - y1) / (x2 - x1) * (x - x1);
+		y1 = colorPoints[i].color.blue();
+		y2 = colorPoints[i+1].color.blue();
+		float B = y1 + (y2 - y1) / (x2 - x1) * (x - x1);
+		y1 = colorPoints[i].color.alpha();
+		y2 = colorPoints[i+1].color.alpha();
+		float A = y1 + (y2 - y1) / (x2 - x1) * (x - x1);
+		return Color(R,G,B,A);
+	}
+	// interpolate HSLA values
 	float H = y1 + (y2 - y1) / (x2 - x1) * (x - x1);
 	y1 = colorPoints[i].color.saturationHSL();
 	y2 = colorPoints[i+1].color.saturationHSL();
