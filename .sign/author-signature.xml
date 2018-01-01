@@ -4,15 +4,27 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>JPjqQiZf2v3ygZnXFE7k0mXmAggNzrxMwyaySYkavzs=</DigestValue>
+<DigestValue>bHlfqejyXTvIRy7pNnMLR4PmDdPfU2rqXODwfnO/Ark=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2FGeoid.dat">
+<Reference URI="shared%2Fres%2Fcolor.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
+<DigestValue>+izHQVqEn1V0ZmUwiA8Reqy5z1ghl0fiQybneK5QarI=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fcolorvario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>hObDzOD/8ZUgKrN+9XOyHhLR7aSfFEoeC+n6fLJmgTk=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fgeoid.dat">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fsound.ini">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>c6IRTN23bbvU1ANKpRDLldKL71VOOs90UzOEjGIWD4U=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fvariometer.ini">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>OCH/dpwAnFuPsEJcZfkuZkYZ4qgEtefWi2rIzGUd3Fo=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -27,9 +39,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-RtTGHBNGmDc7b2JIx9hSA0g6IpE3J0jUuLnKnIkJR/DCDv79eAyBRSzyLYkRXEg0hzn5TxHSkWaK
-Of4drv1//0SaaFWWL6yBP9GPHlHsbTaI6WYfao6S/mHYxPH7+ZKdb2wc4egHvqDJyn9hpbU3lOjD
-/3BMbTUvPqf8sIXrLc4=
+Od/2t10vGwc2c3zm9qVHWLgHf2dmvu1c2usYPsQROy1oA/LMz5YtkKyryfcHwwhycST1+8NePwMU
+NYfQzVmPjjQVldNa0XhGa8F5kPgH7dVbhF31umr892g5vxov03K56nIr96aEKpZWrDjxNsV7qjiE
+8IvJ6sBLyH8Mm5mHHdM=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

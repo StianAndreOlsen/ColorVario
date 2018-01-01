@@ -1,39 +1,16 @@
 #include "VarioColor.h"
-#include <algorithm>
 
-Kystsoft::VarioColor::VarioColor()
+void Kystsoft::VarioColor::load(const Settings& settings)
 {
-	// add the default sound points
-	// red to green
-	addColorPoint(-10.0f, Color(255,   0, 255)); // magenta
-	addColorPoint( -4.0f, Color(255,   0, 255)); // magenta
-	addColorPoint( -4.0f, Color(255,   0,   0)); // red
-	addColorPoint( -2.0f, Color(255,   0,   0)); // red
-	addColorPoint( -1.0f, Color(  0,   0,   0)); // black
-	addColorPoint(  0.0f, Color(  0,   0,   0)); // black
-	addColorPoint(  1.0f, Color(  0, 255,   0)); // green
-	addColorPoint(  3.0f, Color(  0, 255,   0)); // green
-	addColorPoint(  3.0f, Color(  0, 255, 255)); // cyan
-	addColorPoint( 10.0f, Color(  0, 255, 255)); // cyan
-	// blue to red
-//	addColorPoint(-10.0f, Color(  0,   0, 255)); // blue
-//	addColorPoint( -3.5f, Color(  0,   0, 255)); // blue
-//	addColorPoint( -3.5f, Color(  0, 255, 255)); // cyan
-//	addColorPoint( -1.5f, Color(  0, 255, 255)); // cyan
-//	addColorPoint( -1.5f, Color(  0, 255,   0)); // green
-//	addColorPoint(  0.0f, Color(  0, 255,   0)); // green
-//	addColorPoint(  0.0f, Color(255, 255,   0)); // yellow
-//	addColorPoint(  1.5f, Color(255, 255,   0)); // yellow
-//	addColorPoint(  1.5f, Color(255, 165,   0)); // orange
-//	addColorPoint(  3.5f, Color(255, 165,   0)); // orange
-//	addColorPoint(  3.5f, Color(255,   0,   0)); // red
-//	addColorPoint( 10.0f, Color(255,   0,   0)); // red
-}
-
-// TODO: Consider removing
-void Kystsoft::VarioColor::sortColorPoints()
-{
-	std::sort(colorPoints.begin(), colorPoints.end());
+	// color points
+	clearColorPoints();
+	for (auto value : settings.values("Color.point"))
+	{
+		VarioColorPoint point;
+		std::istringstream is(value);
+		if (point.load(is))
+			addColorPoint(point);
+	}
 }
 
 Kystsoft::Color Kystsoft::VarioColor::color(float climb) const
@@ -83,8 +60,8 @@ Kystsoft::Color Kystsoft::VarioColor::defaultColor(float climb)
 {
 	// calculate hue as a function of climb (https://en.wikipedia.org/wiki/Logistic_function)
 	float k = 0.5f; // curve steepness
-	float H = 300 / (1 + std::exp( k * climb)) - 30; // blue - green - red
-//	float H = 120 / (1 + std::exp(-k * climb)); // red - yellow - green
+//	float H = 300 / (1 + std::exp( k * climb)) - 30; // blue - green - red
+	float H = 120 / (1 + std::exp(-k * climb)); // red - yellow - green
 	if (H < 0)
 		H += 360;
 

@@ -6,9 +6,39 @@ Kystsoft::Variometer::Variometer()
 	, averageClimb(5)
 	, averageAltitude(5)
 {
-	pressureListener.setInterval(100);
+	pressureListener.setInterval(interval_ms);
 	pressureListener.setAttribute(SENSOR_ATTRIBUTE_PAUSE_POLICY, SENSOR_PAUSE_NONE);
 	pressureListener.eventSignal().connect(this, &Variometer::onPressureSensorEvent);
+}
+
+void Kystsoft::Variometer::load(const Settings& settings)
+{
+	setSamplingInterval(settings.value("Variometer.samplingInterval", samplingInterval()));
+	setAveragingInterval(settings.value("Variometer.averagingInterval", averagingInterval()));
+}
+
+void Kystsoft::Variometer::setSamplingInterval(float interval)
+{
+	uint32_t newInterval = uint32_t(interval * 1000 + 0.5f);
+	if (newInterval < 10)
+		newInterval = 10;
+	if (interval_ms != newInterval)
+	{
+		interval_ms = newInterval;
+		pressureListener.setInterval(interval_ms);
+	}
+}
+
+void Kystsoft::Variometer::setAveragingInterval(float interval)
+{
+	size_t size = size_t(interval / samplingInterval() + 0.5f);
+	if (size < 1)
+		size = 1;
+	if (averageClimb.size() != size)
+	{
+		averageClimb.resize(size);
+		averageAltitude.resize(size);
+	}
 }
 
 void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event_s* event)

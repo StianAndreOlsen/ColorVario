@@ -1,7 +1,6 @@
 #include "VarioController.h"
 #include "AppFunctions.h"
 #include "dlog.h"
-#include "LocationManager.h"
 #include <exception>
 #include <sstream>
 
@@ -58,6 +57,12 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		display.setMaxBrightness();
 		display.lock();
 
+		// load settings
+		std::string resourcePath = appSharedResourcePath();
+		vario.load(Settings(resourcePath + "variometer.ini"));
+		audio.load(Settings(resourcePath + "sound.ini"));
+		color.load(Settings(resourcePath + "color.ini"));
+
 		// connect variometer signals
 		vario.climbSignal().connect(this, &VarioController::setClimb);
 		vario.climbSignal().connect(&audio, &VarioAudio::setClimb);
@@ -67,7 +72,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		try
 		{
 			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS, 5); // TODO: Discuss if 5 seconds is an ok interval
-			gps->loadGeoid(appSharedResourcePath() + "Geoid.dat");
+			gps->loadGeoid(resourcePath + "geoid.dat");
 			gps->locationSignal().connect(this, &VarioController::onLocationUpdated);
 			gps->start();
 		}

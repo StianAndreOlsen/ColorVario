@@ -2,15 +2,16 @@
 #define KYSTSOFT_VARIOSOUND_H
 
 #include "VarioSoundPoint.h"
-#include <cstddef>
-#include <vector>
+#include "Settings.h"
 
 namespace Kystsoft {
 
 class VarioSound
 {
 public:
-	VarioSound();
+	VarioSound() {}
+	VarioSound(const Settings& settings) { load(settings); }
+	void load(const Settings& settings);
 	float climbSoundOnThreshold() const { return climbSoundOn; }
 	float climbSoundOffThreshold() const { return climbSoundOff; }
 	float sinkSoundOnThreshold() const { return sinkSoundOn; }
@@ -23,7 +24,6 @@ public:
 	void addSoundPoint(float climb, float frequency, float period, float duty)
 		{ addSoundPoint(VarioSoundPoint(climb, frequency, period, duty)); }
 	void clearSoundPoints() { soundPoints.clear(); }
-	void sortSoundPoints();
 	float frequency(float climb) const;
 	float period(float climb) const;
 	float duty(float climb) const;
@@ -32,8 +32,8 @@ public:
 	static float defaultDuty(float climb);
 private:
 	size_t soundPointInterval(float climb) const;
-	float climbSoundOn = -0.5f;
-	float climbSoundOff = -0.5f;
+	float climbSoundOn = 0.0f;
+	float climbSoundOff = 0.0f;
 	float sinkSoundOn = -3.0f;
 	float sinkSoundOff = -3.0f;
 	std::vector<VarioSoundPoint> soundPoints;

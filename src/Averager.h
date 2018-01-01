@@ -11,6 +11,7 @@ class Averager
 {
 public:
 	Averager(size_t n) : v(n, 0) {}
+	size_t size() const { return v.size(); }
 	void resize(size_t n) { v.resize(n, 0); }
 	void add(float value);
 	Averager& operator+=(float value) { add(value); return *this; }

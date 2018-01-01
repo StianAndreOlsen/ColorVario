@@ -4,19 +4,31 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>33wJVU2I99HernrU/XMJWm9Ecr9PGSrk5l/6ZE02pf8=</DigestValue>
+<DigestValue>nwAJS/axZyZuRCqrqt3RpbhdHRZy5cFLyn21Cui2cV8=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>JPjqQiZf2v3ygZnXFE7k0mXmAggNzrxMwyaySYkavzs=</DigestValue>
+<DigestValue>bHlfqejyXTvIRy7pNnMLR4PmDdPfU2rqXODwfnO/Ark=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2FGeoid.dat">
+<Reference URI="shared%2Fres%2Fcolor.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
+<DigestValue>+izHQVqEn1V0ZmUwiA8Reqy5z1ghl0fiQybneK5QarI=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fcolorvario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>hObDzOD/8ZUgKrN+9XOyHhLR7aSfFEoeC+n6fLJmgTk=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fgeoid.dat">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fsound.ini">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>c6IRTN23bbvU1ANKpRDLldKL71VOOs90UzOEjGIWD4U=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2Fvariometer.ini">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>OCH/dpwAnFuPsEJcZfkuZkYZ4qgEtefWi2rIzGUd3Fo=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -31,9 +43,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-bOKLW76c+2fj3XuYqHZ9faCxTFQLcTZYGAB6uzvPitrDti+yf2TYO18/OAI/oWjJms6bJegZ7yzX
-r+FILH617RnOVBBI4ppqKbYqamBrvijkvaGuvuae1pjUFfkKncCrN8S8s1GirDY4JwU6YqanjTIT
-gSRzxMQhukr3J12WnQA=
+nrPqBgGnhxgjddU4zE4EEUU0ncuv5tYnSo7yIUvKbmYDz5LfkYMUn8WuyNq4TYHBEPZzZ2GEvsjK
+JJ8FQll+4WUtl6YfOuycP5f1QrpAXqY91+3WpP8F+NS5WuqV/EvvWBuP+xzKedc4NrgMDasPrcaP
+cV1NLLcYiX0ay5ZEBxk=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

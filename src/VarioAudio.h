@@ -12,6 +12,7 @@ public:
 	VarioAudio();
 	VarioAudio(const VarioAudio& other) = delete;
 	VarioAudio& operator=(const VarioAudio& rhs) = delete;
+	void load(const Settings& settings) { sound.load(settings); }
 	bool isMuted() const { return muted; }
 	void mute();
 	void unmute();

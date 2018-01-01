@@ -8,6 +8,8 @@ Kystsoft::dlog::~dlog() noexcept
 	// print to system log
 	dlog_print(priority, tag.c_str(), str().c_str());
 
+	// TODO: Remove comments when we are able to get the log file from the watch
+	/*
 	// print to file log
 	static bool failed = false;
 	if (!failed)
@@ -32,6 +34,7 @@ Kystsoft::dlog::~dlog() noexcept
 			failed = true;
 		}
 	}
+	*/
 }
 
 std::string Kystsoft::dlog::priorityString(log_priority priority)

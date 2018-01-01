@@ -1,22 +1,12 @@
 #include "VarioColorPoint.h"
-#include <cctype>
 
-bool Kystsoft::VarioColorPoint::load(std::istream& is, char delimiter /*= '\t'*/)
+bool Kystsoft::VarioColorPoint::load(std::istream& is)
 {
-	if (std::isspace(delimiter))
+	int r = 0, g = 0, b = 0;
+	if (is >> climb >> r >> g >> b)
 	{
-		if (is >> climb >> color.r >> color.g >> color.b >> color.a)
-			return true;
-	}
-	else
-	{
-		if (is >> climb >> delimiter >> color.r >> delimiter >> color.g >> delimiter >> color.b >> delimiter >> color.a)
-			return true;
+		color = Color(r,g,b);
+		return true;
 	}
 	return false;
-}
-
-void Kystsoft::VarioColorPoint::save(std::ostream& os, char delimiter /*= '\t'*/) const
-{
-	os << climb << delimiter << color.r << delimiter << color.g << delimiter << color.b << delimiter << color.a;
 }

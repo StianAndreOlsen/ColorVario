@@ -1,39 +1,22 @@
 #include "VarioSound.h"
-#include <algorithm>
 
-Kystsoft::VarioSound::VarioSound()
+void Kystsoft::VarioSound::load(const Settings& settings)
 {
-	// add the default sound points
-	addSoundPoint(-10.00f,  201.4f, 0.847f, 1.00f);
-	addSoundPoint( -8.92f,  202.7f, 0.844f, 1.00f);
-	addSoundPoint( -7.83f,  205.5f, 0.839f, 1.00f);
-	addSoundPoint( -6.75f,  211.1f, 0.831f, 1.00f);
-	addSoundPoint( -5.67f,  222.1f, 0.816f, 1.00f);
-	addSoundPoint( -4.58f,  243.5f, 0.790f, 1.00f);
-	addSoundPoint( -3.50f,  283.9f, 0.748f, 1.00f);
-	addSoundPoint( -3.50f,  283.9f, 0.748f, 0.90f);
-	addSoundPoint( -2.67f,  335.1f, 0.700f, 0.90f);
-	addSoundPoint( -1.83f,  409.7f, 0.636f, 0.90f);
-	addSoundPoint( -1.00f,  508.7f, 0.557f, 0.90f);
-	addSoundPoint( -1.00f,  508.7f, 0.557f, 0.05f);
-	addSoundPoint(  0.00f,  650.0f, 0.450f, 0.05f);
-	addSoundPoint(  0.00f,  650.0f, 0.450f, 0.50f);
-	addSoundPoint(  1.00f,  817.9f, 0.343f, 0.50f);
-	addSoundPoint(  2.00f,  980.6f, 0.250f, 0.50f);
-	addSoundPoint(  3.00f, 1133.8f, 0.179f, 0.50f);
-	addSoundPoint(  4.00f, 1273.9f, 0.130f, 0.50f);
-	addSoundPoint(  5.00f, 1398.7f, 0.098f, 0.50f);
-	addSoundPoint(  6.00f, 1507.5f, 0.078f, 0.50f);
-	addSoundPoint(  7.00f, 1600.3f, 0.067f, 0.50f);
-	addSoundPoint(  8.00f, 1678.2f, 0.060f, 0.50f);
-	addSoundPoint(  9.00f, 1742.6f, 0.056f, 0.50f);
-	addSoundPoint( 10.00f, 1795.2f, 0.053f, 0.50f);
-}
+	// thresholds
+	climbSoundOn = settings.value("Threshold.climbSoundOn", climbSoundOn);
+	climbSoundOff = settings.value("Threshold.climbSoundOff", climbSoundOff);
+	sinkSoundOn = settings.value("Threshold.sinkSoundOn", sinkSoundOn);
+	sinkSoundOff = settings.value("Threshold.sinkSoundOff", sinkSoundOff);
 
-// TODO: Consider removing
-void Kystsoft::VarioSound::sortSoundPoints()
-{
-	std::sort(soundPoints.begin(), soundPoints.end());
+	// sound points
+	clearSoundPoints();
+	for (auto value : settings.values("Sound.point"))
+	{
+		VarioSoundPoint point;
+		std::istringstream is(value);
+		if (point.load(is))
+			addSoundPoint(point);
+	}
 }
 
 float Kystsoft::VarioSound::frequency(float climb) const
@@ -98,7 +81,7 @@ float Kystsoft::VarioSound::defaultPeriod(float climb)
 float Kystsoft::VarioSound::defaultDuty(float climb)
 {
 	if (climb < -1)
-		return climb < -3.5f ? 1.0f : 0.9f;
+		return climb < -4.0f ? 1.0f : 0.9f;
 	return climb > 0 ? 0.5f : 0.05f;
 }
 
