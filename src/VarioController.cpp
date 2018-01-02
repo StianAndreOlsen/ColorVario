@@ -136,19 +136,26 @@ void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
 
 void Kystsoft::VarioController::onLocationUpdated(const Location& location)
 {
-	vario.setCurrentAltitude(location.altitude);
-	// TODO: Use vertical accuracy when reliable
-//	if (location.vertical < 10)
-	if (location.horizontal < 10)
+	// calibrate altimeter and set appropriate altitude label colors
+	double accuracy = location.horizontal; // TODO: Use vertical accuracy when reliable
+	if (accuracy <= gpsBestAccuracy)
 	{
-		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
+		gpsBestAccuracy = accuracy;
+		vario.setCurrentAltitude(location.altitude);
+		if (accuracy < 10)
+			altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::WHITE);
+		else if (accuracy < 100)
+			altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::YELLOW);
+	}
+
+	// consider stopping the gps
+	double seconds = 0;
+	if (gpsStartTime == 0)
+		gpsStartTime = location.timestamp;
+	else
+		seconds = std::difftime(location.timestamp, gpsStartTime);
+	if ((seconds > 60 && gpsBestAccuracy < 10) || seconds > 10 * 60)
 		gps->stop(); // Note: Cannot destroy the GPS here, since this function is called from the GPS signal
-	}
-//	else if (location.vertical < 100)
-	else if (location.horizontal < 100)
-	{
-		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::YELLOW);
-	}
 }
 
 void Kystsoft::VarioController::setBackgroundColor(const Color& color)

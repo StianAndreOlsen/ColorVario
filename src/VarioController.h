@@ -29,6 +29,8 @@ private:
 	Dali::Toolkit::TextLabel altitudeLabel;
 	Display display;
 	std::unique_ptr<LocationManager> gps;
+	time_t gpsStartTime = 0;
+	double gpsBestAccuracy = 1e+6;
 	Variometer vario;
 	VarioAudio audio;
 	VarioColor color;

@@ -4,7 +4,7 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>bHlfqejyXTvIRy7pNnMLR4PmDdPfU2rqXODwfnO/Ark=</DigestValue>
+<DigestValue>4iTTq6BINTXTeIOtt1txGiw6Sj9DTbq8aA1XKILr8/U=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fcolor.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -39,9 +39,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-Od/2t10vGwc2c3zm9qVHWLgHf2dmvu1c2usYPsQROy1oA/LMz5YtkKyryfcHwwhycST1+8NePwMU
-NYfQzVmPjjQVldNa0XhGa8F5kPgH7dVbhF31umr892g5vxov03K56nIr96aEKpZWrDjxNsV7qjiE
-8IvJ6sBLyH8Mm5mHHdM=
+Dg6ZTErubPsL1joP8fAAM0egh0fdUnIKFJqQpk8sNt7eK664ybd2tuIT7BHlp2H1Rdm5IK1Kbr2D
+Ji3/IC2jaXwNg1E6nQD+3IcLcO5X+vTw+09ZALlws8XtRJSvTSWrf4vg7NEhgDULJ0QFCAouiHZk
+h+/mYBXjwYYOlNwLft8=
 </SignatureValue>
 <KeyInfo>
 <X509Data>
