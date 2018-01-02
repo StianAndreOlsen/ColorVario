@@ -21,6 +21,7 @@ public:
 	bool load(std::istream& is);
 	static void removeComments(std::istream& is, std::ostream& os);
 	size_t size() const { return valueMap.size(); }
+	bool hasValue(const std::string& key) const;
 	std::string value(const std::string& key) const;
 	std::vector<std::string> values(const std::string& key) const;
 	template<class T>

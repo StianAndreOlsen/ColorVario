@@ -42,6 +42,11 @@ void Kystsoft::Settings::removeComments(std::istream& is, std::ostream& os)
 	}
 }
 
+bool Kystsoft::Settings::hasValue(const std::string& key) const
+{
+	return valueMap.find(key) != valueMap.end();
+}
+
 std::string Kystsoft::Settings::value(const std::string& key) const
 {
 	auto i = valueMap.find(key);
@@ -79,13 +84,18 @@ size_t Kystsoft::Settings::loadValues(std::istream& is)
 		// name=value
 		{
 			std::istringstream iss(line);
-			std::string name, value;
-			if (std::getline(iss, name, '=') && std::getline(iss, value))
+			std::string name;
+			if (std::getline(iss, name, '='))
 			{
 				name = trim(name);
-				value = trim(value);
-				if (!name.empty() && !value.empty())
-					valueMap.insert(std::pair<std::string, std::string>(section + '.' + name, value));
+				if (!name.empty())
+				{
+					// empty values are allowed
+					std::string value;
+					std::getline(iss, value);
+					value = unquote(trim(value));
+					valueMap.insert(std::make_pair(section + '.' + name, value));
+				}
 			}
 		}
 	}
