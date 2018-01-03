@@ -3,7 +3,7 @@
     <author/>
     <profile name="wearable"/>
     <ui-application appid="no.kystsoft.colorvario" exec="colorvario" multiple="false" nodisplay="false" taskmanage="true" type="capp">
-        <label>Color Vario</label>
+        <label>ColorVario</label>
         <icon>colorvario.png</icon>
         <background-category value="sensor"/>
     </ui-application>
