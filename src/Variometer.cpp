@@ -48,8 +48,10 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	float pressure = event->values[0];
 
 	// calculate reference pressure (calibrate altimeter)
+	bool calibrating = false;
 	if (currentAltitude > -6.4e+6f)
 	{
+		calibrating = true;
 		currentAltitude /= 0.3048f; // convert from meter to feet
 		referencePressure = pressure / std::pow(1 - currentAltitude / 145366.45f, 1 / 0.190284f);
 		currentAltitude = -6.5e+6f;
@@ -61,10 +63,13 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	averageAltitude += altitude;
 
 	// calculate climb
-	float seconds = (timestamp - lastTimestamp) / 1000000.0f;
-	float climb = (altitude - lastAltitude) / seconds;
-	climb = 12 + (pressure - 260) * (-12 - 12) / (1260 - 260); // TODO: Remove after debugging
-	averageClimb += climb;
+	if (!calibrating)
+	{
+		float seconds = (timestamp - lastTimestamp) / 1000000.0f;
+		float climb = (altitude - lastAltitude) / seconds;
+		climb = 12 + (pressure - 260) * (-12 - 12) / (1260 - 260); // TODO: Remove after debugging
+		averageClimb += climb;
+	}
 
 	// save to next event
 	lastTimestamp = timestamp;

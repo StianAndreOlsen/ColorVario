@@ -4,15 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>0l8y8HnK7OufeY0mST0gZSqH0L45V95ACVb8DjSBWeU=</DigestValue>
+<DigestValue>nNhodgInmnNE4B7zd1bq/qFqIaPNcvZkZTIxGfCEne0=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>9jShZktzCDN1tGc13G7woUEBJcDzLaXAgo47weSCUDU=</DigestValue>
-</Reference>
-<Reference URI="shared%2Fres%2Fcolor.1.0.0.ini">
-<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>+izHQVqEn1V0ZmUwiA8Reqy5z1ghl0fiQybneK5QarI=</DigestValue>
+<DigestValue>/ceZ5xlkhcWd+VVw0S7VxptewMDhm8LBU2j0KYFpxpY=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fcolor.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -47,9 +43,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-Xnts+HbS0zbwE1SfhC7UBOHDbUoExrcnA2aZheLC/EItlQ9AQ8RBUUoAJM2M2XMSX2TorTkYH56B
-UJoBzH7S4dOaoedNIfDBtpeB2mixD7iAN1NwHXLpj4rs21gtVymMQFIjE8mf0QA3dCm/qXsUrwx6
-6mHyZXYDaDlVCKhVEdk=
+m2BZQCYrXHWvhUeDVbR+l6oiFDjhRVCqjqnQcBYQvm1Cr3RX/3+l/kuqwDRqPOpLMdOZSz9ZgyKJ
+kSlEJitxHd6jSj8htFFmXGdiOlOCwtbXRLEllsj1r+ySPk0wrdRfTG/GlI6tt8utdsn64PyBV6nm
+GkFGz67zbryqyF0rU1I=
 </SignatureValue>
 <KeyInfo>
 <X509Data>
