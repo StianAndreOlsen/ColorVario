@@ -16,6 +16,19 @@ Kystsoft::LocationManager::LocationManager(location_method_e method, int interva
 	}
 }
 
+Kystsoft::LocationManager::~LocationManager() noexcept
+{
+	try
+	{
+		stop(); // required to send stopped signal if destroyed before stopped
+		location_manager_destroy(manager);
+	}
+	catch (...)
+	{
+		// TODO: Consider error handling
+	}
+}
+
 void Kystsoft::LocationManager::start()
 {
 	if (started)
@@ -24,6 +37,7 @@ void Kystsoft::LocationManager::start()
 	if (error != LOCATIONS_ERROR_NONE)
 		throw TizenError("location_manager_start", error);
 	started = true;
+	startedSignl.emit(started);
 }
 
 void Kystsoft::LocationManager::stop()
@@ -34,6 +48,7 @@ void Kystsoft::LocationManager::stop()
 	if (error != LOCATIONS_ERROR_NONE)
 		throw TizenError("location_manager_stop", error);
 	started = false;
+	startedSignl.emit(started);
 }
 
 void Kystsoft::LocationManager::toggleStartStop()

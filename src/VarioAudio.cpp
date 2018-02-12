@@ -14,6 +14,7 @@ void Kystsoft::VarioAudio::mute()
 	muted = true;
 	if (isSoundOn())
 		turnAudioOff();
+	mutedSignl.emit(muted);
 }
 
 void Kystsoft::VarioAudio::unmute()
@@ -23,6 +24,7 @@ void Kystsoft::VarioAudio::unmute()
 	muted = false;
 	if (isSoundOn())
 		turnAudioOn();
+	mutedSignl.emit(muted);
 }
 
 void Kystsoft::VarioAudio::toggleMuteUnmute()

@@ -24,6 +24,7 @@ public:
 private:
 	static void displayStateChanged(device_callback_e type, void* value, void* user_data);
 	void onDisplayStateChanged(display_state_e state);
+	int initialBrightness = 0;
 	bool locked = false;
 };
 

@@ -25,8 +25,10 @@ private:
 	void setAltitude(float altitude);
 	Dali::Application& app;
 	Dali::Toolkit::Control background;
+	Dali::Toolkit::ImageView muteIcon;
 	Dali::Toolkit::TextLabel climbLabel;
 	Dali::Toolkit::TextLabel altitudeLabel;
+	Dali::Toolkit::ImageView locationIcon;
 	Display display;
 	std::unique_ptr<LocationManager> gps;
 	time_t gpsStartTime = 0;

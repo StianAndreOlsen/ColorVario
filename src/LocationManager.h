@@ -14,7 +14,7 @@ public:
 	LocationManager(location_method_e method, int interval = 1);
 	LocationManager(const LocationManager& other) = delete;
 	LocationManager& operator=(const LocationManager& rhs) = delete;
-	~LocationManager() noexcept { location_manager_destroy(manager); }
+	~LocationManager() noexcept;
 	operator location_manager_h() const { return manager; }
 	bool loadGeoid(const std::string& fileName) { return geoid.load(fileName); }
 	double geoidHeight(double latitude, double longitude) const { return geoid.height(latitude, longitude); }
@@ -24,6 +24,7 @@ public:
 	void start();
 	void stop();
 	void toggleStartStop();
+	const Signal<bool>& startedSignal() const { return startedSignl; }
 	using LocationSignal = Signal<const Location&>; // const location --> all slots get the same location
 	const LocationSignal& locationSignal() const { return locationSignl; }
 private:
@@ -33,6 +34,7 @@ private:
 	GeodeticDatum datum = GeodeticDatum::Geoid;
 	location_manager_h manager = nullptr;
 	bool started = false;
+	Signal<bool> startedSignl;
 	LocationSignal locationSignl;
 };
 

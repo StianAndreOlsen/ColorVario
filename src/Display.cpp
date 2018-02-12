@@ -1,9 +1,14 @@
 #include "Display.h"
+#include "dlog.h"
 #include "TizenError.h"
 #include <device/power.h>
 
 Kystsoft::Display::Display()
 {
+	// save initial brightness
+	initialBrightness = brightness();
+
+	// register state changed callback
 	int error = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, displayStateChanged, this);
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_add_callback", error);
@@ -11,8 +16,24 @@ Kystsoft::Display::Display()
 
 Kystsoft::Display::~Display() noexcept
 {
-	if (locked)
-		device_power_release_lock(POWER_LOCK_DISPLAY);
+	try
+	{
+		// restore initial brightness
+		if (initialBrightness != brightness()) // TODO: Consider skipping this test
+			setBrightness(initialBrightness);
+
+		// unlock if locked
+		unlock();
+	}
+	// TODO: Consider skipping the error handling
+	catch (std::exception& e)
+	{
+		dlog(DLOG_ERROR) << e.what();
+	}
+	catch (...)
+	{
+		dlog(DLOG_ERROR) << "Display::~Display: Unknown error";
+	}
 }
 
 int Kystsoft::Display::brightness() const

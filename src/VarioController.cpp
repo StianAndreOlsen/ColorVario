@@ -28,6 +28,15 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		background.SetPosition(0, 0);
 		stage.Add(background);
 
+		// create mute icon
+		std::string resourcePath = appSharedResourcePath();
+		muteIcon = Dali::Toolkit::ImageView::New(resourcePath + "mute.png");
+		muteIcon.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
+		muteIcon.SetPosition(stageSize.width / 2, stageSize.height / 4);
+		muteIcon.SetVisible(audio.isMuted());
+		audio.mutedSignal().connect((Dali::Actor*)(&muteIcon), &Dali::Actor::SetVisible);
+		background.Add(muteIcon);
+
 		// create climb label
 		climbLabel = Dali::Toolkit::TextLabel::New("0 m/s");
 		climbLabel.SetSize(stageSize.width, stageSize.height / 4);
@@ -49,6 +58,13 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT_COLOR, Dali::Color::RED);
 		background.Add(altitudeLabel);
 
+		// create location icon
+		locationIcon = Dali::Toolkit::ImageView::New(resourcePath + "location.png");
+		locationIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
+		locationIcon.SetPosition(stageSize.width / 2, stageSize.height * 3 / 4);
+		locationIcon.SetVisible(false);
+		background.Add(locationIcon);
+
 		// connect stage signals
 		stage.TouchSignal().Connect(this, &VarioController::onTouch);
 		stage.KeyEventSignal().Connect(this, &VarioController::onKeyEvent);
@@ -58,7 +74,6 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		display.lock();
 
 		// load settings
-		std::string resourcePath = appSharedResourcePath();
 		vario.load(Settings(resourcePath + "variometer.ini"));
 		audio.load(Settings(resourcePath + "sound.ini"));
 		color.load(Settings(resourcePath + "color.ini"));
@@ -73,6 +88,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		{
 			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS, 5); // TODO: Discuss if 5 seconds is an ok interval
 			gps->loadGeoid(resourcePath + "geoid.dat");
+			gps->startedSignal().connect((Dali::Actor*)(&locationIcon), &Dali::Actor::SetVisible);
 			gps->locationSignal().connect(this, &VarioController::onLocationUpdated);
 			gps->start();
 		}

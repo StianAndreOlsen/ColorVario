@@ -2,6 +2,7 @@
 #define KYSTSOFT_VARIOAUDIO_H
 
 #include "AudioOutput.h"
+#include "Signal.h"
 #include "VarioSound.h"
 
 namespace Kystsoft {
@@ -17,6 +18,7 @@ public:
 	void mute();
 	void unmute();
 	void toggleMuteUnmute();
+	const Signal<bool>& mutedSignal() const { return mutedSignl; }
 	void setVarioSound(const VarioSound& varioSound) { sound = varioSound; }
 	const VarioSound& varioSound() const { return sound; }
 	void setClimb(float climb);
@@ -32,6 +34,7 @@ private:
 	float lastCyclePhase = 0;
 	float lastTonePhase = 0;
 	bool muted = true;
+	Signal<bool> mutedSignl;
 	VarioSound sound;
 	float currentClimb = 10; // start with a value...
 	short soundOn = 1; // ...that has climb sound
