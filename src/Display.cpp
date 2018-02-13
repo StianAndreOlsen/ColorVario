@@ -5,34 +5,25 @@
 
 Kystsoft::Display::Display()
 {
-	// save initial brightness
+	addStateChangedCallback();
 	initialBrightness = brightness();
-
-	// register state changed callback
-	int error = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, displayStateChanged, this);
-	if (error != DEVICE_ERROR_NONE)
-		throw TizenError("device_add_callback", error);
 }
 
 Kystsoft::Display::~Display() noexcept
 {
 	try
 	{
-		// restore initial brightness
-		if (initialBrightness != brightness()) // TODO: Consider skipping this test
-			setBrightness(initialBrightness);
-
-		// unlock if locked
 		unlock();
+		setBrightness(initialBrightness);
+		removeStateChangedCallback();
 	}
-	// TODO: Consider skipping the error handling
 	catch (std::exception& e)
 	{
 		dlog(DLOG_ERROR) << e.what();
 	}
 	catch (...)
 	{
-		dlog(DLOG_ERROR) << "Display::~Display: Unknown error";
+		dlog(DLOG_ERROR) << "Kystsoft::Display::~Display: Unknown error";
 	}
 }
 
@@ -90,14 +81,28 @@ void Kystsoft::Display::unlock()
 	locked = false;
 }
 
-void Kystsoft::Display::displayStateChanged(device_callback_e type, void* value, void* user_data)
+void Kystsoft::Display::addStateChangedCallback()
+{
+	int error = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, stateChanged, this);
+	if (error != DEVICE_ERROR_NONE)
+		throw TizenError("device_add_callback", error);
+}
+
+void Kystsoft::Display::removeStateChangedCallback()
+{
+	int error = device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, stateChanged);
+	if (error != DEVICE_ERROR_NONE)
+		throw TizenError("device_remove_callback", error);
+}
+
+void Kystsoft::Display::stateChanged(device_callback_e type, void* value, void* user_data)
 {
 	Display* display = static_cast<Display*>(user_data);
 	if (display != nullptr)
-		display->onDisplayStateChanged(static_cast<display_state_e>(reinterpret_cast<int>(value)));
+		display->onStateChanged(static_cast<display_state_e>(reinterpret_cast<int>(value)));
 }
 
-void Kystsoft::Display::onDisplayStateChanged(display_state_e state)
+void Kystsoft::Display::onStateChanged(display_state_e state)
 {
 	if (locked)
 	{

@@ -1,18 +1,18 @@
 #include "LocationManager.h"
+#include "dlog.h"
 #include "TizenError.h"
 
 Kystsoft::LocationManager::LocationManager(location_method_e method, int interval /*= 1*/)
 {
-	int error = location_manager_create(method, &manager);
-	if (error != LOCATIONS_ERROR_NONE)
-		throw TizenError("location_manager_create", error);
-
-	error = location_manager_set_position_updated_cb(manager, positionUpdated, interval, this);
-	if (error != LOCATIONS_ERROR_NONE)
+	create(method);
+	try
 	{
-		location_manager_destroy(manager);
-		manager = nullptr;
-		throw TizenError("location_manager_set_position_updated_cb", error);
+		setPositionUpdatedCallback(interval);
+	}
+	catch (...)
+	{
+		destroy();
+		throw;
 	}
 }
 
@@ -20,12 +20,17 @@ Kystsoft::LocationManager::~LocationManager() noexcept
 {
 	try
 	{
-		stop(); // required to send stopped signal if destroyed before stopped
-		location_manager_destroy(manager);
+		stop();
+		unsetPositionUpdatedCallback();
+		destroy();
+	}
+	catch (std::exception& e)
+	{
+		dlog(DLOG_ERROR) << e.what();
 	}
 	catch (...)
 	{
-		// TODO: Consider error handling
+		dlog(DLOG_ERROR) << "Kystsoft::LocationManager::~LocationManager: Unknown error";
 	}
 }
 
@@ -36,8 +41,7 @@ void Kystsoft::LocationManager::start()
 	int error = location_manager_start(manager);
 	if (error != LOCATIONS_ERROR_NONE)
 		throw TizenError("location_manager_start", error);
-	started = true;
-	startedSignl.emit(started);
+	startedSignl.emit(started = true);
 }
 
 void Kystsoft::LocationManager::stop()
@@ -47,8 +51,7 @@ void Kystsoft::LocationManager::stop()
 	int error = location_manager_stop(manager);
 	if (error != LOCATIONS_ERROR_NONE)
 		throw TizenError("location_manager_stop", error);
-	started = false;
-	startedSignl.emit(started);
+	startedSignl.emit(started = false);
 }
 
 void Kystsoft::LocationManager::toggleStartStop()
@@ -57,6 +60,35 @@ void Kystsoft::LocationManager::toggleStartStop()
 		stop();
 	else
 		start();
+}
+
+void Kystsoft::LocationManager::create(location_method_e method)
+{
+	int error = location_manager_create(method, &manager);
+	if (error != LOCATIONS_ERROR_NONE)
+		throw TizenError("location_manager_create", error);
+}
+
+void Kystsoft::LocationManager::destroy()
+{
+	int error = location_manager_destroy(manager);
+	if (error != LOCATIONS_ERROR_NONE)
+		throw TizenError("location_manager_destroy", error);
+	manager = nullptr;
+}
+
+void Kystsoft::LocationManager::setPositionUpdatedCallback(int interval)
+{
+	int error = location_manager_set_position_updated_cb(manager, positionUpdated, interval, this);
+	if (error != LOCATIONS_ERROR_NONE)
+		throw TizenError("location_manager_set_position_updated_cb", error);
+}
+
+void Kystsoft::LocationManager::unsetPositionUpdatedCallback()
+{
+	int error = location_manager_unset_position_updated_cb(manager);
+	if (error != LOCATIONS_ERROR_NONE)
+		throw TizenError("location_manager_unset_position_updated_cb", error);
 }
 
 void Kystsoft::LocationManager::positionUpdated(double /*latitude*/, double /*longitude*/, double /*altitude*/, time_t /*timestamp*/, void* user_data)

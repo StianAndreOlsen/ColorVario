@@ -24,7 +24,7 @@ public:
 	bool hasValue(const std::string& key) const;
 	std::string value(const std::string& key) const;
 	std::vector<std::string> values(const std::string& key) const;
-	template<class T>
+	template<typename T>
 	T value(const std::string& key, T defaultValue) const;
 private:
 	size_t loadValues(std::istream& is);
@@ -33,7 +33,7 @@ private:
 
 } // namespace Kystsoft
 
-template<class T>
+template<typename T>
 T Kystsoft::Settings::value(const std::string& key, T defaultValue) const
 {
 	std::istringstream is(value(key));

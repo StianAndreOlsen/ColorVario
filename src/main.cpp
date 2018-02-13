@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	}
 	catch (...)
 	{
-		Kystsoft::dlog(DLOG_FATAL) << "Unknown error";
+		Kystsoft::dlog(DLOG_FATAL) << "main: Unknown error";
 		return 2;
 	}
 	return 0;

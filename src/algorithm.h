@@ -6,7 +6,7 @@
 
 namespace std {
 
-template<class T>
+template<typename T>
 constexpr const T& clamp(const T& v, const T& lo, const T& hi)
 {
 	if (v < lo)

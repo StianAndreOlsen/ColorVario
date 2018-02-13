@@ -4,7 +4,7 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>M5+0aQyfd0JVMtEE1eibGPiXNoSZ5seYn8mwtMFJrVo=</DigestValue>
+<DigestValue>LAVoqGOnj1vFtu/AdgOldj5uDO66wwo+8H2RyVcrd5U=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fcolor.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -20,11 +20,11 @@
 </Reference>
 <Reference URI="shared%2Fres%2Flocation.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>73/SYIHbYzjJjphcs2bv69VtSQKMdhD61SjJNRIDIuw=</DigestValue>
+<DigestValue>NemSFURt9/haHd+jRpSR1NhhT9F2/7vLJiFth2nHP2k=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fmute.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>gxhw3Mo+1vz+IBSVLwHvRWCpMRQ5FGZDIe8wSJaTraI=</DigestValue>
+<DigestValue>TlGGoNs2LjtsyTC1PBjyEQam703PISVa5/ss4PVzYMw=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fsound.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -47,9 +47,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-O9O3Cc3Cx580eIpc2ku8NiGVywjoH49LEckwqVlxjYtTAH4l8Qrq68BNTb3o18mKQagxWJ4/0pEM
-8V5YrLfkvY1YkRzONXXRDcLO0G7gsl2hQp4blRZ2Bz2UYaXwnw3WVrAcZjzbppJO8vQ7gG9BoUez
-ydZZuPUFGr7v66G2YBo=
+GWSSQ/WwydSmGIvIiuz6bSL8TBG2g6mV0T/1uR9tEcwQOrwDKewI1CbWzIgTaGdzSIO8vWwkTv46
+F3crdRbyxjkocCoxOx0kmXQ6l92EMoM/k3WWg+IdnUXMyL9UIxBO9/KjipKIqmPDfroUT0xYo7QG
+Fp28EJM9LPL/85auW80=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

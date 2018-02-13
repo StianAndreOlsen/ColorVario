@@ -1,18 +1,36 @@
 #include "AudioOutput.h"
+#include "dlog.h"
 #include "TizenError.h"
 
 Kystsoft::AudioOutput::AudioOutput(int sampleRate, audio_channel_e channel, audio_sample_type_e type)
 {
-	int error = audio_out_create_new(sampleRate, channel, type, &output);
-	if (error != AUDIO_IO_ERROR_NONE)
-		throw TizenError("audio_out_create_new", error);
-
-	error = audio_out_set_stream_cb(output, streamWriteCallback, this);
-	if (error != AUDIO_IO_ERROR_NONE)
+	create(sampleRate, channel, type);
+	try
 	{
-		audio_out_destroy(output);
-		output = nullptr;
-		throw TizenError("audio_out_set_stream_cb", error);
+		setStreamWriteCallback();
+	}
+	catch (...)
+	{
+		destroy();
+		throw;
+	}
+}
+
+Kystsoft::AudioOutput::~AudioOutput() noexcept
+{
+	try
+	{
+		unprepare();
+		unsetStreamWriteCallback();
+		destroy();
+	}
+	catch (std::exception& e)
+	{
+		dlog(DLOG_ERROR) << e.what();
+	}
+	catch (...)
+	{
+		dlog(DLOG_ERROR) << "Kystsoft::AudioOutput::~AudioOutput: Unknown error";
 	}
 }
 
@@ -134,6 +152,35 @@ sound_type_e Kystsoft::AudioOutput::soundType() const
 	if (error != AUDIO_IO_ERROR_NONE)
 		throw TizenError("audio_out_get_sound_type", error);
 	return soundType;
+}
+
+void Kystsoft::AudioOutput::create(int sampleRate, audio_channel_e channel, audio_sample_type_e type)
+{
+	int error = audio_out_create_new(sampleRate, channel, type, &output);
+	if (error != AUDIO_IO_ERROR_NONE)
+		throw TizenError("audio_out_create_new", error);
+}
+
+void Kystsoft::AudioOutput::destroy()
+{
+	int error = audio_out_destroy(output);
+	if (error != AUDIO_IO_ERROR_NONE)
+		throw TizenError("audio_out_destroy", error);
+	output = nullptr;
+}
+
+void Kystsoft::AudioOutput::setStreamWriteCallback()
+{
+	int error = audio_out_set_stream_cb(output, streamWriteCallback, this);
+	if (error != AUDIO_IO_ERROR_NONE)
+		throw TizenError("audio_out_set_stream_cb", error);
+}
+
+void Kystsoft::AudioOutput::unsetStreamWriteCallback()
+{
+	int error = audio_out_unset_stream_cb(output);
+	if (error != AUDIO_IO_ERROR_NONE)
+		throw TizenError("audio_out_unset_stream_cb", error);
 }
 
 void Kystsoft::AudioOutput::streamWriteCallback(audio_out_h /*handle*/, size_t nbytes, void* user_data)

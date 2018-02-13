@@ -1,5 +1,24 @@
 #include "SensorListener.h"
+#include "dlog.h"
 #include "TizenError.h"
+
+Kystsoft::SensorListener::~SensorListener() noexcept
+{
+	try
+	{
+		stop();
+		unsetSensorEventCallback();
+		destroy();
+	}
+	catch (std::exception& e)
+	{
+		dlog(DLOG_ERROR) << e.what();
+	}
+	catch (...)
+	{
+		dlog(DLOG_ERROR) << "Kystsoft::SensorListener::~SensorListener: Unknown error";
+	}
+}
 
 void Kystsoft::SensorListener::start()
 {
@@ -43,19 +62,47 @@ void Kystsoft::SensorListener::setAttribute(sensor_attribute_e attribute, int va
 		throw TizenError("sensor_listener_set_attribute_int", error);
 }
 
+void Kystsoft::SensorListener::createAndSetSensorEventCallback(Sensor sensor)
+{
+	create(sensor);
+	try
+	{
+		setSensorEventCallback();
+	}
+	catch (...)
+	{
+		destroy();
+		throw;
+	}
+}
+
 void Kystsoft::SensorListener::create(Sensor sensor)
 {
 	int error = sensor_create_listener(sensor, &listener);
 	if (error != SENSOR_ERROR_NONE)
 		throw TizenError("sensor_create_listener", error);
+}
 
-	error = sensor_listener_set_event_cb(listener, 0, sensorEventCallback, this);
+void Kystsoft::SensorListener::destroy()
+{
+	int error = sensor_destroy_listener(listener);
 	if (error != SENSOR_ERROR_NONE)
-	{
-		sensor_destroy_listener(listener);
-		listener = nullptr;
+		throw TizenError("sensor_destroy_listener", error);
+	listener = nullptr;
+}
+
+void Kystsoft::SensorListener::setSensorEventCallback()
+{
+	int error = sensor_listener_set_event_cb(listener, 0, sensorEventCallback, this);
+	if (error != SENSOR_ERROR_NONE)
 		throw TizenError("sensor_listener_set_event_cb", error);
-	}
+}
+
+void Kystsoft::SensorListener::unsetSensorEventCallback()
+{
+	int error = sensor_listener_unset_event_cb(listener);
+	if (error != SENSOR_ERROR_NONE)
+		throw TizenError("sensor_listener_unset_event_cb", error);
 }
 
 void Kystsoft::SensorListener::sensorEventCallback(sensor_h sensor, sensor_event_s* event, void* user_data)

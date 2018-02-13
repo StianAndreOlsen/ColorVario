@@ -31,10 +31,11 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		// create mute icon
 		std::string resourcePath = appSharedResourcePath();
 		muteIcon = Dali::Toolkit::ImageView::New(resourcePath + "mute.png");
+		muteIcon.SetSize(muteIcon.GetWidthForHeight(stageSize.height / 8), stageSize.height / 8);
 		muteIcon.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
 		muteIcon.SetPosition(stageSize.width / 2, stageSize.height / 4);
 		muteIcon.SetVisible(audio.isMuted());
-		audio.mutedSignal().connect((Dali::Actor*)(&muteIcon), &Dali::Actor::SetVisible);
+		audio.mutedSignal().connect(dynamic_cast<Dali::Actor*>(&muteIcon), &Dali::Actor::SetVisible);
 		background.Add(muteIcon);
 
 		// create climb label
@@ -60,6 +61,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 
 		// create location icon
 		locationIcon = Dali::Toolkit::ImageView::New(resourcePath + "location.png");
+		locationIcon.SetSize(locationIcon.GetWidthForHeight(stageSize.height / 8), stageSize.height / 8);
 		locationIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 		locationIcon.SetPosition(stageSize.width / 2, stageSize.height * 3 / 4);
 		locationIcon.SetVisible(false);
@@ -88,7 +90,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		{
 			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS, 5); // TODO: Discuss if 5 seconds is an ok interval
 			gps->loadGeoid(resourcePath + "geoid.dat");
-			gps->startedSignal().connect((Dali::Actor*)(&locationIcon), &Dali::Actor::SetVisible);
+			gps->startedSignal().connect(dynamic_cast<Dali::Actor*>(&locationIcon), &Dali::Actor::SetVisible);
 			gps->locationSignal().connect(this, &VarioController::onLocationUpdated);
 			gps->start();
 		}
@@ -117,7 +119,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 	}
 	catch (...)
 	{
-		dlog(DLOG_FATAL) << "Unknown error";
+		dlog(DLOG_FATAL) << "Kystsoft::VarioController::create: Unknown error";
 		app.Quit();
 	}
 }
@@ -186,9 +188,9 @@ void Kystsoft::VarioController::setBackgroundColor(const Color& color)
 	map[Dali::Toolkit::GradientVisual::Property::CENTER] = Dali::Vector2(0, 0);
 	map[Dali::Toolkit::GradientVisual::Property::RADIUS] = 0.5f;
 	Dali::Property::Array stopOffsets;
-	stopOffsets.PushBack(0.0f);
-	stopOffsets.PushBack(0.7f);
-	stopOffsets.PushBack(1.0f);
+	stopOffsets.PushBack(0.00f);
+	stopOffsets.PushBack(0.75f);
+	stopOffsets.PushBack(1.00f);
 	map[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
 	Dali::Property::Array stopColors;
 	stopColors.PushBack(Dali::Color::BLACK);

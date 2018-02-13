@@ -28,6 +28,10 @@ public:
 	using LocationSignal = Signal<const Location&>; // const location --> all slots get the same location
 	const LocationSignal& locationSignal() const { return locationSignl; }
 private:
+	void create(location_method_e method);
+	void destroy();
+	void setPositionUpdatedCallback(int interval);
+	void unsetPositionUpdatedCallback();
 	static void positionUpdated(double latitude, double longitude, double altitude, time_t timestamp, void* user_data);
 	void onPositionUpdated();
 	Geoid geoid;

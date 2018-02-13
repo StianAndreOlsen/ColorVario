@@ -9,12 +9,12 @@ namespace Kystsoft {
 class SensorListener
 {
 public:
-	SensorListener(Sensor sensor) { create(sensor); }
-	SensorListener(sensor_h handle) { create(handle); }
-	SensorListener(sensor_type_e type) { create(type); }
+	SensorListener(Sensor sensor) { createAndSetSensorEventCallback(sensor); }
+	SensorListener(sensor_h handle) { createAndSetSensorEventCallback(handle); }
+	SensorListener(sensor_type_e type) { createAndSetSensorEventCallback(type); }
 	SensorListener(const SensorListener& other) = delete;
 	SensorListener& operator=(const SensorListener& rhs) = delete;
-	~SensorListener() noexcept { sensor_destroy_listener(listener); }
+	~SensorListener() noexcept;
 	operator sensor_listener_h() const { return listener; }
 	bool isStarted() const { return started; }
 	void start();
@@ -25,7 +25,11 @@ public:
 	using EventSignal = Signal<Sensor, sensor_event_s*>;
 	const EventSignal& eventSignal() const { return eventSignl; }
 private:
+	void createAndSetSensorEventCallback(Sensor sensor);
 	void create(Sensor sensor);
+	void destroy();
+	void setSensorEventCallback();
+	void unsetSensorEventCallback();
 	static void sensorEventCallback(sensor_h sensor, sensor_event_s* event, void* user_data);
 	void onSensorEvent(sensor_h sensor, sensor_event_s* event) { eventSignl.emit(sensor, event); }
 	sensor_listener_h listener = nullptr;
