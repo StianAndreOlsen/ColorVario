@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <manifest xmlns="http://tizen.org/ns/packages" api-version="3.0" package="no.kystsoft.colorvario" version="1.2.0">
-    <author/>
+    <author email="kyrreholm@gmail.com" href="https://www.facebook.com/ColorVariometer/">Kyrre Holm</author>
+    <description>ColorVario is a variometer app running on a smartwatch. The current vertical speed (climb or sink) is displayed as text, shown as a color and indicated using a classic variometer sound.</description>
     <profile name="wearable"/>
     <ui-application appid="no.kystsoft.colorvario" exec="colorvario" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>ColorVario</label>
-        <icon>colorvario.png</icon>
+        <icon>ColorVario.png</icon>
         <background-category value="sensor"/>
     </ui-application>
     <privileges>
+        <privilege>http://tizen.org/privilege/mediastorage</privilege>
         <privilege>http://tizen.org/privilege/appdir.shareddata</privilege>
         <privilege>http://tizen.org/privilege/location</privilege>
         <privilege>http://tizen.org/privilege/display</privilege>

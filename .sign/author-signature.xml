@@ -4,39 +4,39 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>LAVoqGOnj1vFtu/AdgOldj5uDO66wwo+8H2RyVcrd5U=</DigestValue>
+<DigestValue>GUuePDWa4poJWi4RePpTXLXHKnEW0SPply7YvG535ME=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fcolor.ini">
+<Reference URI="shared%2Fres%2FColor.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>81Onfa4IYw+YqedfV2yP1ywR383f53r/owAaj1DYlvY=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fcolorvario.png">
+<Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>hObDzOD/8ZUgKrN+9XOyHhLR7aSfFEoeC+n6fLJmgTk=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fgeoid.dat">
+<Reference URI="shared%2Fres%2FGeoid.dat">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Flocation.png">
+<Reference URI="shared%2Fres%2FLocation.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>NemSFURt9/haHd+jRpSR1NhhT9F2/7vLJiFth2nHP2k=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fmute.png">
+<Reference URI="shared%2Fres%2FMute.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>TlGGoNs2LjtsyTC1PBjyEQam703PISVa5/ss4PVzYMw=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fsound.ini">
+<Reference URI="shared%2Fres%2FSound.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>c6IRTN23bbvU1ANKpRDLldKL71VOOs90UzOEjGIWD4U=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fvariometer.ini">
+<Reference URI="shared%2Fres%2FVariometer.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>OCH/dpwAnFuPsEJcZfkuZkYZ4qgEtefWi2rIzGUd3Fo=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ZEkVuvLgH8l5TKNBUy1td7zTmZdo7F/1OM7S7XwtUxM=</DigestValue>
+<DigestValue>QPIEKCmwVDrrugioeRGmsbhifogJdSrt4c2mYkl82+8=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -47,9 +47,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-GWSSQ/WwydSmGIvIiuz6bSL8TBG2g6mV0T/1uR9tEcwQOrwDKewI1CbWzIgTaGdzSIO8vWwkTv46
-F3crdRbyxjkocCoxOx0kmXQ6l92EMoM/k3WWg+IdnUXMyL9UIxBO9/KjipKIqmPDfroUT0xYo7QG
-Fp28EJM9LPL/85auW80=
+TaBJ7blYIL0LS6HpgB7I1LngcWd9pKsnwcbzAq/pXXaZ3jxOl8oZ04bcd5tC/HDEufeujrgBC5sm
+01YZ9hXKJQe8vt5e/MhcUUkYkgqYef0M6xi27OBAIjMhOxUDy+hKHpMDxirXY1l+a5uhgyF1E6Re
+r8ZW1nfjdL2AMO4hT2E=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

@@ -5,26 +5,27 @@
 
 Kystsoft::Display::Display()
 {
+	setState(DISPLAY_STATE_NORMAL); // required since initialBrightness becomes 0 if the screen is off
 	addStateChangedCallback();
-	initialBrightness = brightness();
+	try
+	{
+		initialBrightness = brightness();
+	}
+	catch (...)
+	{
+		removeStateChangedCallback();
+		throw;
+	}
 }
 
 Kystsoft::Display::~Display() noexcept
 {
-	try
-	{
-		unlock();
-		setBrightness(initialBrightness);
-		removeStateChangedCallback();
-	}
-	catch (std::exception& e)
-	{
-		dlog(DLOG_ERROR) << e.what();
-	}
-	catch (...)
-	{
-		dlog(DLOG_ERROR) << "Kystsoft::Display::~Display: Unknown error";
-	}
+	try { unlock(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { setBrightness(initialBrightness); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { removeStateChangedCallback(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
 
 int Kystsoft::Display::brightness() const
@@ -61,10 +62,19 @@ display_state_e Kystsoft::Display::state() const
 	return state;
 }
 
+void Kystsoft::Display::setState(display_state_e state)
+{
+	// TODO: Find a replacement since this function is deprecated
+	int error = device_display_change_state(state);
+	if (error != DEVICE_ERROR_NONE)
+		throw TizenError("device_display_change_state", error);
+}
+
 void Kystsoft::Display::lock()
 {
 	if (locked)
 		return;
+	// TODO: Find a replacement since this usage is deprecated
 	int error = device_power_request_lock(POWER_LOCK_DISPLAY, 0);
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_power_request_lock", error);
@@ -75,6 +85,7 @@ void Kystsoft::Display::unlock()
 {
 	if (!locked)
 		return;
+	// TODO: Find a replacement since this usage is deprecated
 	int error = device_power_release_lock(POWER_LOCK_DISPLAY);
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_power_release_lock", error);

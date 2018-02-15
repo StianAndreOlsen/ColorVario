@@ -4,43 +4,43 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>0sL4eUwkH57PpzCUWp81FEIUWCPkUdOE6sIpFC0WgX0=</DigestValue>
+<DigestValue>67D9879rsAgtpmYKjpzYyaLiUKLw2r6WEF7oZKcdWsw=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>LAVoqGOnj1vFtu/AdgOldj5uDO66wwo+8H2RyVcrd5U=</DigestValue>
+<DigestValue>GUuePDWa4poJWi4RePpTXLXHKnEW0SPply7YvG535ME=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fcolor.ini">
+<Reference URI="shared%2Fres%2FColor.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>81Onfa4IYw+YqedfV2yP1ywR383f53r/owAaj1DYlvY=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fcolorvario.png">
+<Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>hObDzOD/8ZUgKrN+9XOyHhLR7aSfFEoeC+n6fLJmgTk=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fgeoid.dat">
+<Reference URI="shared%2Fres%2FGeoid.dat">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Flocation.png">
+<Reference URI="shared%2Fres%2FLocation.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>NemSFURt9/haHd+jRpSR1NhhT9F2/7vLJiFth2nHP2k=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fmute.png">
+<Reference URI="shared%2Fres%2FMute.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>TlGGoNs2LjtsyTC1PBjyEQam703PISVa5/ss4PVzYMw=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fsound.ini">
+<Reference URI="shared%2Fres%2FSound.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>c6IRTN23bbvU1ANKpRDLldKL71VOOs90UzOEjGIWD4U=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fvariometer.ini">
+<Reference URI="shared%2Fres%2FVariometer.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>OCH/dpwAnFuPsEJcZfkuZkYZ4qgEtefWi2rIzGUd3Fo=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ZEkVuvLgH8l5TKNBUy1td7zTmZdo7F/1OM7S7XwtUxM=</DigestValue>
+<DigestValue>QPIEKCmwVDrrugioeRGmsbhifogJdSrt4c2mYkl82+8=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -51,9 +51,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-YJBDoEN9Lq9CUzfkFya33H4N/0os8kjCBqDjjPI3gPHUIN/o1tMPYzaDWl78Y3G4kgxVKSibhSSq
-7rgDcWUunSjlC9aFZWzq3SP5ILctT8LN45NzwvkREfpdd0QPmnD5ObbHsrjncf1xSszR80eJK/O2
-BQS8pQ6mQNg2X222xoE=
+ao2Q2s+2h+zcrVZcpDOizJVmgrQB+VDTtfmtedMt3CHkDfBG1wKg5VR3veaLhhRJM82KqoA0f+dx
+NDNb5k2iKoGP4Op2wXwMWfEOCXesqVHqdudBSxdqIvYPvGAlwvg6ydb0TwtJrgbxSi5hQ9Oz6N5Q
+TNm1Yr/XCszCuBURYyI=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

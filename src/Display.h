@@ -18,6 +18,7 @@ public:
 	int maxBrightness() const;
 	void setMaxBrightness() { setBrightness(maxBrightness()); }
 	display_state_e state() const;
+	void setState(display_state_e state);
 	bool isLocked() const { return locked; }
 	void lock();
 	void unlock();

@@ -4,20 +4,12 @@
 
 Kystsoft::SensorListener::~SensorListener() noexcept
 {
-	try
-	{
-		stop();
-		unsetSensorEventCallback();
-		destroy();
-	}
-	catch (std::exception& e)
-	{
-		dlog(DLOG_ERROR) << e.what();
-	}
-	catch (...)
-	{
-		dlog(DLOG_ERROR) << "Kystsoft::SensorListener::~SensorListener: Unknown error";
-	}
+	try { stop(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { unsetSensorEventCallback(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { destroy(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
 
 void Kystsoft::SensorListener::start()

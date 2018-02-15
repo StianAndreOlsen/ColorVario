@@ -1,6 +1,8 @@
 #include "VarioController.h"
 #include "AppFunctions.h"
 #include "dlog.h"
+#include "FileFunctions.h"
+#include "Storage.h"
 #include <exception>
 #include <sstream>
 
@@ -30,7 +32,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 
 		// create mute icon
 		std::string resourcePath = appSharedResourcePath();
-		muteIcon = Dali::Toolkit::ImageView::New(resourcePath + "mute.png");
+		muteIcon = Dali::Toolkit::ImageView::New(resourcePath + "Mute.png");
 		muteIcon.SetSize(muteIcon.GetWidthForHeight(stageSize.height / 8), stageSize.height / 8);
 		muteIcon.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
 		muteIcon.SetPosition(stageSize.width / 2, stageSize.height / 4);
@@ -60,7 +62,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		background.Add(altitudeLabel);
 
 		// create location icon
-		locationIcon = Dali::Toolkit::ImageView::New(resourcePath + "location.png");
+		locationIcon = Dali::Toolkit::ImageView::New(resourcePath + "Location.png");
 		locationIcon.SetSize(locationIcon.GetWidthForHeight(stageSize.height / 8), stageSize.height / 8);
 		locationIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 		locationIcon.SetPosition(stageSize.width / 2, stageSize.height * 3 / 4);
@@ -76,9 +78,22 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		display.lock();
 
 		// load settings
-		vario.load(Settings(resourcePath + "variometer.ini"));
-		audio.load(Settings(resourcePath + "sound.ini"));
-		color.load(Settings(resourcePath + "color.ini"));
+		std::string iniPath = resourcePath;
+		Storage storage;
+		if (storage.isValid())
+		{
+			FileFunctionsInitializer init;
+			iniPath = storage.root() + "/ColorVario/";
+			if (!isDirectory(iniPath) && makeDirectory(iniPath))
+			{
+				copyFile(resourcePath + "Variometer.ini", iniPath + "Variometer.ini");
+				copyFile(resourcePath + "Sound.ini", iniPath + "Sound.ini");
+				copyFile(resourcePath + "Color.ini", iniPath + "Color.ini");
+			}
+		}
+		vario.load(Settings(iniPath + "Variometer.ini"));
+		audio.load(Settings(iniPath + "Sound.ini"));
+		color.load(Settings(iniPath + "Color.ini"));
 
 		// connect variometer signals
 		vario.climbSignal().connect(this, &VarioController::setClimb);
@@ -89,7 +104,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		try
 		{
 			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS, 5); // TODO: Discuss if 5 seconds is an ok interval
-			gps->loadGeoid(resourcePath + "geoid.dat");
+			gps->loadGeoid(resourcePath + "Geoid.dat");
 			gps->startedSignal().connect(dynamic_cast<Dali::Actor*>(&locationIcon), &Dali::Actor::SetVisible);
 			gps->locationSignal().connect(this, &VarioController::onLocationUpdated);
 			gps->start();
@@ -119,7 +134,7 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 	}
 	catch (...)
 	{
-		dlog(DLOG_FATAL) << "Kystsoft::VarioController::create: Unknown error";
+		dlog(DLOG_FATAL) << "Unknown error";
 		app.Quit();
 	}
 }

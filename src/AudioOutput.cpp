@@ -18,20 +18,12 @@ Kystsoft::AudioOutput::AudioOutput(int sampleRate, audio_channel_e channel, audi
 
 Kystsoft::AudioOutput::~AudioOutput() noexcept
 {
-	try
-	{
-		unprepare();
-		unsetStreamWriteCallback();
-		destroy();
-	}
-	catch (std::exception& e)
-	{
-		dlog(DLOG_ERROR) << e.what();
-	}
-	catch (...)
-	{
-		dlog(DLOG_ERROR) << "Kystsoft::AudioOutput::~AudioOutput: Unknown error";
-	}
+	try { unprepare(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { unsetStreamWriteCallback(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { destroy(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
 
 void Kystsoft::AudioOutput::setSoundStreamInfo(sound_stream_info_h streamInfo)

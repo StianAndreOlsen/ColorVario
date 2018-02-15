@@ -18,20 +18,12 @@ Kystsoft::LocationManager::LocationManager(location_method_e method, int interva
 
 Kystsoft::LocationManager::~LocationManager() noexcept
 {
-	try
-	{
-		stop();
-		unsetPositionUpdatedCallback();
-		destroy();
-	}
-	catch (std::exception& e)
-	{
-		dlog(DLOG_ERROR) << e.what();
-	}
-	catch (...)
-	{
-		dlog(DLOG_ERROR) << "Kystsoft::LocationManager::~LocationManager: Unknown error";
-	}
+	try { stop(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { unsetPositionUpdatedCallback(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { destroy(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
 
 void Kystsoft::LocationManager::start()
