@@ -54,7 +54,7 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	// calculate climb
 	float seconds = (timestamp - lastTimestamp) / 1000000.0f;
 	float climb = (altitude - lastAltitude) / seconds;
-	climb = 12 + (pressure - 260) * (-12 - 12) / (1260 - 260); // TODO: Remove after debugging
+//	climb = 12 + (pressure - 260) * (-12 - 12) / (1260 - 260); // TODO: Remove after debugging
 
 	// calibrate altimeter
 	if (currentAltitude > -6.4e+6f)
