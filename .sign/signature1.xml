@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>xjhejFyqgg0ud2qctMEm9DmWXXOBGzPLLvcj0ZHrKkU=</DigestValue>
+<DigestValue>LNqVDp1a2/ns+E3nLCbbmLGtORrhCs8TRZVSqOpsiBw=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>6TIX+lLzU3etwfKJzks3bN7xiNi6G2f1OsYFC7f0jRs=</DigestValue>
+<DigestValue>cAjAj2x/98kAUOmxgBDLXGctDsLSCg4TxLaZv/fyiIc=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColor.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -32,7 +32,7 @@
 </Reference>
 <Reference URI="shared%2Fres%2FSound.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>c6IRTN23bbvU1ANKpRDLldKL71VOOs90UzOEjGIWD4U=</DigestValue>
+<DigestValue>8sDN2E4AYFOkdByNRpHO13GVHH526djuoVv8Z0CYlNY=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FVariometer.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -51,11 +51,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-IIoAXKgBCtQ/YSRK0FmvW6OfGL2wNJTdofy8DrvpuZG7ZwU/VfTWoORS81WYbnkMiFodhYJu5tW7
-0VwK7ogm0NGo9Oi/vHwyO6nRsJ+ZPK2wqYlIxiRFTjeI4y9eYWWZfI9BfHQMzMPsRFIeQx2ymV/7
-/T/earIME6sqlvapT+FK5bZC5pV6bAfrXfhyMFMM96XeWvUcdWyJLiXaW76VUVXTHdUbD8crPQtN
-+z/AOnMehWRq/jpjJhMzbd8pYjpH6OcLRIq88flSz7Rv5nZ3VwlvabWkA9TtbhqH3XPy93uwwUIE
-VXNUhrJ+kZRByOnNaMpPQDTBBqslBIFhNS2XEA==
+HUOqVymqCXDDMILMJZr6yLnV9UZw8+acOXhMCP3EnJd0fOnJlzXpeKlfqwshvFSFKL1ka9KJfH51
+MdKssYMDT4xByVNXg0nFp4Sc4gv9/x/a5vcngFUvovHpAMr756qTt+TzIgw6ASgvtcQu+wI9wr0t
+ptutFtQulG2mmwP1U6lra4OxdevEHZA3b8RQ6r6xbH7lPV2DY5Men0e5M2710mc76ss2Bw4++76l
+DKf5I03ELUHYnIYPwSsuofo84TsxdXlCqBhDqYeQhkZt3GdSetuScl6vGGYKmAWzJqsUItY2fPtV
+L6SIovd8LaeA91CBi829hrHchwWXU6lW2GqYdg==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

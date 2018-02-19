@@ -17,6 +17,10 @@ public:
 	VarioController(Dali::Application& application);
 private:
 	void create(Dali::Application& application);
+	std::string validateSettings(const std::string& resourcePath);
+	std::string loadVersion(const std::string& fileName);
+	void saveVersion(const std::string& fileName);
+	void copyFile(const std::string& fileName, const std::string& srcPath, const std::string& dstPath);
 	void onTouch(const Dali::TouchData& touch);
 	void onKeyEvent(const Dali::KeyEvent& event);
 	void onLocationUpdated(const Location& location);

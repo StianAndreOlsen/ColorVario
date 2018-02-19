@@ -4,6 +4,7 @@
 #include "FileFunctions.h"
 #include "Storage.h"
 #include <exception>
+#include <fstream>
 #include <sstream>
 
 Kystsoft::VarioController::VarioController(Dali::Application& application)
@@ -78,22 +79,10 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 		display.lock();
 
 		// load settings
-		std::string iniPath = resourcePath;
-		Storage storage;
-		if (storage.isValid())
-		{
-			FileFunctionsInitializer init;
-			iniPath = storage.root() + "/ColorVario/";
-			if (!isDirectory(iniPath) && makeDirectory(iniPath))
-			{
-				copyFile(resourcePath + "Variometer.ini", iniPath + "Variometer.ini");
-				copyFile(resourcePath + "Sound.ini", iniPath + "Sound.ini");
-				copyFile(resourcePath + "Color.ini", iniPath + "Color.ini");
-			}
-		}
-		vario.load(Settings(iniPath + "Variometer.ini"));
-		audio.load(Settings(iniPath + "Sound.ini"));
-		color.load(Settings(iniPath + "Color.ini"));
+		std::string settingsPath = validateSettings(resourcePath);
+		vario.load(Settings(settingsPath + "Variometer.ini"));
+		audio.load(Settings(settingsPath + "Sound.ini"));
+		color.load(Settings(settingsPath + "Color.ini"));
 
 		// connect variometer signals
 		vario.climbSignal().connect(this, &VarioController::setClimb);
@@ -139,6 +128,69 @@ void Kystsoft::VarioController::create(Dali::Application& application)
 	}
 }
 
+std::string Kystsoft::VarioController::validateSettings(const std::string& resourcePath)
+{
+	Storage storage;
+	if (!storage.isValid())
+		return resourcePath;
+	FileFunctionsInitializer init;
+
+	// make sure the settings directory exists
+	std::string settingsPath = storage.root() + "/ColorVario/Settings/";
+	if (!isDirectory(settingsPath))
+	{
+		if (!makePath(settingsPath))
+		{
+			dlog(DLOG_ERROR) << "Unable to create \"" << settingsPath << "\"";
+			return resourcePath;
+		}
+		dlog(DLOG_DEBUG) << "\"" << settingsPath << "\" created";
+	}
+
+	// load version
+	std::string versionFile = settingsPath + ".version";
+	std::string oldVersion = loadVersion(versionFile);
+
+	// copy files
+	if (oldVersion < "1.2.0" || !fileExists(settingsPath + "Variometer.ini"))
+		copyFile("Variometer.ini", resourcePath, settingsPath);
+	if (oldVersion < "1.2.0" || !fileExists(settingsPath + "Sound.ini"))
+		copyFile("Sound.ini", resourcePath, settingsPath);
+	if (oldVersion < "1.2.0" || !fileExists(settingsPath + "Color.ini"))
+		copyFile("Color.ini", resourcePath, settingsPath);
+
+	// save version
+	saveVersion(versionFile);
+
+	return settingsPath;
+}
+
+std::string Kystsoft::VarioController::loadVersion(const std::string& fileName)
+{
+	if (!fileExists(fileName))
+		return std::string();
+	std::ifstream is(fileName);
+	std::string version;
+	if (!(is >> version))
+		dlog(DLOG_ERROR) << "Unable to load version from \"" << fileName << "\"";
+	return version;
+}
+
+void Kystsoft::VarioController::saveVersion(const std::string& fileName)
+{
+	std::ofstream os(fileName);
+	if (!(os << appVersion() << '\n'))
+		dlog(DLOG_ERROR) << "Unable to save version to \"" << fileName << "\"";
+}
+
+void Kystsoft::VarioController::copyFile(const std::string& fileName, const std::string& srcPath, const std::string& dstPath)
+{
+	if (Kystsoft::copyFile(srcPath + fileName, dstPath + fileName))
+		dlog(DLOG_DEBUG) << "\"" << fileName << "\" is copied from \"" << srcPath << "\" to \"" << dstPath << "\"";
+	else
+		dlog(DLOG_ERROR) << "Unable to copy \"" << fileName << "\" from \"" << srcPath << "\" to \"" << dstPath << "\"";
+}
+
 void Kystsoft::VarioController::onTouch(const Dali::TouchData& touch)
 {
 	try
@@ -170,7 +222,9 @@ void Kystsoft::VarioController::onKeyEvent(const Dali::KeyEvent& event)
 void Kystsoft::VarioController::onLocationUpdated(const Location& location)
 {
 	// calibrate altimeter and set appropriate altitude label colors
-	double accuracy = location.horizontal; // TODO: Use vertical accuracy when reliable
+	double accuracy = location.vertical;
+	if (accuracy < 0)
+		accuracy = location.horizontal;
 	if (accuracy <= gpsBestAccuracy)
 	{
 		gpsBestAccuracy = accuracy;
