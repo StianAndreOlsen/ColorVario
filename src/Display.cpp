@@ -7,15 +7,6 @@ Kystsoft::Display::Display()
 {
 	setState(DISPLAY_STATE_NORMAL); // required since initialBrightness becomes 0 if the screen is off
 	addStateChangedCallback();
-	try
-	{
-		initialBrightness = brightness();
-	}
-	catch (...)
-	{
-		removeStateChangedCallback();
-		throw;
-	}
 }
 
 Kystsoft::Display::~Display() noexcept
@@ -26,31 +17,6 @@ Kystsoft::Display::~Display() noexcept
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 	try { removeStateChangedCallback(); }
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
-}
-
-int Kystsoft::Display::brightness() const
-{
-	int brightness = 0;
-	int error = device_display_get_brightness(0, &brightness);
-	if (error != DEVICE_ERROR_NONE)
-		throw TizenError("device_display_get_brightness", error);
-	return brightness;
-}
-
-void Kystsoft::Display::setBrightness(int brightness)
-{
-	int error = device_display_set_brightness(0, brightness);
-	if (error != DEVICE_ERROR_NONE)
-		throw TizenError("device_display_set_brightness", error);
-}
-
-int Kystsoft::Display::maxBrightness() const
-{
-	int maxBrightness = 0;
-	int error = device_display_get_max_brightness(0, &maxBrightness);
-	if (error != DEVICE_ERROR_NONE)
-		throw TizenError("device_display_get_max_brightness", error);
-	return maxBrightness;
 }
 
 display_state_e Kystsoft::Display::state() const
@@ -68,6 +34,37 @@ void Kystsoft::Display::setState(display_state_e state)
 	int error = device_display_change_state(state);
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_display_change_state", error);
+}
+
+float Kystsoft::Display::brightness() const
+{
+	int ibrightness = 0;
+	int error = device_display_get_brightness(0, &ibrightness);
+	if (error != DEVICE_ERROR_NONE)
+		throw TizenError("device_display_get_brightness", error);
+	return float(ibrightness) / maxBrightness();
+}
+
+void Kystsoft::Display::setBrightness(float brightness)
+{
+	if (brightness < 0)
+		return;
+	if (brightness > 1)
+		brightness = 1;
+	if (initialBrightness < 0)
+		initialBrightness = this->brightness();
+	int ibrightness = int(brightness * maxBrightness() + 0.5f);
+	int error = device_display_set_brightness(0, ibrightness);
+	if (error != DEVICE_ERROR_NONE)
+		throw TizenError("device_display_set_brightness", error);
+}
+
+void Kystsoft::Display::setLocked(bool locked)
+{
+	if (locked)
+		lock();
+	else
+		unlock();
 }
 
 void Kystsoft::Display::lock()
@@ -131,4 +128,17 @@ void Kystsoft::Display::onStateChanged(display_state_e state)
 			lock();
 		}
 	}
+
+	// activate our app when display is turned on
+	if (state == DISPLAY_STATE_NORMAL)
+		appManager.resume();
+}
+
+int Kystsoft::Display::maxBrightness() const
+{
+	int maxBrightness = 0;
+	int error = device_display_get_max_brightness(0, &maxBrightness);
+	if (error != DEVICE_ERROR_NONE)
+		throw TizenError("device_display_get_max_brightness", error);
+	return maxBrightness;
 }

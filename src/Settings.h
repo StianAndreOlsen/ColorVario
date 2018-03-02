@@ -37,6 +37,7 @@ template<typename T>
 T Kystsoft::Settings::value(const std::string& key, T defaultValue) const
 {
 	std::istringstream is(value(key));
+	is.setf(std::ios_base::boolalpha);
 	T val;
 	if (is >> val)
 		return val;

@@ -12,6 +12,14 @@ Kystsoft::SensorListener::~SensorListener() noexcept
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
 
+void Kystsoft::SensorListener::setStarted(bool started)
+{
+	if (started)
+		start();
+	else
+		stop();
+}
+
 void Kystsoft::SensorListener::start()
 {
 	if (started)

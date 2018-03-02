@@ -17,9 +17,11 @@ public:
 	operator audio_out_h() const { return output; }
 	void setSoundStreamInfo(sound_stream_info_h streamInfo); // TODO: Figure out what this function does
 	bool isPrepared() const { return prepared; }
+	void setPrepared(bool prepared);
 	void prepare();
 	void unprepare();
 	bool isPaused() const { return paused; }
+	void setPaused(bool paused);
 	void pause();
 	void resume();
 	void drain();

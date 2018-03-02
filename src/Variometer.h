@@ -19,6 +19,7 @@ public:
 	float averagingInterval() const { return samplingInterval() * averageClimb.size(); }
 	void setAveragingInterval(float interval);
 	bool isStarted() const { return pressureListener.isStarted(); }
+	void setStarted(bool started) { pressureListener.setStarted(started); }
 	void start() { pressureListener.start(); }
 	void stop() { pressureListener.stop(); }
 	void toggleStartStop() { pressureListener.toggleStartStop(); }

@@ -5,6 +5,7 @@
 
 int main(int argc, char *argv[])
 {
+	Kystsoft::dlog::setLogTag("ColorVario");
 	Kystsoft::dlog(DLOG_DEBUG) << "Hello!";
 	try
 	{

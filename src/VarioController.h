@@ -3,6 +3,7 @@
 
 #include "Display.h"
 #include "LocationManager.h"
+#include "SoundManager.h"
 #include "VarioAudio.h"
 #include "VarioColor.h"
 #include "Variometer.h"
@@ -17,10 +18,9 @@ public:
 	VarioController(Dali::Application& application);
 private:
 	void create(Dali::Application& application);
-	std::string validateSettings(const std::string& resourcePath);
-	std::string loadVersion(const std::string& fileName);
-	void saveVersion(const std::string& fileName);
-	void copyFile(const std::string& fileName, const std::string& srcPath, const std::string& dstPath);
+	void createUi();
+	void load(const Settings& settings);
+	Settings settingsFromFile();
 	void onTouch(const Dali::TouchData& touch);
 	void onKeyEvent(const Dali::KeyEvent& event);
 	void onLocationUpdated(const Location& location);
@@ -33,6 +33,11 @@ private:
 	Dali::Toolkit::TextLabel climbLabel;
 	Dali::Toolkit::TextLabel altitudeLabel;
 	Dali::Toolkit::ImageView locationIcon;
+	std::string climbUnit = "m/s";
+	std::string altitudeUnit = "m";
+	bool showClimbUnit = true;
+	bool showAltitudeUnit = true;
+	SoundManager soundManager;
 	Display display;
 	std::unique_ptr<LocationManager> gps;
 	time_t gpsStartTime = 0;

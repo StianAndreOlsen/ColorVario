@@ -10,15 +10,18 @@ namespace Kystsoft {
 class dlog : public std::ostringstream
 {
 public:
-	dlog(log_priority logPriority, const std::string& logTag = "Kystsoft")
-		: priority(logPriority), tag(logTag) {}
+	dlog(log_priority logPriority) : priority(logPriority) {}
 	~dlog() noexcept;
 	static std::string priorityString(log_priority priority);
 	std::string priorityString() const { return priorityString(priority); }
+	static std::string logTag() { return tag; }
+	static void setLogTag(const std::string& logTag) { tag = logTag; }
 private:
 	log_priority priority;
-	std::string tag;
+	static std::string tag;
 };
+
+void setDebugLogFile(const std::string& fileName);
 
 } // namespace Kystsoft
 

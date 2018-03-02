@@ -13,8 +13,9 @@ public:
 	VarioAudio();
 	VarioAudio(const VarioAudio& other) = delete;
 	VarioAudio& operator=(const VarioAudio& rhs) = delete;
-	void load(const Settings& settings) { sound.load(settings); }
+	void load(const Settings& settings);
 	bool isMuted() const { return muted; }
+	void setMuted(bool muted);
 	void mute();
 	void unmute();
 	void toggleMuteUnmute();
@@ -36,8 +37,8 @@ private:
 	bool muted = true;
 	Signal<bool> mutedSignl;
 	VarioSound sound;
-	float currentClimb = 10; // start with a value...
-	short soundOn = 1; // ...that has climb sound
+	float currentClimb = 3.1e+8f; // start with an unrealistic value (higher than the speed of light)
+	short soundOn = 0;
 };
 
 } // namespace Kystsoft

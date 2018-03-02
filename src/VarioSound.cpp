@@ -2,11 +2,22 @@
 
 void Kystsoft::VarioSound::load(const Settings& settings)
 {
+	// tone waveform
+	std::string waveform = settings.value("Sound.waveform");
+	if (waveform == "sine")
+		toneWaveform = Waveform::Sine;
+	else if (waveform == "square")
+		toneWaveform = Waveform::Square;
+	else if (waveform == "triangle")
+		toneWaveform = Waveform::Triangle;
+	else
+		toneWaveform = Waveform::Sawtooth;
+
 	// thresholds
-	climbSoundOn = settings.value("Threshold.climbSoundOn", climbSoundOn);
-	climbSoundOff = settings.value("Threshold.climbSoundOff", climbSoundOff);
-	sinkSoundOn = settings.value("Threshold.sinkSoundOn", sinkSoundOn);
-	sinkSoundOff = settings.value("Threshold.sinkSoundOff", sinkSoundOff);
+	climbSoundOn = settings.value("Sound.climbSoundOn", climbSoundOn);
+	climbSoundOff = settings.value("Sound.climbSoundOff", climbSoundOff);
+	sinkSoundOn = settings.value("Sound.sinkSoundOn", sinkSoundOn);
+	sinkSoundOff = settings.value("Sound.sinkSoundOff", sinkSoundOff);
 
 	// sound points
 	clearSoundPoints();

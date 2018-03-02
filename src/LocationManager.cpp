@@ -26,6 +26,14 @@ Kystsoft::LocationManager::~LocationManager() noexcept
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
 
+void Kystsoft::LocationManager::setStarted(bool started)
+{
+	if (started)
+		start();
+	else
+		stop();
+}
+
 void Kystsoft::LocationManager::start()
 {
 	if (started)
@@ -93,8 +101,6 @@ void Kystsoft::LocationManager::positionUpdated(double /*latitude*/, double /*lo
 void Kystsoft::LocationManager::onPositionUpdated()
 {
 	Location location;
-	// TODO: Debug and check the difference between the two functions below
-//	int error = location_manager_get_location(manager,
 	int error = location_manager_get_last_location(manager,
 		&location.altitude,
 		&location.latitude,

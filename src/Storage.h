@@ -26,6 +26,10 @@ private:
 	int id = -1;
 };
 
+// convenience functions
+std::string internalStorageRoot();
+std::string internalStorageDirectory(storage_directory_e type);
+
 } // namespace Kystsoft
 
 #endif // KYSTSOFT_STORAGE_H

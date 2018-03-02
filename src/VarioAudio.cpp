@@ -7,6 +7,20 @@ Kystsoft::VarioAudio::VarioAudio()
 	audioOutput.writeCallback().connect(this, &VarioAudio::onAudioRequested);
 }
 
+void Kystsoft::VarioAudio::load(const Settings& settings)
+{
+	setMuted(settings.value("Sound.muted", false));
+	sound.load(settings);
+}
+
+void Kystsoft::VarioAudio::setMuted(bool muted)
+{
+	if (muted)
+		mute();
+	else
+		unmute();
+}
+
 void Kystsoft::VarioAudio::mute()
 {
 	if (muted)
@@ -44,7 +58,15 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 
 	// sound on or off
 	bool soundWasOn = isSoundOn();
-	if (currentClimb > previousClimb)
+	if (previousClimb > 3e+8f)
+	{
+		// special handling if this is the first real climb value
+		if (currentClimb >= sound.climbSoundOnThreshold())
+			soundOn = 1; // turn on climb sound
+		else if (currentClimb <= sound.sinkSoundOnThreshold())
+			soundOn = -1; // turn on sink sound
+	}
+	else if (currentClimb > previousClimb)
 	{
 		if (isSinkSoundOn() && currentClimb >= sound.sinkSoundOffThreshold())
 			soundOn = 0; // turn off sink sound
@@ -107,10 +129,22 @@ void Kystsoft::VarioAudio::onAudioRequested(AudioOutput& audioOutput, size_t byt
 		if (cyclePhase < duty)
 		{
 			float x = lastTonePhase + i * frequency / sampleRate;
-//			float y = std::sin(2 * 3.14159265359f * x); // sine wave (https://en.wikipedia.org/wiki/Sine_wave)
-			float y = 2 * (x - std::floor(x + 0.5f)); // sawtooth wave (https://en.wikipedia.org/wiki/Sawtooth_wave)
-//			float y = 2 * std::abs(2 * (x + 0.25f - std::floor(x + 0.75f))) - 1; // triangle wave (https://en.wikipedia.org/wiki/Triangle_wave)
-//			float y = 2 * (2 * std::floor(x) - std::floor(2 * x)) + 1; // square wave (https://en.wikipedia.org/wiki/Square_wave)
+			float y = 0;
+			switch (sound.waveform())
+			{
+			case Waveform::Sine: // sine wave (https://en.wikipedia.org/wiki/Sine_wave)
+				y = std::sin(2 * 3.14159265359f * x);
+				break;
+			case Waveform::Square: // square wave (https://en.wikipedia.org/wiki/Square_wave)
+				y = 2 * (2 * std::floor(x) - std::floor(2 * x)) + 1;
+				break;
+			case Waveform::Triangle: // triangle wave (https://en.wikipedia.org/wiki/Triangle_wave)
+				y = 2 * std::abs(2 * (x + 0.25f - std::floor(x + 0.75f))) - 1;
+				break;
+			case Waveform::Sawtooth: // sawtooth wave (https://en.wikipedia.org/wiki/Sawtooth_wave)
+				y = 2 * (x - std::floor(x + 0.5f));
+				break;
+			}
 			points[i] = uint8_t(y * INT8_MAX + INT8_MAX);
 			tonePhase = x - int(x); // keep below 1
 		}

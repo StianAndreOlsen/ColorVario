@@ -17,6 +17,7 @@ public:
 	~SensorListener() noexcept;
 	operator sensor_listener_h() const { return listener; }
 	bool isStarted() const { return started; }
+	void setStarted(bool started);
 	void start();
 	void stop();
 	void toggleStartStop();

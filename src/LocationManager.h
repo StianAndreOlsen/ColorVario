@@ -21,6 +21,7 @@ public:
 	GeodeticDatum geodeticDatum() const { return datum; }
 	void setGeodeticDatum(GeodeticDatum geodeticDatum) { datum = geodeticDatum; }
 	bool isStarted() const { return started; }
+	void setStarted(bool started);
 	void start();
 	void stop();
 	void toggleStartStop();

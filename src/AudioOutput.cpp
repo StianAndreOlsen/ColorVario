@@ -33,6 +33,14 @@ void Kystsoft::AudioOutput::setSoundStreamInfo(sound_stream_info_h streamInfo)
 		throw TizenError("audio_out_set_sound_stream_info", error);
 }
 
+void Kystsoft::AudioOutput::setPrepared(bool prepared)
+{
+	if (prepared)
+		prepare();
+	else
+		unprepare();
+}
+
 void Kystsoft::AudioOutput::prepare()
 {
 	if (prepared)
@@ -51,6 +59,14 @@ void Kystsoft::AudioOutput::unprepare()
 	if (error != AUDIO_IO_ERROR_NONE)
 		throw TizenError("audio_out_unprepare", error);
 	prepared = false;
+}
+
+void Kystsoft::AudioOutput::setPaused(bool paused)
+{
+	if (paused)
+		pause();
+	else
+		resume();
 }
 
 void Kystsoft::AudioOutput::pause()

@@ -3,6 +3,7 @@
 
 #include "VarioSoundPoint.h"
 #include "Settings.h"
+#include "Waveform.h"
 
 namespace Kystsoft {
 
@@ -12,6 +13,8 @@ public:
 	VarioSound() {}
 	VarioSound(const Settings& settings) { load(settings); }
 	void load(const Settings& settings);
+	Waveform waveform() const { return toneWaveform; }
+	void setWaveform(Waveform waveform) { toneWaveform = waveform; }
 	float climbSoundOnThreshold() const { return climbSoundOn; }
 	float climbSoundOffThreshold() const { return climbSoundOff; }
 	float sinkSoundOnThreshold() const { return sinkSoundOn; }
@@ -32,8 +35,9 @@ public:
 	static float defaultDuty(float climb);
 private:
 	size_t soundPointInterval(float climb) const;
-	float climbSoundOn = 0.0f;
-	float climbSoundOff = 0.0f;
+	Waveform toneWaveform = Waveform::Sawtooth;
+	float climbSoundOn = 0.1f;
+	float climbSoundOff = 0.1f;
 	float sinkSoundOn = -3.0f;
 	float sinkSoundOff = -3.0f;
 	std::vector<VarioSoundPoint> soundPoints;

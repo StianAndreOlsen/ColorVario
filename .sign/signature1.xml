@@ -4,15 +4,15 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>LNqVDp1a2/ns+E3nLCbbmLGtORrhCs8TRZVSqOpsiBw=</DigestValue>
+<DigestValue>Pcp/dJ27uru+HDOG5M4n5JOkDBnc/9uoOaXuWZsiAg8=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>cAjAj2x/98kAUOmxgBDLXGctDsLSCg4TxLaZv/fyiIc=</DigestValue>
+<DigestValue>ek3RCRaywMDmEwNEvV5ByUdlMdgqpPAimI70pt5a46k=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2FColor.ini">
+<Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>81Onfa4IYw+YqedfV2yP1ywR383f53r/owAaj1DYlvY=</DigestValue>
+<DigestValue>DhAOWj2FXj3AmYiT7Z1TDtGmSDcqdTRGTjuRucD7CwE=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -30,17 +30,9 @@
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>TlGGoNs2LjtsyTC1PBjyEQam703PISVa5/ss4PVzYMw=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2FSound.ini">
-<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>8sDN2E4AYFOkdByNRpHO13GVHH526djuoVv8Z0CYlNY=</DigestValue>
-</Reference>
-<Reference URI="shared%2Fres%2FVariometer.ini">
-<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>OCH/dpwAnFuPsEJcZfkuZkYZ4qgEtefWi2rIzGUd3Fo=</DigestValue>
-</Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>QPIEKCmwVDrrugioeRGmsbhifogJdSrt4c2mYkl82+8=</DigestValue>
+<DigestValue>0oY9jqYwQrnVJDSNa3hveef1D12sm692Ud6j2aRuvdM=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -51,11 +43,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-HUOqVymqCXDDMILMJZr6yLnV9UZw8+acOXhMCP3EnJd0fOnJlzXpeKlfqwshvFSFKL1ka9KJfH51
-MdKssYMDT4xByVNXg0nFp4Sc4gv9/x/a5vcngFUvovHpAMr756qTt+TzIgw6ASgvtcQu+wI9wr0t
-ptutFtQulG2mmwP1U6lra4OxdevEHZA3b8RQ6r6xbH7lPV2DY5Men0e5M2710mc76ss2Bw4++76l
-DKf5I03ELUHYnIYPwSsuofo84TsxdXlCqBhDqYeQhkZt3GdSetuScl6vGGYKmAWzJqsUItY2fPtV
-L6SIovd8LaeA91CBi829hrHchwWXU6lW2GqYdg==
+JUQYvavpbmmgLQsGE/3ptLLAu2grEwoCjE7HJq2y6V1OXBZJnny3DaG0+9B19i9spdkrMX7TFQoP
+fg/6mLrGDMM9QMCNwRj7uYY/I2jQ26e45nvUNbnkljaxxrMje4VCupB6CTPJfd3hD0GRLFhl268Z
+I/yEs8aYz7Xc9bPD/MtOuuWwH4XO6TxWD5NbignKYraAk32zZIlek9bKJFww1nFJRDYFwRzJ5Kz0
+s6k0QOxB94Q3Ro2d5LufnhgyKkapABqrJVoI/KD7ugsLV8B8+eaOQrZmLjzjbi8lKWJDRSCHCNxd
+vPWd/SUZlBXq/yooNZ3eYnSaQYG2X2kszKJPEQ==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

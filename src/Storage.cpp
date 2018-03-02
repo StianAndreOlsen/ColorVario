@@ -84,3 +84,19 @@ bool Kystsoft::Storage::deviceAccepted(int storage_id, storage_type_e type, stor
 	}
 	return false;
 }
+
+std::string Kystsoft::internalStorageRoot()
+{
+	Storage storage;
+	if (storage.isValid())
+		return storage.root();
+	return std::string();
+}
+
+std::string Kystsoft::internalStorageDirectory(storage_directory_e type)
+{
+	Storage storage;
+	if (storage.isValid())
+		return storage.directory(type);
+	return std::string();
+}

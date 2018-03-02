@@ -6,16 +6,20 @@
     <ui-application appid="no.kystsoft.colorvario" exec="colorvario" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>ColorVario</label>
         <icon>ColorVario.png</icon>
+        <background-category value="location"/>
+        <background-category value="media"/>
         <background-category value="sensor"/>
     </ui-application>
     <privileges>
-        <privilege>http://tizen.org/privilege/mediastorage</privilege>
-        <privilege>http://tizen.org/privilege/appdir.shareddata</privilege>
-        <privilege>http://tizen.org/privilege/location</privilege>
+        <privilege>http://tizen.org/privilege/appmanager.launch</privilege>
         <privilege>http://tizen.org/privilege/display</privilege>
+        <privilege>http://tizen.org/privilege/location</privilege>
+        <privilege>http://tizen.org/privilege/mediastorage</privilege>
+        <privilege>http://tizen.org/privilege/volume.set</privilege>
     </privileges>
-    <feature name="http://tizen.org/feature/screen.size.all">true</feature>
-    <feature name="http://tizen.org/feature/sensor.barometer.wakeup">true</feature>
+    <feature name="http://tizen.org/feature/location">true</feature>
     <feature name="http://tizen.org/feature/location.gps">true</feature>
+    <feature name="http://tizen.org/feature/screen.shape.circle">true</feature>
+    <feature name="http://tizen.org/feature/screen.size.all">true</feature>
     <feature name="http://tizen.org/feature/sensor.barometer">true</feature>
 </manifest>
