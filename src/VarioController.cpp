@@ -5,6 +5,7 @@
 #include "Storage.h"
 #include "TimeFunctions.h"
 #include <cmath>
+#include <ctime>
 #include <exception>
 #include <fstream>
 #include <sstream>
@@ -81,20 +82,55 @@ void Kystsoft::VarioController::createUi()
 
 	// create background
 	background = Dali::Toolkit::Control::New();
-	background.SetSize(stageSize.width, stageSize.height);
+	background.SetSize(stageSize);
 	background.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
 	background.SetPosition(0, 0);
 	stage.Add(background);
 
-	// create mute icon
+	// create icon box
+	float iconHeight = stageSize.height / 8;
+	float iconSpacing = stageSize.width / 16;
+	iconBox = Dali::Toolkit::Control::New();
+	iconBox.SetSize(stageSize.width, iconHeight);
+	iconBox.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
+	iconBox.SetPosition(stageSize.width / 2, stageSize.height / 8);
+	background.Add(iconBox);
+	lastIconBoxTouch = std::time(nullptr);
+
+	// get resource directory
 	std::string resourceDir = appSharedResourcePath();
-	muteIcon = Dali::Toolkit::ImageView::New(resourceDir + "Mute.png");
-	muteIcon.SetSize(muteIcon.GetWidthForHeight(stageSize.height / 8), stageSize.height / 8);
-	muteIcon.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
-	muteIcon.SetPosition(stageSize.width / 2, stageSize.height / 4);
-	muteIcon.SetVisible(audio.isMuted());
-	audio.mutedSignal().connect(dynamic_cast<Dali::Actor*>(&muteIcon), &Dali::Actor::SetVisible);
-	background.Add(muteIcon);
+
+	// create muted icon
+	mutedIcon = Dali::Toolkit::ImageView::New(resourceDir + "Muted.png");
+	mutedIcon.SetSize(mutedIcon.GetWidthForHeight(iconHeight), iconHeight);
+	mutedIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_RIGHT);
+	mutedIcon.SetPosition(stageSize.width / 2 - iconSpacing / 2, 0);
+	mutedIcon.SetVisible(audio.isMuted());
+	iconBox.Add(mutedIcon);
+
+	// create unmuted icon
+	unmutedIcon = Dali::Toolkit::ImageView::New(resourceDir + "Unmuted.png");
+	unmutedIcon.SetSize(unmutedIcon.GetWidthForHeight(iconHeight), iconHeight);
+	unmutedIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_RIGHT);
+	unmutedIcon.SetPosition(stageSize.width / 2 - iconSpacing / 2, 0);
+	unmutedIcon.SetVisible(!audio.isMuted());
+	iconBox.Add(unmutedIcon);
+
+	// create locked icon
+	lockedIcon = Dali::Toolkit::ImageView::New(resourceDir + "Locked.png");
+	lockedIcon.SetSize(lockedIcon.GetWidthForHeight(iconHeight), iconHeight);
+	lockedIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
+	lockedIcon.SetPosition(stageSize.width / 2 + iconSpacing / 2, 0);
+	lockedIcon.SetVisible(display.isLocked());
+	iconBox.Add(lockedIcon);
+
+	// create unlocked icon
+	unlockedIcon = Dali::Toolkit::ImageView::New(resourceDir + "Unlocked.png");
+	unlockedIcon.SetSize(unlockedIcon.GetWidthForHeight(iconHeight), iconHeight);
+	unlockedIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
+	unlockedIcon.SetPosition(stageSize.width / 2 + iconSpacing / 2, 0);
+	unlockedIcon.SetVisible(!display.isLocked());
+	iconBox.Add(unlockedIcon);
 
 	// create climb label
 	climbLabel = Dali::Toolkit::TextLabel::New("Climb");
@@ -119,7 +155,7 @@ void Kystsoft::VarioController::createUi()
 
 	// create location icon
 	locationIcon = Dali::Toolkit::ImageView::New(resourceDir + "Location.png");
-	locationIcon.SetSize(locationIcon.GetWidthForHeight(stageSize.height / 8), stageSize.height / 8);
+	locationIcon.SetSize(locationIcon.GetWidthForHeight(iconHeight), iconHeight);
 	locationIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 	locationIcon.SetPosition(stageSize.width / 2, stageSize.height * 3 / 4);
 	locationIcon.SetVisible(false);
@@ -128,6 +164,10 @@ void Kystsoft::VarioController::createUi()
 	// connect stage signals
 	stage.TouchSignal().Connect(this, &VarioController::onTouch);
 	stage.KeyEventSignal().Connect(this, &VarioController::onKeyEvent);
+
+	// connect muted and locked signals
+	audio.mutedSignal().connect(this, &VarioController::onAudioMuted);
+	display.lockedSignal().connect(this, &VarioController::onDisplayLocked);
 }
 
 void Kystsoft::VarioController::load(const Settings& settings)
@@ -203,10 +243,21 @@ void Kystsoft::VarioController::onTouch(const Dali::TouchData& touch)
 	{
 		if (touch.GetPointCount() > 0 && touch.GetState(0) == Dali::PointState::FINISHED)
 		{
-			if (vario.isStarted())
-				audio.toggleMuteUnmute();
-			else
+			if (!vario.isStarted())
 				vario.start();
+			else if (touch.GetScreenPosition(0).y < climbLabel.GetCurrentPosition().y)
+			{
+				lastIconBoxTouch = std::time(nullptr);
+				if (!iconBox.IsVisible())
+					iconBox.SetVisible(true);
+				else
+				{
+					if (touch.GetScreenPosition(0).x < climbLabel.GetCurrentSize().width / 2)
+						audio.toggleMuteUnmute();
+					else
+						display.toggleLockUnlock();
+				}
+			}
 		}
 	}
 	catch (std::exception& e)
@@ -251,6 +302,18 @@ void Kystsoft::VarioController::onLocationUpdated(const Location& location)
 		gps->stop(); // Note: Cannot destroy the GPS here, since this function is called from the GPS signal
 }
 
+void Kystsoft::VarioController::onAudioMuted(bool muted)
+{
+	mutedIcon.SetVisible(muted);
+	unmutedIcon.SetVisible(!muted);
+}
+
+void Kystsoft::VarioController::onDisplayLocked(bool locked)
+{
+	lockedIcon.SetVisible(locked);
+	unlockedIcon.SetVisible(!locked);
+}
+
 void Kystsoft::VarioController::setBackgroundColor(const Color& color)
 {
 	if (color == currentColor)
@@ -277,6 +340,13 @@ void Kystsoft::VarioController::setBackgroundColor(const Color& color)
 
 void Kystsoft::VarioController::setClimb(float climb)
 {
+	if (iconBox.IsVisible())
+	{
+		double seconds = std::difftime(std::time(nullptr), lastIconBoxTouch);
+		if (seconds > 15)
+			iconBox.SetVisible(false);
+	}
+
 	setBackgroundColor(color(climb));
 
 	std::ostringstream os;

@@ -79,7 +79,7 @@ void Kystsoft::setDebugLogFile(const std::string& fileName)
 		dlog(DLOG_ERROR) << "Unable to print debug logs to \"" << fileName << "\"";
 		return;
 	}
-	os = &ofs; // from now on; print logs to file stream
+	os = &ofs; // from now on; print logs directly to file stream
 	ofs << oss.str() << std::flush; // print string stream buffer to file stream
 	oss.str(""); // clear string stream buffer
 }

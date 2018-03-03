@@ -54,6 +54,8 @@ void Kystsoft::Display::setBrightness(float brightness)
 	if (initialBrightness < 0)
 		initialBrightness = this->brightness();
 	int ibrightness = int(brightness * maxBrightness() + 0.5f);
+	if (ibrightness < 1)
+		ibrightness = 1;
 	int error = device_display_set_brightness(0, ibrightness);
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_display_set_brightness", error);
@@ -76,6 +78,7 @@ void Kystsoft::Display::lock()
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_power_request_lock", error);
 	locked = true;
+	lockedSignl.emit(locked);
 }
 
 void Kystsoft::Display::unlock()
@@ -87,6 +90,15 @@ void Kystsoft::Display::unlock()
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_power_release_lock", error);
 	locked = false;
+	lockedSignl.emit(locked);
+}
+
+void Kystsoft::Display::toggleLockUnlock()
+{
+	if (locked)
+		unlock();
+	else
+		lock();
 }
 
 void Kystsoft::Display::addStateChangedCallback()

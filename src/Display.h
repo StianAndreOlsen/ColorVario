@@ -2,6 +2,7 @@
 #define KYSTSOFT_DISPLAY_H
 
 #include "AppManager.h"
+#include "Signal.h"
 #include <device/callback.h>
 #include <device/display.h>
 
@@ -22,6 +23,8 @@ public:
 	void setLocked(bool locked);
 	void lock();
 	void unlock();
+	void toggleLockUnlock();
+	const Signal<bool>& lockedSignal() const { return lockedSignl; }
 private:
 	void addStateChangedCallback();
 	void removeStateChangedCallback();
@@ -30,6 +33,7 @@ private:
 	int maxBrightness() const;
 	float initialBrightness = -1;
 	bool locked = false;
+	Signal<bool> lockedSignl;
 	AppManager appManager;
 };
 
