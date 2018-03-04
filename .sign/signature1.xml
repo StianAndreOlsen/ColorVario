@@ -4,15 +4,15 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>6doAf+3wTWlt++boQdg37jb2DIWvt07fedP6diaAVQ0=</DigestValue>
+<DigestValue>arIOnln9XHVtGfys7Gwd/LNG7UDa0eziudDG5Gqo1kM=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>4lcMcy291PEKZIDT3rQet1qrhBZfD9rwyw7kuqGhJXE=</DigestValue>
+<DigestValue>+178iUhIc9xH9u4TO6vTOjbsfgG4pIM25piXw1BltPU=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>DhAOWj2FXj3AmYiT7Z1TDtGmSDcqdTRGTjuRucD7CwE=</DigestValue>
+<DigestValue>s6C+i85sJ/fPLHqYgLEdG5XgMKBDujIRcmzQNFRDFJE=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -55,11 +55,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-pNlwMUw36ymd6y2XXMQDlCyAcqPWbevA5EaxuQuegvTN6pv5KPaY1RU2FWNr4DTk2SIxKN3FJhis
-BCD4oB5NpD7kIxTBPlcTclwGY9m1syvftVinsCHw9tGbwzzM9YHsKWDIswUfBDildere9pqpKnQ2
-0GfYJBc8V3g1Duy7pb08H5Rg62Nnf3aB518DrDFKBW1G7bM1vFRykUylVbSdSYDwtENuVoE+pBvx
-++be4tgr7VbGotgtL+gXwVF9zWPMu+cIaGm/6iSX04wb4UK9VqGna7T5gbKcfZ1H2ajxAawGfUX7
-D9OslB0C2P+Xe/lvaqnZInapOEv4W4P1XA9lyQ==
+W5KXBAAdqNUOagGYx/MAUpQW7xDwt/YRqkituDepNuc8UUfLSO2UMxutThlbeM05mUejOoFy6qDL
+UZxmWc8ZMpEzNULbKjbu6ajHjtWBsGumHb+er9CbX97Hx/MJ9LHOXEpq0lT3gulyMcVNb0KiU2D7
+vwDP7aCMhJ0BLIyGSEREKZwxt0K35a/T4+yrKWjZOqijrXcZWH9RxxGaWmlBKhQgyzEuQ/jZoVkP
+PTYE7AOMyHtYdrgmUmT/jGS7hiF6iBjbtnwDJadG5iOiJAMFyeW0p5Wh6h5+0VJw+zdde/ZGBlsr
+mAyRZ+S2WlFBBzN7QA/CKGK8NLez6VUU/LgzmA==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

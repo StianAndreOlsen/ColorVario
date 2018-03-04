@@ -1,7 +1,6 @@
 #ifndef KYSTSOFT_DISPLAY_H
 #define KYSTSOFT_DISPLAY_H
 
-#include "AppManager.h"
 #include "Signal.h"
 #include <device/callback.h>
 #include <device/display.h>
@@ -17,6 +16,7 @@ public:
 	Display& operator=(const Display& rhs) = delete;
 	display_state_e state() const;
 	void setState(display_state_e state);
+	const Signal<display_state_e>& stateChangedSignal() const { return stateChangedSignl; }
 	float brightness() const;
 	void setBrightness(float brightness);
 	bool isLocked() const { return locked; }
@@ -31,10 +31,10 @@ private:
 	static void stateChanged(device_callback_e type, void* value, void* user_data);
 	void onStateChanged(display_state_e state);
 	int maxBrightness() const;
+	Signal<display_state_e> stateChangedSignl;
 	float initialBrightness = -1;
 	bool locked = false;
 	Signal<bool> lockedSignl;
-	AppManager appManager;
 };
 
 } // namespace Kystsoft
