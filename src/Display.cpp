@@ -141,9 +141,7 @@ void Kystsoft::Display::onStateChanged(display_state_e state)
 		}
 	}
 
-	// activate our app when display is turned on
-	if (state == DISPLAY_STATE_NORMAL)
-		appManager.resume();
+	stateChangedSignl.emit(state);
 }
 
 int Kystsoft::Display::maxBrightness() const

@@ -14,8 +14,13 @@ Kystsoft::VarioController::VarioController(Dali::Application& application)
 	: app(application)
 	, soundManager(SOUND_TYPE_MEDIA)
 {
-	// connect the application's init signal
+	// connect application signals
 	app.InitSignal().Connect(this, &VarioController::create);
+	app.PauseSignal().Connect(this, &VarioController::onPause);
+	app.ResumeSignal().Connect(this, &VarioController::onResume);
+
+	// connect display signals
+	display.stateChangedSignal().connect(this, &VarioController::onDisplayStateChanged);
 }
 
 // The init signal is received only once during the application lifetime
@@ -187,7 +192,7 @@ void Kystsoft::VarioController::load(const Settings& settings)
 	float brightness = settings.value("Display.brightness", -1.0f);
 	if (brightness >= 0)
 		display.setBrightness(brightness / 100);
-	if (settings.value("Display.alwaysOn", false))
+	if (settings.value("Display.locked", false))
 		display.lock();
 
 	// climb and altitude settings
@@ -225,7 +230,7 @@ Kystsoft::Settings Kystsoft::VarioController::settingsFromFile()
 
 	// load settings and check if storage file is up to date
 	Settings settings(storageFile);
-	if (settings.hasValue("Sound.volume")) // TODO: Update when ColorVario.ini changes
+	if (settings.hasValue("Display.locked")) // TODO: Update when ColorVario.ini changes
 		return settings;
 
 	// backup existing storage file
@@ -235,6 +240,16 @@ Kystsoft::Settings Kystsoft::VarioController::settingsFromFile()
 	if (!copyFile(resourceFile, storageFile))
 		return Settings(resourceFile);
 	return Settings(storageFile);
+}
+
+void Kystsoft::VarioController::onPause(Dali::Application& /*application*/)
+{
+	paused = true;
+}
+
+void Kystsoft::VarioController::onResume(Dali::Application& /*application*/)
+{
+	paused = false;
 }
 
 void Kystsoft::VarioController::onTouch(const Dali::TouchData& touch)
@@ -314,6 +329,13 @@ void Kystsoft::VarioController::onDisplayLocked(bool locked)
 	unlockedIcon.SetVisible(!locked);
 }
 
+void Kystsoft::VarioController::onDisplayStateChanged(display_state_e state)
+{
+	// if our app is paused, activate it when the display is turned on
+	if (paused && state == DISPLAY_STATE_NORMAL)
+		appManager.resume();
+}
+
 void Kystsoft::VarioController::setBackgroundColor(const Color& color)
 {
 	if (color == currentColor)
@@ -373,7 +395,6 @@ void Kystsoft::VarioController::setClimb(float climb)
 
 void Kystsoft::VarioController::setAltitude(float altitude)
 {
-	// TODO: Figure out a better place to destroy the GPS, or get used to this! ;-)
 	if (gps && !gps->isStarted())
 		gps.reset(); // destroy gps
 
