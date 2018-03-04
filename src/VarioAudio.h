@@ -14,7 +14,7 @@ public:
 	VarioAudio(const VarioAudio& other) = delete;
 	VarioAudio& operator=(const VarioAudio& rhs) = delete;
 	void load(const Settings& settings);
-	bool isMuted() const { return muted; }
+	bool isMuted() const { return !audioOutput.isPrepared(); }
 	void setMuted(bool muted);
 	void mute();
 	void unmute();
@@ -24,8 +24,9 @@ public:
 	const VarioSound& varioSound() const { return sound; }
 	void setClimb(float climb);
 private:
-	void turnAudioOn();
-	void turnAudioOff();
+	bool isPaused() const { return audioOutput.isPaused(); }
+	void pause();
+	void resume();
 	void onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested);
 	bool isSoundOn() const { return soundOn != 0; }
 	bool isSoundOff() const { return soundOn == 0; }
@@ -34,7 +35,6 @@ private:
 	AudioOutput audioOutput;
 	float lastCyclePhase = 0;
 	float lastTonePhase = 0;
-	bool muted = true;
 	Signal<bool> mutedSignl;
 	VarioSound sound;
 	float currentClimb = 3.1e+8f; // start with an unrealistic value (higher than the speed of light)

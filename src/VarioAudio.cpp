@@ -23,27 +23,25 @@ void Kystsoft::VarioAudio::setMuted(bool muted)
 
 void Kystsoft::VarioAudio::mute()
 {
-	if (muted)
+	if (isMuted())
 		return;
-	muted = true;
-	if (isSoundOn())
-		turnAudioOff();
-	mutedSignl.emit(muted);
+	audioOutput.unprepare();
+	mutedSignl.emit(true);
 }
 
 void Kystsoft::VarioAudio::unmute()
 {
-	if (!muted)
+	if (!isMuted())
 		return;
-	muted = false;
-	if (isSoundOn())
-		turnAudioOn();
-	mutedSignl.emit(muted);
+	audioOutput.prepare();
+	if (!isSoundOn())
+		pause();
+	mutedSignl.emit(false);
 }
 
 void Kystsoft::VarioAudio::toggleMuteUnmute()
 {
-	if (muted)
+	if (isMuted())
 		unmute();
 	else
 		mute();
@@ -84,23 +82,33 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 
 	// audio on or off
 	if (!soundWasOn && soundIsOn)
-		turnAudioOn();
+		resume();
 	else if (soundWasOn && !soundIsOn)
-		turnAudioOff();
+		pause();
 }
 
-void Kystsoft::VarioAudio::turnAudioOn()
+void Kystsoft::VarioAudio::pause()
 {
-	if (muted)
+	if (isMuted() || isPaused())
+		return;
+	// Without unprepare and prepare, the speaker generates a tick sound each time the sound starts
+	// With or without, the app starts generating sounds after it is unmuted manually (by touching the icon)
+	// and then it crashes after a few seconds. I really don't understand this. It must be something wrong
+	// in the Tizen implementation of pause.
+//	audioOutput.unprepare();
+//	audioOutput.prepare();
+	audioOutput.pause();
+	audioOutput.flush();
+//	audioOutput.drain(); // I have also tested drain but always got an error saying that this function is not implemented. Arrgh! Tizen stinks!
+}
+
+void Kystsoft::VarioAudio::resume()
+{
+	if (isMuted() || !isPaused())
 		return;
 	lastCyclePhase = 0;
 	lastTonePhase = 0;
-	audioOutput.prepare();
-}
-
-void Kystsoft::VarioAudio::turnAudioOff()
-{
-	audioOutput.unprepare();
+	audioOutput.resume();
 }
 
 void Kystsoft::VarioAudio::onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested)
