@@ -19,7 +19,16 @@ Kystsoft::VarioController::VarioController(Dali::Application& application)
 	app.PauseSignal().Connect(this, &VarioController::onPause);
 	app.ResumeSignal().Connect(this, &VarioController::onResume);
 
+	// connect variometer signals
+	vario.climbSignal().connect(this, &VarioController::setClimb);
+	vario.climbSignal().connect(&audio, &VarioAudio::setClimb);
+	vario.altitudeSignal().connect(this, &VarioController::setAltitude);
+
+	// connect audio signals
+	audio.mutedSignal().connect(this, &VarioController::onAudioMuted);
+
 	// connect display signals
+	display.lockedSignal().connect(this, &VarioController::onDisplayLocked);
 	display.stateChangedSignal().connect(this, &VarioController::onDisplayStateChanged);
 }
 
@@ -29,16 +38,8 @@ void Kystsoft::VarioController::create(Dali::Application& /*application*/)
 	// exceptions does not propagate to main, probably because we are in a different thread
 	try
 	{
-		// create user interface
 		createUi();
-
-		// load settings from file
 		load(settingsFromFile());
-
-		// connect variometer signals
-		vario.climbSignal().connect(this, &VarioController::setClimb);
-		vario.climbSignal().connect(&audio, &VarioAudio::setClimb);
-		vario.altitudeSignal().connect(this, &VarioController::setAltitude);
 
 		// create, connect and start gps
 		try
@@ -169,10 +170,6 @@ void Kystsoft::VarioController::createUi()
 	// connect stage signals
 	stage.TouchSignal().Connect(this, &VarioController::onTouch);
 	stage.KeyEventSignal().Connect(this, &VarioController::onKeyEvent);
-
-	// connect muted and locked signals
-	audio.mutedSignal().connect(this, &VarioController::onAudioMuted);
-	display.lockedSignal().connect(this, &VarioController::onDisplayLocked);
 }
 
 void Kystsoft::VarioController::load(const Settings& settings)

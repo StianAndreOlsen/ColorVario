@@ -15,7 +15,6 @@ public:
 	Display(const Display& other) = delete;
 	Display& operator=(const Display& rhs) = delete;
 	display_state_e state() const;
-	void setState(display_state_e state);
 	const Signal<display_state_e>& stateChangedSignal() const { return stateChangedSignl; }
 	float brightness() const;
 	void setBrightness(float brightness);
@@ -33,6 +32,7 @@ private:
 	int maxBrightness() const;
 	Signal<display_state_e> stateChangedSignl;
 	float initialBrightness = -1;
+	float wantedBrightness = -1;
 	bool locked = false;
 	Signal<bool> lockedSignl;
 };

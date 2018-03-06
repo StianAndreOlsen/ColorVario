@@ -5,7 +5,6 @@
 
 Kystsoft::Display::Display()
 {
-	setState(DISPLAY_STATE_NORMAL); // required since initialBrightness becomes 0 if the screen is off
 	addStateChangedCallback();
 }
 
@@ -28,14 +27,6 @@ display_state_e Kystsoft::Display::state() const
 	return state;
 }
 
-void Kystsoft::Display::setState(display_state_e state)
-{
-	// TODO: Find a replacement since this function is deprecated
-	int error = device_display_change_state(state);
-	if (error != DEVICE_ERROR_NONE)
-		throw TizenError("device_display_change_state", error);
-}
-
 float Kystsoft::Display::brightness() const
 {
 	int ibrightness = 0;
@@ -52,7 +43,16 @@ void Kystsoft::Display::setBrightness(float brightness)
 	if (brightness > 1)
 		brightness = 1;
 	if (initialBrightness < 0)
+	{
 		initialBrightness = this->brightness();
+		if (initialBrightness == 0)
+		{
+			// store the wanted brightness and try again when the display is turned on
+			initialBrightness = -1;
+			wantedBrightness = brightness;
+			return;
+		}
+	}
 	int ibrightness = int(brightness * maxBrightness() + 0.5f);
 	if (ibrightness < 1)
 		ibrightness = 1;
@@ -139,6 +139,12 @@ void Kystsoft::Display::onStateChanged(display_state_e state)
 			locked = false;
 			lock();
 		}
+	}
+
+	if (wantedBrightness >= 0 && state == DISPLAY_STATE_NORMAL)
+	{
+		setBrightness(wantedBrightness);
+		wantedBrightness = -1;
 	}
 
 	stateChangedSignl.emit(state);

@@ -4,15 +4,15 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>arIOnln9XHVtGfys7Gwd/LNG7UDa0eziudDG5Gqo1kM=</DigestValue>
+<DigestValue>uAYgpH4ta3wh5wNTHClB3HxueNSICJkc/l9QWW3nhO0=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>+178iUhIc9xH9u4TO6vTOjbsfgG4pIM25piXw1BltPU=</DigestValue>
+<DigestValue>3cnvJDQHyLZN4ors7DmgOfRVUNeGBGHoG5NcMC11JX8=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>s6C+i85sJ/fPLHqYgLEdG5XgMKBDujIRcmzQNFRDFJE=</DigestValue>
+<DigestValue>TGSCU+7hlweJk6BU/OVg1xuVM62gT5WT9rZFpMFo9kA=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -44,7 +44,7 @@
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>uGcKiEoRUcjcHaZdhSB7KMLlSnJ5kK61X8XXgv7WuK0=</DigestValue>
+<DigestValue>dO2tIDCfkIMAsO8wvSfbjCjSMdAI61hCQ1DXjORiU6A=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -55,11 +55,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-W5KXBAAdqNUOagGYx/MAUpQW7xDwt/YRqkituDepNuc8UUfLSO2UMxutThlbeM05mUejOoFy6qDL
-UZxmWc8ZMpEzNULbKjbu6ajHjtWBsGumHb+er9CbX97Hx/MJ9LHOXEpq0lT3gulyMcVNb0KiU2D7
-vwDP7aCMhJ0BLIyGSEREKZwxt0K35a/T4+yrKWjZOqijrXcZWH9RxxGaWmlBKhQgyzEuQ/jZoVkP
-PTYE7AOMyHtYdrgmUmT/jGS7hiF6iBjbtnwDJadG5iOiJAMFyeW0p5Wh6h5+0VJw+zdde/ZGBlsr
-mAyRZ+S2WlFBBzN7QA/CKGK8NLez6VUU/LgzmA==
+oEghoIvxaMP8NG6n2uhBozgFYG6cZvIlkdUMKQYeTYjChg4RcEEJv95vZtmKuMW+8jE6QfnGRAtf
+ukC5A/LIe90sYn7y28Pe0Ela1HYfRyA83KbpF0fmEztP0miwhEMqzITTjj/s2iWG6EsmXBgshuiw
+fugscwJJYmQU5YlXpNxWcNhuhacNlb2zBtVQZBjexux0WTabb77gVOhNG+XEnaSpggIJEK3dmxeD
+8c4mi5kQImomlrlOwA26qtL3m9suMRcfjKrIuR9DMBR8XQD+iPhhgEZz+IeAQ8IDmyH4DhqOqEsK
+PAl63LWbO5QuNLsbhdPNUC0r7TftphCs6Ac57w==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

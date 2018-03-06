@@ -23,27 +23,23 @@ void Kystsoft::VarioAudio::setMuted(bool muted)
 
 void Kystsoft::VarioAudio::mute()
 {
-	if (muted)
+	if (isMuted())
 		return;
-	muted = true;
-	if (isSoundOn())
-		turnAudioOff();
-	mutedSignl.emit(muted);
+	audioOutput.unprepare();
+	mutedSignl.emit(true);
 }
 
 void Kystsoft::VarioAudio::unmute()
 {
-	if (!muted)
+	if (!isMuted())
 		return;
-	muted = false;
-	if (isSoundOn())
-		turnAudioOn();
-	mutedSignl.emit(muted);
+	audioOutput.prepare();
+	mutedSignl.emit(false);
 }
 
 void Kystsoft::VarioAudio::toggleMuteUnmute()
 {
-	if (muted)
+	if (isMuted())
 		unmute();
 	else
 		mute();
@@ -57,7 +53,6 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 	currentClimb = climb;
 
 	// sound on or off
-	bool soundWasOn = isSoundOn();
 	if (previousClimb > 3e+8f)
 	{
 		// special handling if this is the first real climb value
@@ -80,31 +75,20 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 		if (isSoundOff() && currentClimb <= sound.sinkSoundOnThreshold())
 			soundOn = -1; // turn on sink sound
 	}
-	bool soundIsOn = isSoundOn();
-
-	// audio on or off
-	if (!soundWasOn && soundIsOn)
-		turnAudioOn();
-	else if (soundWasOn && !soundIsOn)
-		turnAudioOff();
-}
-
-void Kystsoft::VarioAudio::turnAudioOn()
-{
-	if (muted)
-		return;
-	lastCyclePhase = 0;
-	lastTonePhase = 0;
-	audioOutput.prepare();
-}
-
-void Kystsoft::VarioAudio::turnAudioOff()
-{
-	audioOutput.unprepare();
 }
 
 void Kystsoft::VarioAudio::onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested)
 {
+	if (!isSoundOn())
+	{
+		lastCyclePhase = 0;
+		lastTonePhase = 0;
+		size_t pointCount = bytesRequested; // 8-bit audio --> number of points equals number of bytes
+		std::vector<uint8_t> points(pointCount, INT8_MAX);
+		audioOutput.write(points);
+		return;
+	}
+
 	// get sample rate
 	int sampleRate = audioOutput.sampleRate();
 
