@@ -2,7 +2,12 @@
 #include <cmath>
 
 Kystsoft::VarioAudio::VarioAudio()
-	: audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_U8)
+// TODO: Figure out the native audio format used by the watch and choose that, as recommended here:
+// https://developer.tizen.org/ko/development/guides/native-application/media-and-camera/raw-audio-playback-and-recording
+//	: audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_U8)
+//	: audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_S16_LE)
+//	: audioOutput(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_U8)
+	: audioOutput(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_S16_LE)
 {
 	audioOutput.writeCallback().connect(this, &VarioAudio::onAudioRequested);
 }
@@ -79,30 +84,53 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 
 void Kystsoft::VarioAudio::onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested)
 {
-	if (!isSoundOn())
+	// get audio characteristics
+	int sampleRate = audioOutput.sampleRate();
+	audio_channel_e channel = audioOutput.channel();
+	audio_sample_type_e sampleType = audioOutput.sampleType();
+
+	if (isSoundOff())
 	{
 		lastCyclePhase = 0;
 		lastTonePhase = 0;
-		size_t pointCount = bytesRequested; // 8-bit audio --> number of points equals number of bytes
-		std::vector<uint8_t> points(pointCount, INT8_MAX);
-		audioOutput.write(points);
+		if (sampleType == AUDIO_SAMPLE_TYPE_U8)
+		{
+			std::vector<uint8_t> points(bytesRequested, INT8_MAX);
+			audioOutput.write(points);
+		}
+		else // AUDIO_SAMPLE_TYPE_S16_LE
+		{
+			std::vector<int16_t> points(bytesRequested / 2, 0);
+			audioOutput.write(points);
+		}
 		return;
 	}
-
-	// get sample rate
-	int sampleRate = audioOutput.sampleRate();
 
 	// get sound characteristics
 	float frequency = sound.frequency(currentClimb);
 	float period = sound.period(currentClimb);
 	float duty = sound.duty(currentClimb);
 
+	// calculate number of points
+	size_t pointCount = bytesRequested;
+	if (channel == AUDIO_CHANNEL_STEREO)
+		pointCount /= 2;
+	if (sampleType == AUDIO_SAMPLE_TYPE_S16_LE)
+		pointCount /= 2;
+
 	// calculate number of points in a full cycle
 	uint32_t cyclePointCount = uint32_t(sampleRate * period);
 
 	// create sound and silence points
-	size_t pointCount = bytesRequested; // 8-bit audio --> number of points equals number of bytes
-	std::vector<uint8_t> points(pointCount, INT8_MAX);
+	std::vector<uint8_t> pointsU8;
+	std::vector<int16_t> points16;
+	size_t size = pointCount;
+	if (channel == AUDIO_CHANNEL_STEREO)
+		size *= 2;
+	if (sampleType == AUDIO_SAMPLE_TYPE_U8)
+		pointsU8.resize(size, INT8_MAX);
+	else // AUDIO_SAMPLE_TYPE_S16_LE
+		points16.resize(size, 0);
 	float cyclePhase = 0;
 	float tonePhase = 0;
 	for (size_t i = 0; i < pointCount; ++i)
@@ -129,7 +157,22 @@ void Kystsoft::VarioAudio::onAudioRequested(AudioOutput& audioOutput, size_t byt
 				y = 2 * (x - std::floor(x + 0.5f));
 				break;
 			}
-			points[i] = uint8_t(y * INT8_MAX + INT8_MAX);
+			if (sampleType == AUDIO_SAMPLE_TYPE_U8)
+			{
+				uint8_t point = uint8_t(y * INT8_MAX + INT8_MAX);
+				if (channel == AUDIO_CHANNEL_STEREO)
+					pointsU8[2*i] = pointsU8[2*i+1] = point;
+				else
+					pointsU8[i] = point;
+			}
+			else // AUDIO_SAMPLE_TYPE_S16_LE
+			{
+				int16_t point = int16_t(y * INT16_MAX);
+				if (channel == AUDIO_CHANNEL_STEREO)
+					points16[2*i] = points16[2*i+1] = point;
+				else
+					points16[i] = point;
+			}
 			tonePhase = x - int(x); // keep below 1
 		}
 		else
@@ -141,5 +184,8 @@ void Kystsoft::VarioAudio::onAudioRequested(AudioOutput& audioOutput, size_t byt
 	lastTonePhase = tonePhase;
 
 	// play sound
-	audioOutput.write(points);
+	if (sampleType == AUDIO_SAMPLE_TYPE_U8)
+		audioOutput.write(pointsU8);
+	else
+		audioOutput.write(points16);
 }
