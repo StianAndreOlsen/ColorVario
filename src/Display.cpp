@@ -124,29 +124,11 @@ void Kystsoft::Display::stateChanged(device_callback_e type, void* value, void* 
 
 void Kystsoft::Display::onStateChanged(display_state_e state)
 {
-	if (locked)
-	{
-		// unlock when display is turned off
-		if (state == DISPLAY_STATE_SCREEN_OFF)
-		{
-			unlock();
-			locked = true; // keep locked flag to reset lock when display is turned on
-		}
-
-		// reset lock when display is turned on
-		else if (state == DISPLAY_STATE_NORMAL)
-		{
-			locked = false;
-			lock();
-		}
-	}
-
 	if (wantedBrightness >= 0 && state == DISPLAY_STATE_NORMAL)
 	{
 		setBrightness(wantedBrightness);
 		wantedBrightness = -1;
 	}
-
 	stateChangedSignl.emit(state);
 }
 

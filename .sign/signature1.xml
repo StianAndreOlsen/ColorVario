@@ -4,15 +4,15 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>0S5Ca3EJc7ujKiwRjjwobXCrqQ8iJAYLK8OpkTJCah0=</DigestValue>
+<DigestValue>+sgr4ZjQL+Odq7ipjPhgP3dzIBEwMzckZJUHFTO4OiI=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>PF/oQiMwomMDKV7pFntF3gQHfYAvOjd7FKrBynquPko=</DigestValue>
+<DigestValue>ZXj/S+b2NcE4CaKCOpZ1jxjCrPPCzeInq2n37fFz5h4=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>s6C+i85sJ/fPLHqYgLEdG5XgMKBDujIRcmzQNFRDFJE=</DigestValue>
+<DigestValue>+hK52nsijLZUwiPzNljXpq420xwW2ehF0PGcbw/vewo=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -44,7 +44,7 @@
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>dO2tIDCfkIMAsO8wvSfbjCjSMdAI61hCQ1DXjORiU6A=</DigestValue>
+<DigestValue>/8XX3LDLjmCs/+NHChpDbfIL6i8AKoU/WLFivo2PZlA=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -55,11 +55,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-EOksKcfq7aXSmALkMn7WYHVwm/gaZiVJA0PACnbUyAxT2s1PElaDJLmIY008c3cbwKrE8XVX93qn
-qm54kYJQbPDTlsfCh5cWmMqAbQPwHroAp9R2tEcQ0KnaG26hCXuoKxH+vWpN9xmrGDrFmADrkxrg
-Bm8ZF7ttLf8KNWeW1pMaarj9d+erViFKsmUu7NKss19k991YvBIWTYryYiqcqhiawK7QBFGWwUSs
-hXqxaIHpw/ReGnWnVLwak1QTrgbBu+VEfUCbJuPj7BJm5lHK+bHH8V7Hcj9hVMXsecEmNCQYjpzD
-LjgTYb9LiS/2MV9jqrD9deCkCk0hg18NdEtu/g==
+e4kYOO7ilNnT/uotAJyoa7Hm86m1GXM854tpiBtzH1ukCiHQSHsHJ2ES+KrV+6FMP+EsOPeswyHi
+0zSGc4xGHIpOxOFbvNwpVSu7dkOc61O+YlsospyLazrEPjLSLpDP42ujUQ6u9LHzt5pBJB2COKE2
+E8P9FxQxUi2390Bckox/1maKRkmhSr/FgajrcHlPVtnChmy8Bv/sFE9Anc5GW/SDycLZ+BZ3UDxA
+BFJ8LQeODvfUF3MVquj+USpMXHvCsB2LAC4TRbfB1Q1GXHwWF8HAeYxrhqd/gOlj6Fqwefd1yLPM
+XyxdiFociqA2UmU4Ro0h3IaIwHptO/JEnwph4w==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

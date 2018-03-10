@@ -11,7 +11,6 @@
         <background-category value="sensor"/>
     </ui-application>
     <privileges>
-        <privilege>http://tizen.org/privilege/appmanager.launch</privilege>
         <privilege>http://tizen.org/privilege/display</privilege>
         <privilege>http://tizen.org/privilege/location</privilege>
         <privilege>http://tizen.org/privilege/mediastorage</privilege>

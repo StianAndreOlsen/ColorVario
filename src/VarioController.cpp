@@ -170,6 +170,8 @@ void Kystsoft::VarioController::createUi()
 	// connect stage signals
 	stage.TouchSignal().Connect(this, &VarioController::onTouch);
 	stage.KeyEventSignal().Connect(this, &VarioController::onKeyEvent);
+	stage.ContextLostSignal().Connect(this, &VarioController::onContextLost);
+	stage.ContextRegainedSignal().Connect(this, &VarioController::onContextRegained);
 }
 
 void Kystsoft::VarioController::load(const Settings& settings)
@@ -181,16 +183,11 @@ void Kystsoft::VarioController::load(const Settings& settings)
 		setDebugLogFile(""); // terminate string stream buffering
 
 	// set sound volume
-	float volume = settings.value("Sound.volume", -1.0f);
-	if (volume >= 0)
-		soundManager.setVolume(volume / 100);
+	soundManager.setVolume(settings.value("Sound.volume", -100.0f) / 100);
 
 	// control display
-	float brightness = settings.value("Display.brightness", -1.0f);
-	if (brightness >= 0)
-		display.setBrightness(brightness / 100);
-	if (settings.value("Display.locked", false))
-		display.lock();
+	display.setBrightness(settings.value("Display.brightness", -100.0f) / 100);
+	display.setLocked(settings.value("Display.locked", false));
 
 	// climb and altitude settings
 	climbUnit = settings.value("Display.climbUnit");
@@ -241,12 +238,32 @@ Kystsoft::Settings Kystsoft::VarioController::settingsFromFile()
 
 void Kystsoft::VarioController::onPause(Dali::Application& /*application*/)
 {
-	paused = true;
+	if (display.isLocked())
+	{
+		display.unlock();
+		displayLockPaused = true;
+	}
+	cpu.lock(); // no dad, I am not going to sleep!
 }
 
 void Kystsoft::VarioController::onResume(Dali::Application& /*application*/)
 {
-	paused = false;
+	cpu.unlock(); // not even dad wants me to sleep while I am up and running
+	if (displayLockPaused)
+	{
+		display.lock();
+		displayLockPaused = false;
+	}
+}
+
+void Kystsoft::VarioController::onContextLost()
+{
+	dlog(DLOG_INFO) << "Context lost!";
+}
+
+void Kystsoft::VarioController::onContextRegained()
+{
+	dlog(DLOG_INFO) << "Context regained!";
 }
 
 void Kystsoft::VarioController::onTouch(const Dali::TouchData& touch)
@@ -328,9 +345,9 @@ void Kystsoft::VarioController::onDisplayLocked(bool locked)
 
 void Kystsoft::VarioController::onDisplayStateChanged(display_state_e state)
 {
-	// if our app is paused, activate it when the display is turned on
-	if (paused && state == DISPLAY_STATE_NORMAL)
-		appManager.resume();
+	if (state == DISPLAY_STATE_NORMAL)
+		app.GetWindow().Activate();
+
 }
 
 void Kystsoft::VarioController::setBackgroundColor(const Color& color)

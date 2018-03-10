@@ -89,6 +89,7 @@ void Kystsoft::VarioAudio::onAudioRequested(AudioOutput& audioOutput, size_t byt
 	audio_channel_e channel = audioOutput.channel();
 	audio_sample_type_e sampleType = audioOutput.sampleType();
 
+	// create silence points
 	if (isSoundOff())
 	{
 		lastCyclePhase = 0;

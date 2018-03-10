@@ -1,7 +1,7 @@
 #ifndef KYSTSOFT_VARIOCONTROLLER_H
 #define KYSTSOFT_VARIOCONTROLLER_H
 
-#include "AppManager.h"
+#include "Cpu.h"
 #include "Display.h"
 #include "LocationManager.h"
 #include "SoundManager.h"
@@ -24,6 +24,8 @@ private:
 	Settings settingsFromFile();
 	void onPause(Dali::Application& application);
 	void onResume(Dali::Application& application);
+	void onContextLost(); // TODO: Remove after testing
+	void onContextRegained(); // TODO: Remove after testing
 	void onTouch(const Dali::TouchData& touch);
 	void onKeyEvent(const Dali::KeyEvent& event);
 	void onLocationUpdated(const Location& location);
@@ -48,10 +50,10 @@ private:
 	std::string altitudeUnit = "m";
 	bool showClimbUnit = true;
 	bool showAltitudeUnit = true;
-	bool paused = false;
-	AppManager appManager;
 	SoundManager soundManager;
+	Cpu cpu;
 	Display display;
+	bool displayLockPaused = false;
 	std::unique_ptr<LocationManager> gps;
 	time_t gpsStartTime = 0;
 	double gpsBestAccuracy = 1e+6;
