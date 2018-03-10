@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ZXj/S+b2NcE4CaKCOpZ1jxjCrPPCzeInq2n37fFz5h4=</DigestValue>
+<DigestValue>W5gLpHdAy0V/NR/LgyO86aEAuY9sjBPSdMjIyYhznDw=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>+hK52nsijLZUwiPzNljXpq420xwW2ehF0PGcbw/vewo=</DigestValue>
+<DigestValue>QfdM8fzMFL+mGpotQ4aWtpZMc2F0HlL3NN1OTJZ3zMM=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -51,11 +51,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-MrSfV/hOvYvzlWlRueZKihgGuevoQAzEcMP5d0CqtT7CkaryCFWVBMqeQeKfVzMU+dYUcSJNqKZx
-WuoAKfFDJFN0kT0rs9ZWLdHcZEuLURfw1YAsePFR6c60P9wQm4BNkj67Du3+z7WUBwRLGaIa7KAB
-XsSb6GIHEbICpdjnmPczwlN928tvrwI/uSvjqkQmKVsLHHGHTwA122FA2J0H2yTdpjeIASznDael
-Uvd55iZf6mriBwaBES+dD4ZqhxZSMX1h2whbjwyJveuaXIddnoEKogXiORck0WTFbwrJ9OdQzrTh
-B7ubs6VXuN8NnDZYsS4WeYNFM0a5ubPHfhmw7w==
+QMGazdb/BaaeYD1yKDSwnBTtoOFeMS/p4lp7OgjjsEBUAvKnt/dJS5uKGAn7tYsonfmPC6+cPe2F
+lvERPoW+WyvUJhGIZWTNdswO0wv6amvE4oRnfPVisZYFDYPwLdqj2ExqSjK2e8XXHwpwtA2o9HcR
+GXM6GvnrC5kO/wUj50WoJBPQPYc6mzIFMIHdgKKNkDxptfiVOEoHHCucH/YVVc9xxcoF9u4i424Z
+S4OYCyxijBtcWdhNwBO0UmPxt4BuCGeqNdivvN/Xdxeo0xfHRgUVz0M/hpDbHIDDRHC29G3lEygC
+FYQQqzTSlCCQ75aJ17v1hnu8AnVAd5paN/IorA==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

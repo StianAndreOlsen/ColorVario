@@ -4,6 +4,7 @@
 #include "AudioOutput.h"
 #include "Signal.h"
 #include "VarioSound.h"
+#include <ctime>
 
 namespace Kystsoft {
 
@@ -32,6 +33,7 @@ private:
 	AudioOutput audioOutput;
 	float lastCyclePhase = 0;
 	float lastTonePhase = 0;
+	time_t lastWriteTime = 0;
 	Signal<bool> mutedSignl;
 	VarioSound sound;
 	float currentClimb = 3.1e+8f; // start with an unrealistic value (higher than the speed of light)

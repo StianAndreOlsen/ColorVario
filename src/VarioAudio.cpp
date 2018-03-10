@@ -1,4 +1,5 @@
 #include "VarioAudio.h"
+#include "dlog.h"
 #include <cmath>
 
 Kystsoft::VarioAudio::VarioAudio()
@@ -30,6 +31,7 @@ void Kystsoft::VarioAudio::mute()
 {
 	if (isMuted())
 		return;
+	lastWriteTime = 0;
 	audioOutput.unprepare();
 	mutedSignl.emit(true);
 }
@@ -38,6 +40,7 @@ void Kystsoft::VarioAudio::unmute()
 {
 	if (!isMuted())
 		return;
+	lastWriteTime = 0;
 	audioOutput.prepare();
 	mutedSignl.emit(false);
 }
@@ -80,10 +83,22 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 		if (isSoundOff() && currentClimb <= sound.sinkSoundOnThreshold())
 			soundOn = -1; // turn on sink sound
 	}
+
+	// restart audio if it has stopped (for some mysterious reason)
+	if (!isMuted() && lastWriteTime > 0 && std::difftime(std::time(nullptr), lastWriteTime) > 2)
+	{
+		lastWriteTime = 0;
+		audioOutput.unprepare();
+		audioOutput.prepare();
+		dlog(DLOG_INFO) << "Audio is restarted!";
+	}
 }
 
 void Kystsoft::VarioAudio::onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested)
 {
+	// save the last write time
+	lastWriteTime = std::time(nullptr);
+
 	// get audio characteristics
 	int sampleRate = audioOutput.sampleRate();
 	audio_channel_e channel = audioOutput.channel();

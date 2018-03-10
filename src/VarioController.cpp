@@ -376,12 +376,8 @@ void Kystsoft::VarioController::setBackgroundColor(const Color& color)
 
 void Kystsoft::VarioController::setClimb(float climb)
 {
-	if (iconBox.IsVisible())
-	{
-		double seconds = std::difftime(std::time(nullptr), lastIconBoxTouch);
-		if (seconds > 15)
-			iconBox.SetVisible(false);
-	}
+	if (iconBox.IsVisible() && std::difftime(std::time(nullptr), lastIconBoxTouch) > 15)
+		iconBox.SetVisible(false);
 
 	setBackgroundColor(color(climb));
 
