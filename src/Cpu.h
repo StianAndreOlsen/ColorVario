@@ -9,9 +9,9 @@ class Cpu
 {
 public:
 	Cpu() {}
-	~Cpu() noexcept;
 	Cpu(const Cpu& other) = delete;
 	Cpu& operator=(const Cpu& rhs) = delete;
+	~Cpu() noexcept;
 	bool isLocked() const { return locked; }
 	void setLocked(bool locked);
 	void lock();

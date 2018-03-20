@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>W5gLpHdAy0V/NR/LgyO86aEAuY9sjBPSdMjIyYhznDw=</DigestValue>
+<DigestValue>1/v2ByagsqbDmPBVxJQDMsYNGAO3/s0nGUfn/pNM+RY=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>QfdM8fzMFL+mGpotQ4aWtpZMc2F0HlL3NN1OTJZ3zMM=</DigestValue>
+<DigestValue>6fvmkvlofy1mMlKD+mWC0lBu05CdKAd3JlQfhYJs61Y=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -24,23 +24,23 @@
 </Reference>
 <Reference URI="shared%2Fres%2FLocked.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>tej7CQTMt6qXuK48PddB/BLbLTfxaHhTeI6KGUYq6Bs=</DigestValue>
+<DigestValue>xzt35VfFYL4qOSCrTXVS9/28lCS51aMaEG62jaVlrLU=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FMuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>EOs2GMviBNNO3t2+JTcRCI8GnhPaDahsrk3g6l5HzaQ=</DigestValue>
+<DigestValue>GWWezX+Z4NnFyxbOp72nSdVisBNvh364keB+YmeahMQ=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FUnlocked.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>/5km68jjRAQSKhvb4/L4WJJnUkpaMol1dpN2dqQsylk=</DigestValue>
+<DigestValue>5Xx37aAkt0sv6b0sSd49zMUnZID7F5Ty/3OLLnIOVjg=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FUnmuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>oztGF+zNXUqsDPwifPhHqcqa8WrMO0SJl5sfQal6bOo=</DigestValue>
+<DigestValue>y1dMkyvF+p1X77wAdRXzakpHD0rCApEwCMSxiT/3t9I=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>/8XX3LDLjmCs/+NHChpDbfIL6i8AKoU/WLFivo2PZlA=</DigestValue>
+<DigestValue>wwNUTS897JjOVc72L4/x5bipu8isNyAEY/5m3XMwUNk=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -51,11 +51,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-QMGazdb/BaaeYD1yKDSwnBTtoOFeMS/p4lp7OgjjsEBUAvKnt/dJS5uKGAn7tYsonfmPC6+cPe2F
-lvERPoW+WyvUJhGIZWTNdswO0wv6amvE4oRnfPVisZYFDYPwLdqj2ExqSjK2e8XXHwpwtA2o9HcR
-GXM6GvnrC5kO/wUj50WoJBPQPYc6mzIFMIHdgKKNkDxptfiVOEoHHCucH/YVVc9xxcoF9u4i424Z
-S4OYCyxijBtcWdhNwBO0UmPxt4BuCGeqNdivvN/Xdxeo0xfHRgUVz0M/hpDbHIDDRHC29G3lEygC
-FYQQqzTSlCCQ75aJ17v1hnu8AnVAd5paN/IorA==
+OFH+cXNQ5ji65pTe3h4hVU7azBRYn8DFLxd1wmlTpVB6ysXO3OQrBFINDJ4/p5rg2qHHk0zSDcNe
+Vu2rX94HNdjcTL2Ny9vasRsvz5kMU7fG2jhI/LF84L0t3x6Tl4iHJyXR9M86/izSvgX6hV3BnvqM
+nJgrkti5+s2QXr4BupMHfTEqueH+uXbUuhk1tKUKQXxWd+xf/NemY2LFI4LJvExIKd1yA7s6QWwz
+jm+ItDNWdRpAC9U1CpFYW7zORBdF7kAU9AAtsA40cIE+8NozmpKZQ33ZMfAPf57/9tVDl7BKi79s
+DgGimMOdOTppp9UHmnLzkn9UbwWt7DcgvX7hzQ==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

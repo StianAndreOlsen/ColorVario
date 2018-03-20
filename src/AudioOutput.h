@@ -15,7 +15,7 @@ public:
 	AudioOutput& operator=(const AudioOutput& rhs) = delete;
 	~AudioOutput() noexcept;
 	operator audio_out_h() const { return output; }
-	void setSoundStreamInfo(sound_stream_info_h streamInfo); // TODO: Figure out what this function does
+	void setSoundStreamInfo(sound_stream_info_h streamInfo);
 	bool isPrepared() const { return prepared; }
 	void setPrepared(bool prepared);
 	void prepare();

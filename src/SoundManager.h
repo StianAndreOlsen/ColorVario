@@ -9,9 +9,9 @@ class SoundManager
 {
 public:
 	SoundManager(sound_type_e type) : soundType(type) {}
-	~SoundManager() noexcept;
 	SoundManager(const SoundManager& other) = delete;
 	SoundManager& operator=(const SoundManager& rhs) = delete;
+	~SoundManager() noexcept;
 	float volume() const;
 	void setVolume(float volume);
 private:

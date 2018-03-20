@@ -11,9 +11,9 @@ class Display
 {
 public:
 	Display();
-	~Display() noexcept;
 	Display(const Display& other) = delete;
 	Display& operator=(const Display& rhs) = delete;
+	~Display() noexcept;
 	display_state_e state() const;
 	const Signal<display_state_e>& stateChangedSignal() const { return stateChangedSignl; }
 	float brightness() const;

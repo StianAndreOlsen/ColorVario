@@ -3,14 +3,27 @@
 #include <cmath>
 
 Kystsoft::VarioAudio::VarioAudio()
+	: soundStream(SOUND_STREAM_TYPE_MEDIA)
 // TODO: Figure out the native audio format used by the watch and choose that, as recommended here:
 // https://developer.tizen.org/ko/development/guides/native-application/media-and-camera/raw-audio-playback-and-recording
-//	: audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_U8)
-//	: audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_S16_LE)
-//	: audioOutput(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_U8)
-	: audioOutput(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_S16_LE)
+//	, audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_U8)
+//	, audioOutput(44100, AUDIO_CHANNEL_MONO, AUDIO_SAMPLE_TYPE_S16_LE)
+//	, audioOutput(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_U8)
+	, audioOutput(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_S16_LE)
 {
+	soundStream.focusChangedSignal().connect(this, &VarioAudio::onSoundStreamFocusChanged);
+	audioOutput.setSoundStreamInfo(soundStream);
 	audioOutput.writeCallback().connect(this, &VarioAudio::onAudioRequested);
+}
+
+Kystsoft::VarioAudio::~VarioAudio() noexcept
+{
+	// Note: It is important to mute before audioOutput is destroyed. If not,
+	// the sound stream focus will be released when soundStream is destroyed
+	// and if that happens after audioOutput has been destroyed our call to
+	// audioOutput.unprepare() will crash the application.
+	try { mute(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
 
 void Kystsoft::VarioAudio::load(const Settings& settings)
@@ -31,18 +44,14 @@ void Kystsoft::VarioAudio::mute()
 {
 	if (isMuted())
 		return;
-	lastWriteTime = 0;
-	audioOutput.unprepare();
-	mutedSignl.emit(true);
+	soundStream.releasePlaybackFocus();
 }
 
 void Kystsoft::VarioAudio::unmute()
 {
 	if (!isMuted())
 		return;
-	lastWriteTime = 0;
-	audioOutput.prepare();
-	mutedSignl.emit(false);
+	soundStream.acquirePlaybackFocus();
 }
 
 void Kystsoft::VarioAudio::toggleMuteUnmute()
@@ -84,6 +93,7 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 			soundOn = -1; // turn on sink sound
 	}
 
+	// TODO: Remove if this never happens (check ColorVario.log after a long period of testing)
 	// restart audio if it has stopped (for some mysterious reason)
 	if (!isMuted() && lastWriteTime > 0 && std::difftime(std::time(nullptr), lastWriteTime) > 2)
 	{
@@ -91,6 +101,23 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 		audioOutput.unprepare();
 		audioOutput.prepare();
 		dlog(DLOG_INFO) << "Audio is restarted!";
+	}
+}
+
+void Kystsoft::VarioAudio::onSoundStreamFocusChanged(int focus)
+{
+	lastWriteTime = 0;
+	if (focus & SOUND_STREAM_FOCUS_FOR_PLAYBACK)
+	{
+		// focus gained --> start audio
+		audioOutput.prepare();
+		mutedSignl.emit(false);
+	}
+	else
+	{
+		// focus lost --> stop audio
+		audioOutput.unprepare();
+		mutedSignl.emit(true);
 	}
 }
 

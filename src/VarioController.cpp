@@ -191,7 +191,7 @@ void Kystsoft::VarioController::load(const Settings& settings)
 
 	// climb and altitude settings
 	climbUnit = settings.value("Display.climbUnit");
-	if (climbUnit != "fpm" && climbUnit != "hfpm")
+	if (climbUnit != "fpm" && climbUnit != "hfpm" && climbUnit != "kn")
 		climbUnit = "m/s";
 	altitudeUnit = settings.value("Display.altitudeUnit");
 	if (altitudeUnit != "ft")
@@ -392,6 +392,11 @@ void Kystsoft::VarioController::setClimb(float climb)
 	{
 		os.precision(1);
 		os << climb * 60 / 0.3048f / 100;
+	}
+	else if (climbUnit == "kn")
+	{
+		os.precision(1);
+		os << climb * 60 * 60 / 1852;
 	}
 	else
 	{

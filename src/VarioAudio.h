@@ -3,6 +3,7 @@
 
 #include "AudioOutput.h"
 #include "Signal.h"
+#include "SoundStream.h"
 #include "VarioSound.h"
 #include <ctime>
 
@@ -14,6 +15,7 @@ public:
 	VarioAudio();
 	VarioAudio(const VarioAudio& other) = delete;
 	VarioAudio& operator=(const VarioAudio& rhs) = delete;
+	~VarioAudio() noexcept;
 	void load(const Settings& settings);
 	bool isMuted() const { return !audioOutput.isPrepared(); }
 	void setMuted(bool muted);
@@ -25,11 +27,13 @@ public:
 	const VarioSound& varioSound() const { return sound; }
 	void setClimb(float climb);
 private:
+	void onSoundStreamFocusChanged(int focus);
 	void onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested);
 	bool isSoundOn() const { return soundOn != 0; }
 	bool isSoundOff() const { return soundOn == 0; }
 	bool isClimbSoundOn() const { return soundOn > 0; }
 	bool isSinkSoundOn() const { return soundOn < 0; }
+	SoundStream soundStream;
 	AudioOutput audioOutput;
 	float lastCyclePhase = 0;
 	float lastTonePhase = 0;
