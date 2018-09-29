@@ -12,7 +12,7 @@ struct Location
 	double longitude = 0; // degrees [-180, 180]
 	double altitude = 0; // altitude above the geodetic datum [m]
 	double speed = 0; // horizontal speed [m/s]
-	double direction = 0; // degrees from the north // TODO: Update with better description when I know the definition
+	double direction = 0; // traveling direction in degrees [0, 360) (north 0, east 90, south 180, west 270)
 	double climb = 0; // vertical speed [m/s]
 	location_accuracy_level_e level = LOCATIONS_ACCURACY_NONE;
 	double horizontal = 0; // horizontal accuracy [m]

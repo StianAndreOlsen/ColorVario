@@ -91,6 +91,6 @@ void Kystsoft::SoundStream::focusChangedCallback(
 	void* user_data)
 {
 	SoundStream* soundStream = static_cast<SoundStream*>(user_data);
-	if (soundStream != nullptr)
+	if (soundStream)
 		soundStream->onFocusChanged();
 }

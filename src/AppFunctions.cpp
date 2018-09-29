@@ -38,7 +38,7 @@ std::string Kystsoft::appVersion()
 std::string Kystsoft::appDataPath()
 {
 	char* path = app_get_data_path();
-	if (path == nullptr)
+	if (!path)
 		throw TizenError("app_get_data_path", get_last_result());
 	std::string appPath(path);
 	free(path);
@@ -48,7 +48,7 @@ std::string Kystsoft::appDataPath()
 std::string Kystsoft::appResourcePath()
 {
 	char* path = app_get_resource_path();
-	if (path == nullptr)
+	if (!path)
 		throw TizenError("app_get_resource_path", get_last_result());
 	std::string appPath(path);
 	free(path);
@@ -58,7 +58,7 @@ std::string Kystsoft::appResourcePath()
 std::string Kystsoft::appSharedDataPath()
 {
 	char* path = app_get_shared_data_path();
-	if (path == nullptr)
+	if (!path)
 		throw TizenError("app_get_shared_data_path", get_last_result());
 	std::string appPath(path);
 	free(path);
@@ -68,7 +68,7 @@ std::string Kystsoft::appSharedDataPath()
 std::string Kystsoft::appSharedResourcePath()
 {
 	char* path = app_get_shared_resource_path();
-	if (path == nullptr)
+	if (!path)
 		throw TizenError("app_get_shared_resource_path", get_last_result());
 	std::string appPath(path);
 	free(path);

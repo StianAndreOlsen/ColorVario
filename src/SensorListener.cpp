@@ -108,6 +108,6 @@ void Kystsoft::SensorListener::unsetSensorEventCallback()
 void Kystsoft::SensorListener::sensorEventCallback(sensor_h sensor, sensor_event_s* event, void* user_data)
 {
 	SensorListener* listener = static_cast<SensorListener*>(user_data);
-	if (listener != nullptr)
+	if (listener)
 		listener->onSensorEvent(sensor, event);
 }

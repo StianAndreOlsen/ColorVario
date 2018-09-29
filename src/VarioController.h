@@ -1,6 +1,8 @@
 #ifndef KYSTSOFT_VARIOCONTROLLER_H
 #define KYSTSOFT_VARIOCONTROLLER_H
 
+#include "BluetoothAdapter.h"
+#include "BluetoothLowEnergyAdvertiser.h"
 #include "Cpu.h"
 #include "Display.h"
 #include "LocationManager.h"
@@ -61,6 +63,8 @@ private:
 	VarioAudio audio;
 	VarioColor color;
 	Color currentColor;
+	BluetoothAdapter btAdapter;
+	BluetoothLowEnergyAdvertiser bleAdvertiser;
 };
 
 } // namespace Kystsoft

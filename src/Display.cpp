@@ -118,7 +118,7 @@ void Kystsoft::Display::removeStateChangedCallback()
 void Kystsoft::Display::stateChanged(device_callback_e type, void* value, void* user_data)
 {
 	Display* display = static_cast<Display*>(user_data);
-	if (display != nullptr)
+	if (display)
 		display->onStateChanged(static_cast<display_state_e>(reinterpret_cast<int>(value)));
 }
 

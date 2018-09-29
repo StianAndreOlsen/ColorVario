@@ -6,7 +6,7 @@ std::string Kystsoft::currentDate()
 	// get local time
 	time_t t = std::time(nullptr);
 	tm* lt = std::localtime(&t);
-	if (lt == nullptr)
+	if (!lt)
 		return "?";
 
 	// create formatted date string
@@ -22,7 +22,7 @@ std::string Kystsoft::currentTime()
 	// get local time
 	time_t t = std::time(nullptr);
 	tm* lt = std::localtime(&t);
-	if (lt == nullptr)
+	if (!lt)
 		return "?";
 
 	// create formatted time string
@@ -38,7 +38,7 @@ std::string Kystsoft::currentDateAndTime()
 	// get local time
 	time_t t = std::time(nullptr);
 	tm* lt = std::localtime(&t);
-	if (lt == nullptr)
+	if (!lt)
 		return "?";
 
 	// create formatted date and time string

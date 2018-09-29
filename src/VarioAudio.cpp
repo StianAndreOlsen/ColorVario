@@ -93,7 +93,7 @@ void Kystsoft::VarioAudio::setClimb(float climb)
 			soundOn = -1; // turn on sink sound
 	}
 
-	// TODO: Remove if this never happens (check ColorVario.log after a long period of testing)
+	// TODO: Remove if this never happens (check log file after a long period of testing)
 	// restart audio if it has stopped (for some mysterious reason)
 	if (!isMuted() && lastWriteTime > 0 && std::difftime(std::time(nullptr), lastWriteTime) > 2)
 	{

@@ -1,6 +1,7 @@
 #include "LocationManager.h"
 #include "dlog.h"
 #include "TizenError.h"
+#include <cmath>
 
 Kystsoft::LocationManager::LocationManager(location_method_e method, int interval /*= 1*/)
 {
@@ -94,7 +95,7 @@ void Kystsoft::LocationManager::unsetPositionUpdatedCallback()
 void Kystsoft::LocationManager::positionUpdated(double /*latitude*/, double /*longitude*/, double /*altitude*/, time_t /*timestamp*/, void* user_data)
 {
 	LocationManager* manager = static_cast<LocationManager*>(user_data);
-	if (manager != nullptr)
+	if (manager)
 		manager->onPositionUpdated();
 }
 
@@ -115,9 +116,10 @@ void Kystsoft::LocationManager::onPositionUpdated()
 	);
 	if (error != LOCATIONS_ERROR_NONE)
 		throw TizenError("location_manager_get_last_location", error);
-	location.speed /= 3.6f; // convert from km/h to m/s
-	location.climb /= 3.6f; // convert from km/h to m/s
 	if (datum == GeodeticDatum::Geoid)
 		location.altitude -= geoid.height(location.latitude, location.longitude);
+	location.speed /= 3.6f; // convert from km/h to m/s
+	location.climb /= 3.6f; // convert from km/h to m/s
+	location.direction = std::fmod(location.direction, 360.0); // make sure it's within [0, 360)
 	locationSignl.emit(location);
 }

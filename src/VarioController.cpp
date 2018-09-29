@@ -30,6 +30,10 @@ Kystsoft::VarioController::VarioController(Dali::Application& application)
 	// connect display signals
 	display.lockedSignal().connect(this, &VarioController::onDisplayLocked);
 	display.stateChangedSignal().connect(this, &VarioController::onDisplayStateChanged);
+
+	// start advertising Bluetooth
+//	bleAdvertiser.addServiceUuid("FFE0"); // TODO: First, I thought this was required but it's not. Consider removing!
+	bleAdvertiser.start();
 }
 
 // The init signal is received only once during the application lifetime
@@ -44,7 +48,7 @@ void Kystsoft::VarioController::create(Dali::Application& /*application*/)
 		// create, connect and start gps
 		try
 		{
-			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS, 5);
+			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS);
 			gps->loadGeoid(appSharedResourcePath() + "Geoid.dat");
 			gps->startedSignal().connect(dynamic_cast<Dali::Actor*>(&locationIcon), &Dali::Actor::SetVisible);
 			gps->locationSignal().connect(this, &VarioController::onLocationUpdated);
@@ -178,7 +182,7 @@ void Kystsoft::VarioController::load(const Settings& settings)
 {
 	// enable debug logging
 	if (settings.value("Debug.enableLogging", false))
-		setDebugLogFile(internalStorageRoot() + "/ColorVario/ColorVario.log");
+		setDebugLogFile(internalStorageRoot() + '/' + appName() + '/' + appName() + ".log");
 	else
 		setDebugLogFile(""); // terminate string stream buffering
 
@@ -208,8 +212,8 @@ void Kystsoft::VarioController::load(const Settings& settings)
 Kystsoft::Settings Kystsoft::VarioController::settingsFromFile()
 {
 	std::string resourceDir = appSharedResourcePath();
-	std::string storageDir = internalStorageRoot() + "/ColorVario/";
-	std::string fileName = "ColorVario.ini";
+	std::string storageDir = internalStorageRoot() + '/' + appName() + '/';
+	std::string fileName = appName() + ".ini";
 	std::string resourceFile = resourceDir + fileName;
 	std::string storageFile = storageDir + fileName;
 	FileFunctionsInitializer init;
@@ -224,7 +228,7 @@ Kystsoft::Settings Kystsoft::VarioController::settingsFromFile()
 
 	// load settings and check if storage file is up to date
 	Settings settings(storageFile);
-	if (settings.hasValue("Display.locked")) // TODO: Update when ColorVario.ini changes
+	if (settings.hasValue("Display.locked")) // TODO: Update when ini file changes
 		return settings;
 
 	// backup existing storage file

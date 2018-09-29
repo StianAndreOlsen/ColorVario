@@ -70,7 +70,7 @@ void Kystsoft::Storage::findDevice(storage_type_e type)
 bool Kystsoft::Storage::device(int storage_id, storage_type_e type, storage_state_e state, const char* /*path*/, void* user_data)
 {
 	Storage* storage = static_cast<Storage*>(user_data);
-	if (storage != nullptr && storage->deviceAccepted(storage_id, type, state))
+	if (storage && storage->deviceAccepted(storage_id, type, state))
 		return false;
 	return true; // next device
 }

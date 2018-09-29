@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="3.0" package="no.kystsoft.colorvario" version="1.2.1">
+<manifest xmlns="http://tizen.org/ns/packages" api-version="3.0" package="no.kystsoft.colorvario" version="2.0.0">
     <author email="kyrreholm@gmail.com" href="https://www.facebook.com/ColorVariometer/">Kyrre Holm</author>
     <description>ColorVario is a variometer app running on a smartwatch. The current vertical speed (climb or sink) is displayed as text, shown as a color and indicated using a classic variometer sound.</description>
     <profile name="wearable"/>
@@ -11,12 +11,15 @@
         <background-category value="sensor"/>
     </ui-application>
     <privileges>
+        <privilege>http://tizen.org/privilege/bluetooth</privilege>
         <privilege>http://tizen.org/privilege/display</privilege>
         <privilege>http://tizen.org/privilege/location</privilege>
         <privilege>http://tizen.org/privilege/mediastorage</privilege>
         <privilege>http://tizen.org/privilege/volume.set</privilege>
     </privileges>
     <feature name="http://tizen.org/feature/location.gps">true</feature>
+    <feature name="http://tizen.org/feature/network.bluetooth">true</feature>
+    <feature name="http://tizen.org/feature/network.bluetooth.le">true</feature>
     <feature name="http://tizen.org/feature/screen.shape.circle">true</feature>
     <feature name="http://tizen.org/feature/screen.size.all">true</feature>
     <feature name="http://tizen.org/feature/sensor.barometer">true</feature>

@@ -10,7 +10,7 @@ namespace
 	std::ostream* os = &oss; // current output stream
 }
 
-std::string Kystsoft::dlog::tag = "Kystsoft";
+std::string Kystsoft::dlog::tag = Kystsoft::appName();
 
 Kystsoft::dlog::~dlog() noexcept
 {

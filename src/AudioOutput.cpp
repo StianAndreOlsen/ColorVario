@@ -194,6 +194,6 @@ void Kystsoft::AudioOutput::unsetStreamWriteCallback()
 void Kystsoft::AudioOutput::streamWriteCallback(audio_out_h /*handle*/, size_t nbytes, void* user_data)
 {
 	AudioOutput* audioOutput = static_cast<AudioOutput*>(user_data);
-	if (audioOutput != nullptr)
+	if (audioOutput)
 		audioOutput->onStreamWrite(nbytes);
 }
