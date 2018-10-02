@@ -30,10 +30,6 @@ Kystsoft::VarioController::VarioController(Dali::Application& application)
 	// connect display signals
 	display.lockedSignal().connect(this, &VarioController::onDisplayLocked);
 	display.stateChangedSignal().connect(this, &VarioController::onDisplayStateChanged);
-
-	// start advertising Bluetooth
-//	bleAdvertiser.addServiceUuid("FFE0"); // TODO: First, I thought this was required but it's not. Consider removing!
-	bleAdvertiser.start();
 }
 
 // The init signal is received only once during the application lifetime
@@ -70,6 +66,22 @@ void Kystsoft::VarioController::create(Dali::Application& /*application*/)
 			dlog(DLOG_ERROR) << e.what();
 			climbLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT, "No pressure");
 			altitudeLabel.SetProperty(Dali::Toolkit::TextLabel::Property::TEXT, "signal!");
+		}
+
+		// TODO: Create a function for this
+		// start Bluetooth
+		if (btAdapter.isEnabled())
+		{
+			try
+			{
+				bleAdvertiser = std::make_unique<BluetoothLowEnergyAdvertiser>();
+//				bleAdvertiser->addServiceUuid("FFE0"); // TODO: First, I thought this was required but it's not. Consider removing!
+				bleAdvertiser->start();
+			}
+			catch (std::exception& e)
+			{
+				dlog(DLOG_ERROR) << e.what();
+			}
 		}
 	}
 	catch (std::exception& e)
@@ -333,6 +345,11 @@ void Kystsoft::VarioController::onLocationUpdated(const Location& location)
 		seconds = std::difftime(location.timestamp, gpsStartTime);
 	if ((seconds > 60 && gpsBestAccuracy < 10) || seconds > 10 * 60)
 		gps->stop(); // Note: Cannot destroy the GPS here, since this function is called from the GPS signal
+
+	// TODO: Remove when Bluetooth implementation is finished
+	// consider stopping the Bluetooth advertiser
+	if (seconds > 20)
+		bleAdvertiser->stop();
 }
 
 void Kystsoft::VarioController::onAudioMuted(bool muted)

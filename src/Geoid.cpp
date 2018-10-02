@@ -12,7 +12,8 @@ bool Kystsoft::Geoid::load(const std::string& fileName)
 		dlog(DLOG_ERROR) << "Unable to load Geoid data from \"" << fileName << "\"";
 		return false;
 	}
-	dlog(DLOG_DEBUG) << "Geoid data (" << ni << " x " << nj << ") loaded from \"" << fileName << "\"";
+	// TODO: Remove completely, if we don't want it. Discuss with Kyrre.
+//	dlog(DLOG_DEBUG) << "Geoid data (" << ni << " x " << nj << ") loaded from \"" << fileName << "\"";
 	return true;
 }
 

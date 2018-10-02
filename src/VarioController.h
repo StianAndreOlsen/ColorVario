@@ -64,7 +64,7 @@ private:
 	VarioColor color;
 	Color currentColor;
 	BluetoothAdapter btAdapter;
-	BluetoothLowEnergyAdvertiser bleAdvertiser;
+	std::unique_ptr<BluetoothLowEnergyAdvertiser> bleAdvertiser;
 };
 
 } // namespace Kystsoft
