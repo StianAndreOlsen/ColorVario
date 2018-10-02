@@ -6,6 +6,7 @@
 
 namespace Kystsoft {
 
+// https://www.bluetooth.com/specifications/gatt/services
 class BluetoothGattService : public BluetoothGattObject
 {
 public:

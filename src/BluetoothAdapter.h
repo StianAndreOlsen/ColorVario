@@ -10,11 +10,13 @@ class BluetoothAdapter
 public:
 	BluetoothAdapter();
 	~BluetoothAdapter() noexcept;
-	std::string name() const;
-	void setName(const std::string& name);
+	static bool isEnabled();
+	static std::string address();
+	static std::string name();
+	static void setName(const std::string& name);
 private:
-	void initialize();
-	void deinitialize();
+	static void initialize();
+	static void deinitialize();
 };
 
 } // namespace Kystsoft

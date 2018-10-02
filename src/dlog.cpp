@@ -10,7 +10,7 @@ namespace
 	std::ostream* os = &oss; // current output stream
 }
 
-std::string Kystsoft::dlog::tag = Kystsoft::appName();
+std::string Kystsoft::dlog::tag = Kystsoft::appName(); // TODO: What happens if appName throws an exception?
 
 Kystsoft::dlog::~dlog() noexcept
 {
