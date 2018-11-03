@@ -16,8 +16,8 @@ public:
 	~Display() noexcept;
 	display_state_e state() const;
 	const Signal<display_state_e>& stateChangedSignal() const { return stateChangedSignl; }
-	float brightness() const;
-	void setBrightness(float brightness);
+	double brightness() const;
+	void setBrightness(double brightness);
 	bool isLocked() const { return locked; }
 	void setLocked(bool locked);
 	void lock();
@@ -31,8 +31,8 @@ private:
 	void onStateChanged(display_state_e state);
 	int maxBrightness() const;
 	Signal<display_state_e> stateChangedSignl;
-	float initialBrightness = -1;
-	float wantedBrightness = -1;
+	double initialBrightness = -1;
+	double wantedBrightness = -1;
 	bool locked = false;
 	Signal<bool> lockedSignl;
 };

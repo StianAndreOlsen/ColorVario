@@ -63,7 +63,7 @@ struct Color : public Dali::Vector4
 	// C is chroma
 	// Y is luma
 	// A is alpha
-	static float luma(float R, float G, float B) { return 0.299f * R + 0.587f * G + 0.114 * B; }
+	static float luma(float R, float G, float B) { return 0.299f * R + 0.587f * G + 0.114f * B; }
 	float luma() const { return luma(red(), green(), blue()); }
 	static Color fromHCYA(float H, float C, float Y, float A = 1);
 

@@ -20,7 +20,7 @@
 
 namespace Kystsoft {
 
-template <typename... Args>
+template<typename... Args>
 class Signal
 {
 public:

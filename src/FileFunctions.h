@@ -9,7 +9,7 @@ class FileFunctionsInitializer
 {
 public:
 	FileFunctionsInitializer();
-	~FileFunctionsInitializer();
+	~FileFunctionsInitializer() noexcept;
 };
 
 bool fileExists(const std::string& file);

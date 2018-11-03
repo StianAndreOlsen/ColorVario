@@ -27,16 +27,16 @@ display_state_e Kystsoft::Display::state() const
 	return state;
 }
 
-float Kystsoft::Display::brightness() const
+double Kystsoft::Display::brightness() const
 {
 	int ibrightness = 0;
 	int error = device_display_get_brightness(0, &ibrightness);
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_display_get_brightness", error);
-	return float(ibrightness) / maxBrightness();
+	return double(ibrightness) / maxBrightness();
 }
 
-void Kystsoft::Display::setBrightness(float brightness)
+void Kystsoft::Display::setBrightness(double brightness)
 {
 	if (brightness < 0)
 		return;
@@ -53,7 +53,7 @@ void Kystsoft::Display::setBrightness(float brightness)
 			return;
 		}
 	}
-	int ibrightness = int(brightness * maxBrightness() + 0.5f);
+	int ibrightness = int(brightness * maxBrightness() + 0.5);
 	if (ibrightness < 1)
 		ibrightness = 1;
 	int error = device_display_set_brightness(0, ibrightness);

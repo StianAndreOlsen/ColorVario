@@ -13,7 +13,7 @@
 
 namespace Kystsoft {
 
-template <typename... Args>
+template<typename... Args>
 class Callback
 {
 public:

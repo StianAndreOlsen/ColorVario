@@ -6,7 +6,15 @@ Kystsoft::BluetoothGattServer::BluetoothGattServer()
 {
 	// TODO: Figure out if we need to call start and/or initialize
 	initialize();
-	create();
+	try
+	{
+		create();
+	}
+	catch (...)
+	{
+		deinitialize();
+		throw;
+	}
 }
 
 Kystsoft::BluetoothGattServer::~BluetoothGattServer() noexcept

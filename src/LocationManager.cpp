@@ -118,8 +118,8 @@ void Kystsoft::LocationManager::onPositionUpdated()
 		throw TizenError("location_manager_get_last_location", error);
 	if (datum == GeodeticDatum::Geoid)
 		location.altitude -= geoid.height(location.latitude, location.longitude);
-	location.speed /= 3.6f; // convert from km/h to m/s
-	location.climb /= 3.6f; // convert from km/h to m/s
+	location.speed /= 3.6; // convert from km/h to m/s
+	location.climb /= 3.6; // convert from km/h to m/s
 	location.direction = std::fmod(location.direction, 360.0); // make sure it's within [0, 360)
 	locationSignl.emit(location);
 }

@@ -11,7 +11,6 @@ bool Kystsoft::Settings::load(const std::string& fileName)
 		dlog(DLOG_ERROR) << "Unable to load settings from \"" << fileName << "\"";
 		return false;
 	}
-	// TODO: Remove completely, if we don't want it. Discuss with Kyrre.
 //	dlog(DLOG_DEBUG) << "Settings loaded from \"" << fileName << "\"";
 	return true;
 }

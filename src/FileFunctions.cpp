@@ -7,7 +7,7 @@ Kystsoft::FileFunctionsInitializer::FileFunctionsInitializer()
 	ecore_file_init();
 }
 
-Kystsoft::FileFunctionsInitializer::~FileFunctionsInitializer()
+Kystsoft::FileFunctionsInitializer::~FileFunctionsInitializer() noexcept
 {
 	ecore_file_shutdown();
 }

@@ -1,5 +1,5 @@
+#include "ColorVarioController.h"
 #include "dlog.h"
-#include "VarioController.h"
 #include <dali/dali.h>
 #include <exception>
 
@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 	try
 	{
 		Dali::Application application = Dali::Application::New(&argc, &argv);
-		Kystsoft::VarioController controller(application);
+		Kystsoft::ColorVario::Controller controller(application);
 		application.MainLoop();
 	}
 	catch (std::exception& e)

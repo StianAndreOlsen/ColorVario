@@ -12,12 +12,12 @@ public:
 	SoundManager(const SoundManager& other) = delete;
 	SoundManager& operator=(const SoundManager& rhs) = delete;
 	~SoundManager() noexcept;
-	float volume() const;
-	void setVolume(float volume);
+	double volume() const;
+	void setVolume(double volume);
 private:
 	int maxVolume() const;
 	sound_type_e soundType = SOUND_TYPE_SYSTEM;
-	float initialVolume = -1;
+	double initialVolume = -1;
 };
 
 } // namespace Kystsoft

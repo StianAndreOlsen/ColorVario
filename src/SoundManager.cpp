@@ -8,16 +8,16 @@ Kystsoft::SoundManager::~SoundManager() noexcept
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
 
-float Kystsoft::SoundManager::volume() const
+double Kystsoft::SoundManager::volume() const
 {
 	int ivolume = 0;
 	int error = sound_manager_get_volume(soundType, &ivolume);
 	if (error != SOUND_MANAGER_ERROR_NONE)
 		throw TizenError("sound_manager_get_volume", error);
-	return float(ivolume) / maxVolume();
+	return double(ivolume) / maxVolume();
 }
 
-void Kystsoft::SoundManager::setVolume(float volume)
+void Kystsoft::SoundManager::setVolume(double volume)
 {
 	if (volume < 0)
 		return;
@@ -25,7 +25,7 @@ void Kystsoft::SoundManager::setVolume(float volume)
 		volume = 1;
 	if (initialVolume < 0)
 		initialVolume = this->volume();
-	int ivolume = int(volume * maxVolume() + 0.5f);
+	int ivolume = int(volume * maxVolume() + 0.5);
 	int error = sound_manager_set_volume(soundType, ivolume);
 	if (error != SOUND_MANAGER_ERROR_NONE)
 		throw TizenError("sound_manager_set_volume", error);
