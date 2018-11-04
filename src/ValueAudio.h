@@ -6,7 +6,6 @@
 #include "Signal.h"
 #include "SoundStream.h"
 #include "ValueSound.h"
-#include <limits>
 #include <ctime>
 
 namespace Kystsoft {
@@ -25,30 +24,24 @@ public:
 	void unmute();
 	void toggleMuteUnmute();
 	const Signal<bool>& mutedSignal() const { return mutedSignl; }
-	void setValueSound(const ValueSound& valueSound) { sound = valueSound; }
 	const ValueSound& valueSound() const { return sound; }
-	void setSamplingInterval(double interval) { average.setSamplingInterval(interval); }
-	void setAveragingInterval(double interval) { average.setAveragingInterval(interval); }
+	void setValueSound(const ValueSound& valueSound) { sound = valueSound; }
+	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
+	void setAveragingInterval(double interval) { averageValue.setAveragingInterval(interval); }
 	void setValue(double value);
 protected:
 	void load(const Settings& settings, const std::string& section);
 private:
 	void onSoundStreamFocusChanged(int focus);
 	void onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested);
-	bool isSoundOn() const { return soundOn != 0; }
-	bool isSoundOff() const { return soundOn == 0; }
-	bool isUpperSoundOn() const { return soundOn > 0; }
-	bool isLowerSoundOn() const { return soundOn < 0; }
 	SoundStream soundStream;
 	AudioOutput audioOutput;
 	double lastCyclePhase = 0;
 	double lastTonePhase = 0;
 	time_t lastWriteTime = 0;
 	Signal<bool> mutedSignl;
+	Averager<double> averageValue;
 	ValueSound sound;
-	Averager<double> average;
-	double current = std::numeric_limits<double>::quiet_NaN();
-	short soundOn = 0;
 };
 
 } // namespace Kystsoft

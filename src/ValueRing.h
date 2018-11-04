@@ -16,17 +16,17 @@ public:
 	ValueRing& operator=(const Dali::Toolkit::Control& rhs) { Dali::Toolkit::Control::operator=(rhs); return *this; }
 	virtual ~ValueRing() noexcept {}
 	virtual void load(const Settings& settings) = 0;
-	void setValueColor(const ValueColor& valueColor) { color = valueColor; }
 	const ValueColor& valueColor() const { return color; }
-	void setSamplingInterval(double interval) { average.setSamplingInterval(interval); }
-	void setAveragingInterval(double interval) { average.setAveragingInterval(interval); }
+	void setValueColor(const ValueColor& valueColor) { color = valueColor; }
+	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
+	void setAveragingInterval(double interval) { averageValue.setAveragingInterval(interval); }
 	void setValue(double value);
 protected:
 	void load(const Settings& settings, const std::string& section);
 private:
-	Averager<double> average;
+	Averager<double> averageValue;
 	ValueColor color;
-	Color currentColor;
+	Color currentColor = Dali::Color::TRANSPARENT;
 };
 
 } // namespace Kystsoft

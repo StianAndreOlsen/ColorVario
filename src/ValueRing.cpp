@@ -2,8 +2,8 @@
 
 void Kystsoft::ValueRing::setValue(double value)
 {
-	average += value;
-	Color newColor = color(average);
+	averageValue += value;
+	Color newColor = color(averageValue);
 	if (newColor == currentColor)
 		return;
 	currentColor = newColor;

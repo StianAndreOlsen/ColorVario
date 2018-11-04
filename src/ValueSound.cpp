@@ -13,11 +13,8 @@ void Kystsoft::ValueSound::load(const Settings& settings, const std::string& sec
 	else
 		toneWaveform = Waveform::Sawtooth;
 
-	// thresholds
-	upperSoundOn = settings.value(section + ".upperSoundOn", upperSoundOn);
-	upperSoundOff = settings.value(section + ".upperSoundOff", upperSoundOff);
-	lowerSoundOn = settings.value(section + ".lowerSoundOn", lowerSoundOn);
-	lowerSoundOff = settings.value(section + ".lowerSoundOff", lowerSoundOff);
+	// sound on and off zones
+	zones.load(settings, section);
 
 	// sound points
 	clearSoundPoints();
@@ -31,6 +28,8 @@ void Kystsoft::ValueSound::load(const Settings& settings, const std::string& sec
 
 double Kystsoft::ValueSound::frequency(double value) const
 {
+	if (zones.isOff(value))
+		return 0;
 	if (soundPoints.empty())
 		return 500;
 	if (soundPoints.size() < 2)
@@ -50,6 +49,8 @@ double Kystsoft::ValueSound::frequency(double value) const
 
 double Kystsoft::ValueSound::period(double value) const
 {
+	if (zones.isOff(value))
+		return 0;
 	if (soundPoints.empty())
 		return 1;
 	if (soundPoints.size() < 2)
@@ -69,6 +70,8 @@ double Kystsoft::ValueSound::period(double value) const
 
 double Kystsoft::ValueSound::duty(double value) const
 {
+	if (zones.isOff(value))
+		return 0;
 	if (soundPoints.empty())
 		return 1;
 	if (soundPoints.size() < 2)

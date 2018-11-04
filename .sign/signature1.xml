@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ZnBk1PiNXQ0yopcLFehUKbp5mwFAGHg5JljwSjDiYfA=</DigestValue>
+<DigestValue>lOQjazY9NfgQgFnPw6urI9AO91VBeGguWpPm0g1lxHo=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>1ZEagLnUQtGc94F52NHVoXpL4AvCVD7Zt64s70NztXI=</DigestValue>
+<DigestValue>SMEVLFzcuZtr4ZRQU0lwFC+E+8jckvDFV4oGUTmUZl0=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FAudioMuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -20,7 +20,7 @@
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>3qvFafgMVY2bKiDO0T3vh4E2snG5WePn5d00UN2vPRw=</DigestValue>
+<DigestValue>IYdNm/oyXgwh5XzvP5t+bEr4NVtmZwLLydA+ICaZ0B8=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -55,11 +55,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-OwgAU+ZjPw/Rj/cX+VCHcR/MgvMyZF6Eb4fnY3XAT2BBQfczXkJ8Q2nrMSTk6Iuq+6hVQF4sg0tM
-S/TIFFDoxzPP03FUqtyaIUv2zL0tA6bKFKG9cQCMm1YHxZdSZsWCzBE7nyu5xYf8hBAz0z7Wo5QH
-79Pz/TfdS5MdoW60VROer54Pz6YZ0HlVpUgSD4Zx+tJV6GNgPAuyJZVmWeuh55ndKP0Xl29WsVbE
-4MDKEMGAJSA3NJZbRGkJqp9ogU6IfJIE43/Lc4ebS8BxwSw9sumKBbrhgx4cWgWqvxYou5pFc/p1
-5jmChS3y1JhZYnHC2g5ZP2z0+70cJ/9PeYcTtA==
+TWBCdovzDqPRbVYY0XAj7KKKfNB+DkVk3Yw2iGD00TgUDY6oVUmhTfJCm7bfFpPgE2TZUt99LOzV
+VL6K72EdvMORSd7SeiolyYJ7MJpvgMcA0w2oY96RBLLbDF0hXuajRauiRU1itmI/RiadrhxR6sEI
+LWX0nQ3Rhpof9L5aSLnVAhrl0vwX7G3lX3x6mBwZAsodHK0aGuy437vJ5XeTPyUe2ejth8be0qsH
+xXMXRMMb+yGbiUFBljJL/mf7WCuvOsVzP/lLHg/EMQEQgNaEOtHDkGC7ku8AwId0DCDuCYO75RGT
+5yZ1//lKX+NFzM5KNCmDsD+ve35cu1eW9pMWHQ==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

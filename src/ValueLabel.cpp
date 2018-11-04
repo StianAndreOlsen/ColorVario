@@ -4,9 +4,9 @@
 void Kystsoft::ValueLabel::setValue(double value)
 {
 	convertCb.execute(value, &value);
-	average += value;
+	averageValue += value;
 	os.str("");
-	os << mround(average, mult);
+	os << mround(averageValue, multipl);
 	if (showUnt)
 		os << ' ' << unt;
 	setText(os.str());

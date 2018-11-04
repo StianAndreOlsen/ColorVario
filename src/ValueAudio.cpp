@@ -58,35 +58,7 @@ void Kystsoft::ValueAudio::toggleMuteUnmute()
 
 void Kystsoft::ValueAudio::setValue(double value)
 {
-	double previous = current;
-	average += value;
-	current = average;
-	if (current == previous)
-		return;
-
-	// sound on or off
-	if (std::isnan(previous))
-	{
-		// special handling if this is the first real value
-		if (current >= sound.upperSoundOnThreshold())
-			soundOn = 1; // turn on upper sound
-		else if (current <= sound.lowerSoundOnThreshold())
-			soundOn = -1; // turn on lower sound
-	}
-	else if (current > previous)
-	{
-		if (isLowerSoundOn() && current >= sound.lowerSoundOffThreshold())
-			soundOn = 0; // turn off lower sound
-		if (isSoundOff() && current >= sound.upperSoundOnThreshold())
-			soundOn = 1; // turn on upper sound
-	}
-	else // remember that equality is tested at function start
-	{
-		if (isUpperSoundOn() && current <= sound.upperSoundOffThreshold())
-			soundOn = 0; // turn off upper sound
-		if (isSoundOff() && current <= sound.lowerSoundOnThreshold())
-			soundOn = -1; // turn on lower sound
-	}
+	averageValue += value;
 
 	// TODO: Remove if this never happens (check log file after a long period of testing)
 	// restart audio if it has stopped (for some mysterious reason)
@@ -133,8 +105,14 @@ void Kystsoft::ValueAudio::onAudioRequested(AudioOutput& audioOutput, size_t byt
 	audio_channel_e channel = audioOutput.channel();
 	audio_sample_type_e sampleType = audioOutput.sampleType();
 
+	// get sound characteristics
+	double value = averageValue;
+	double frequency = sound.frequency(value);
+	double period = sound.period(value);
+	double duty = sound.duty(value);
+
 	// create silence points
-	if (isSoundOff())
+	if (frequency <= 0 || period <= 0 || duty <= 0)
 	{
 		lastCyclePhase = 0;
 		lastTonePhase = 0;
@@ -150,11 +128,6 @@ void Kystsoft::ValueAudio::onAudioRequested(AudioOutput& audioOutput, size_t byt
 		}
 		return;
 	}
-
-	// get sound characteristics
-	double frequency = sound.frequency(current);
-	double period = sound.period(current);
-	double duty = sound.duty(current);
 
 	// calculate number of points
 	size_t pointCount = bytesRequested;

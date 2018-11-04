@@ -3,6 +3,7 @@
 
 #include "Settings.h"
 #include "ValueColorPoint.h"
+#include "ValueZones.h"
 
 namespace Kystsoft {
 
@@ -10,6 +11,8 @@ class ValueColor
 {
 public:
 	void load(const Settings& settings, const std::string& section);
+	const ValueZones& valueZones() const { return zones; }
+	void setValueZones(const ValueZones& valueZones) { zones = valueZones; }
 	void addColorPoint(const ValueColorPoint& point) { colorPoints.push_back(point); }
 	void addColorPoint(double value, const Color& color)
 		{ addColorPoint(ValueColorPoint(value, color)); }
@@ -18,6 +21,7 @@ public:
 	Color operator()(double value) const { return color(value); }
 private:
 	size_t colorPointInterval(double value) const;
+	ValueZones zones;
 	std::vector<ValueColorPoint> colorPoints;
 };
 

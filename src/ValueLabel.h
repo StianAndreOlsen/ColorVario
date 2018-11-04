@@ -21,9 +21,9 @@ public:
 	virtual void setUnit(const std::string& unit) { unt = unit; }
 	bool showUnit() const { return showUnt; }
 	void setShowUnit(bool showUnit) { showUnt = showUnit; }
-	void setSamplingInterval(double interval) { average.setSamplingInterval(interval); }
-	void setAveragingInterval(double interval) { average.setAveragingInterval(interval); }
-	void setRoundToNearest(double multiple) { mult = multiple; }
+	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
+	void setAveragingInterval(double interval) { averageValue.setAveragingInterval(interval); }
+	void setRoundToNearest(double multiple) { multipl = multiple; }
 	void setValue(double value);
 protected:
 	void load(const Settings& settings, const std::string& section);
@@ -33,8 +33,8 @@ private:
 	std::string unt;
 	bool showUnt = true;
 	ConvertCallback convertCb;
-	Averager<double> average;
-	double mult = 0;
+	Averager<double> averageValue;
+	double multipl = 0;
 	std::ostringstream os;
 };
 

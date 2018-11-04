@@ -2,6 +2,9 @@
 
 void Kystsoft::ValueColor::load(const Settings& settings, const std::string& section)
 {
+	// color on and off zones
+	zones.load(settings, section);
+
 	// color points
 	clearColorPoints();
 	for (const auto& value : settings.values(section + ".point"))
@@ -14,6 +17,8 @@ void Kystsoft::ValueColor::load(const Settings& settings, const std::string& sec
 
 Kystsoft::Color Kystsoft::ValueColor::color(double value) const
 {
+	if (zones.isOff(value))
+		return Dali::Color::BLACK;
 	if (colorPoints.empty())
 		return Dali::Color::RED;
 	if (colorPoints.size() < 2)
