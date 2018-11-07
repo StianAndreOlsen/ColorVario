@@ -73,7 +73,8 @@ void Kystsoft::ValueAudio::setValue(double value)
 
 void Kystsoft::ValueAudio::load(const Settings& settings, const std::string& section)
 {
-	setMuted(settings.value("Sound.muted", false));
+	// TODO: Figure out why the below line crashes the app
+//	setMuted(settings.value("Sound.muted", false));
 	setAveragingInterval(settings.value(section + ".averagingInterval", 1.0));
 	sound.load(settings, section);
 }

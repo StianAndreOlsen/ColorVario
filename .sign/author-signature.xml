@@ -4,7 +4,7 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>SMEVLFzcuZtr4ZRQU0lwFC+E+8jckvDFV4oGUTmUZl0=</DigestValue>
+<DigestValue>o8eiKuusQDjPy0CFg83PH28/1wjJuz5UTN9qSCZ1+8Q=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FAudioMuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -14,9 +14,21 @@
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>y1dMkyvF+p1X77wAdRXzakpHD0rCApEwCMSxiT/3t9I=</DigestValue>
 </Reference>
+<Reference URI="shared%2Fres%2FBluetoothConnected.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>K4+6RRopOJCl/Hks8/8KrdSNGnWalJbgqgvRHyIP1iA=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FBluetoothDisabled.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>xM4VLTXu4xgNL1MWkjrTcRBOdFf3VqxBFDEYi/rVyEU=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FBluetoothEnabled.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>igE8iCh1hkg1uUpCA40u9JrYt85H2eAjrMi2+Ggu7mU=</DigestValue>
+</Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>IYdNm/oyXgwh5XzvP5t+bEr4NVtmZwLLydA+ICaZ0B8=</DigestValue>
+<DigestValue>Ky11tHOEYkged5IWm+uQ8LCv4+mAJjU+64IgvYlfebI=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -34,9 +46,21 @@
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2FLocation.png">
+<Reference URI="shared%2Fres%2FLocationDisabled.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>P61o2fe7uGqXZ0CHbc0Vv03uW4P6PqIc1jrtxSRVNE4=</DigestValue>
+<DigestValue>VnfaPArZQnQ0NG1wsILik2DEBuSQpPhgmoPFbXUGj8E=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FLocationEnabled.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>WKGrsPUOzVd3Iw+2GHrVqD3g5Xrr45zwAIS7c7/mOlw=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FQuitSelected.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>QOPuzAD8KQkZBmwaMu0GLTC2Nw1i/lVu2v79kRj/MmY=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FQuitUnselected.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>+FMOf9ThbT7M7tGcseHTCUYp0Z/62ymvqS6/6Wv1nBc=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -51,11 +75,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-brR046TaW05y4vDhv5i+iYr6G4dyI5rUGuf1a2dicv+Tlr0WmPg9H0/Ti0WzS9JSAqHwj2mlhg9F
-o8FElnigUKJtjMcwC913rpkEkivg8zq3/o0StdTuDIubhdXqiT5dfjnv6ZjOkHBEefSr/Mh/1MYX
-YYbT4pafuQaT1FewWM886SzAJYWJLDRMZXE8NT4IzTi0r6YurRSW05OqDdw08EGvqJyiQVc2frex
-0/tdLTijZ+KbD3EjAa616SMp4D+/39PqK7GpsTeFq5qrvkCdfPmdZcNSAxNN5fQZU56Yd+K4hc/9
-BBNzFZkfbn2GiWtoliju5GfBrTZuI+C2tGJsTg==
+AxUw2QsjL+hDdBnOpIet88OkDD8eELouCha7hAkMchpAihDpcGP/ph+BXLrAjjlaj9wgvlNaYn5+
+jsuePDi4IbP7UPsUTb9YaEAY6oWxG546fnY13J9Re+oE3Oqu9jgG97/3G9xygeLoDzNZ/LKAB3Az
+U8kWgtrvpPy9D5sULjeenHvPZbheyF7+5yQWAiPDUg4OR654XxoM4uuhBZyzrBJV1w/Mkc3mUa64
+7oW0ZBe1CeqeDC2Hy/bPh6C4v8sK1KmgN7SwayrZdP+Z8Z74paReYGsECUk90lSWTRezyQfSrS74
+jRFZ0WTTjEbkFMYYrBIT/bvy4PBlXdGtdGw/lg==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

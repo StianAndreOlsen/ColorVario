@@ -18,15 +18,17 @@ Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	app.ResumeSignal().Connect(this, &Controller::onResume);
 
 	// connect variometer signals
-	vario.climbSignal().connect(this, &Controller::setClimb);
 	vario.altitudeSignal().connect(this, &Controller::setAltitude);
-
-	// connect audio signals
-	climbAudio.mutedSignal().connect(this, &Controller::onAudioMuted);
+	vario.altitudeSignal().connect(&ui, &UserInterface::setAltitude);
+	vario.climbSignal().connect(&ui, &UserInterface::setClimb);
 
 	// connect display signals
-	display.lockedSignal().connect(this, &Controller::onDisplayLocked);
+	display.lockedSignal().connect(&ui, &UserInterface::onDisplayLocked);
 	display.stateChangedSignal().connect(this, &Controller::onDisplayStateChanged);
+
+	// connect user interface signals
+	ui.quitSignal().connect(this, &Controller::quit);
+	ui.lockDisplaySignal().connect(&display, &Display::setLocked);
 }
 
 // The init signal is received only once during the application lifetime
@@ -43,7 +45,7 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		{
 			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS);
 			gps->loadGeoid(appSharedResourcePath() + "Geoid.dat");
-			gps->startedSignal().connect(dynamic_cast<Dali::Actor*>(&locationIcon), &Dali::Actor::SetVisible);
+//			gps->startedSignal().connect(dynamic_cast<Dali::Actor*>(&locationIcon), &Dali::Actor::SetVisible);
 			gps->locationSignal().connect(this, &Controller::onLocationUpdated);
 			gps->start();
 		}
@@ -62,8 +64,8 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		{
 			dlog(DLOG_ERROR) << e.what();
 			// TODO: Consider showing a separate error label
-			climbLabel.setText("No pressure");
-			altitudeLabel.setText("signal!");
+//			climbLabel.setText("No pressure");
+//			altitudeLabel.setText("signal!");
 		}
 
 		// TODO: Create a function/class for this
@@ -98,92 +100,10 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 
 void Kystsoft::ColorVario::Controller::createUi()
 {
-	// get a handle to the stage
-	Dali::Stage stage = Dali::Stage::GetCurrent();
-	Dali::Vector2 stageSize = stage.GetSize();
-
-	// create climb ring
-	climbRing = ClimbRing::New();
-	climbRing.SetSize(stageSize);
-	climbRing.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	climbRing.SetPosition(0, 0);
-	stage.Add(climbRing);
-
-	// create icon box
-	float iconHeight = stageSize.height / 8;
-	float iconSpacing = stageSize.width / 16;
-	iconBox = Dali::Toolkit::Control::New();
-	iconBox.SetSize(stageSize.width, iconHeight);
-	iconBox.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
-	iconBox.SetPosition(stageSize.width / 2, stageSize.height / 8);
-	climbRing.Add(iconBox);
-	lastIconBoxTouch = std::time(nullptr);
-
-	// get resource directory
-	std::string resourceDir = appSharedResourcePath();
-
-	// create muted icon
-	mutedIcon = Dali::Toolkit::ImageView::New(resourceDir + "AudioMuted.png");
-	mutedIcon.SetSize(mutedIcon.GetWidthForHeight(iconHeight), iconHeight);
-	mutedIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_RIGHT);
-	mutedIcon.SetPosition(stageSize.width / 2 - iconSpacing / 2, 0);
-	mutedIcon.SetVisible(climbAudio.isMuted());
-	iconBox.Add(mutedIcon);
-
-	// create unmuted icon
-	unmutedIcon = Dali::Toolkit::ImageView::New(resourceDir + "AudioUnmuted.png");
-	unmutedIcon.SetSize(unmutedIcon.GetWidthForHeight(iconHeight), iconHeight);
-	unmutedIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_RIGHT);
-	unmutedIcon.SetPosition(stageSize.width / 2 - iconSpacing / 2, 0);
-	unmutedIcon.SetVisible(!climbAudio.isMuted());
-	iconBox.Add(unmutedIcon);
-
-	// create locked icon
-	lockedIcon = Dali::Toolkit::ImageView::New(resourceDir + "DisplayLocked.png");
-	lockedIcon.SetSize(lockedIcon.GetWidthForHeight(iconHeight), iconHeight);
-	lockedIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	lockedIcon.SetPosition(stageSize.width / 2 + iconSpacing / 2, 0);
-	lockedIcon.SetVisible(display.isLocked());
-	iconBox.Add(lockedIcon);
-
-	// create unlocked icon
-	unlockedIcon = Dali::Toolkit::ImageView::New(resourceDir + "DisplayUnlocked.png");
-	unlockedIcon.SetSize(unlockedIcon.GetWidthForHeight(iconHeight), iconHeight);
-	unlockedIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	unlockedIcon.SetPosition(stageSize.width / 2 + iconSpacing / 2, 0);
-	unlockedIcon.SetVisible(!display.isLocked());
-	iconBox.Add(unlockedIcon);
-
-	// create climb label
-	climbLabel = ClimbLabel::New("Climb");
-	climbLabel.SetSize(stageSize.width, stageSize.height / 4);
-	climbLabel.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	climbLabel.SetPosition(0, stageSize.height / 4);
-	climbLabel.setPointSize(15);
-	climbLabel.setHorizontalAlignment("CENTER");
-	climbLabel.setVerticalAlignment("CENTER");
-	climbLabel.setTextColor(Dali::Color::WHITE);
-	climbRing.Add(climbLabel);
-
-	// create altitude label
-	altitudeLabel = AltitudeLabel::New("Altitude");
-	altitudeLabel.SetSize(stageSize.width, stageSize.height / 4);
-	altitudeLabel.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	altitudeLabel.SetPosition(0, stageSize.height / 2);
-	altitudeLabel.setHorizontalAlignment("CENTER");
-	altitudeLabel.setVerticalAlignment("CENTER");
-	altitudeLabel.setTextColor(Dali::Color::RED);
-	climbRing.Add(altitudeLabel);
-
-	// create location icon
-	locationIcon = Dali::Toolkit::ImageView::New(resourceDir + "Location.png");
-	locationIcon.SetSize(locationIcon.GetWidthForHeight(iconHeight), iconHeight);
-	locationIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
-	locationIcon.SetPosition(stageSize.width / 2, stageSize.height * 3 / 4);
-	locationIcon.SetVisible(false);
-	climbRing.Add(locationIcon);
+	ui.create();
 
 	// connect stage signals
+	Dali::Stage stage = Dali::Stage::GetCurrent();
 	stage.TouchSignal().Connect(this, &Controller::onTouch);
 	stage.KeyEventSignal().Connect(this, &Controller::onKeyEvent);
 	stage.WheelEventSignal().Connect(this, &Controller::onWheelEvent);
@@ -209,19 +129,11 @@ void Kystsoft::ColorVario::Controller::load(const Settings& settings)
 	// variometer settings
 	vario.load(settings);
 
-	// sound settings
-	climbAudio.setSamplingInterval(vario.samplingInterval());
-	climbAudio.load(settings);
-
-	// color settings
-	climbRing.setSamplingInterval(vario.samplingInterval());
-	climbRing.load(settings);
-
-	// label settings
-	climbLabel.setSamplingInterval(vario.samplingInterval());
-	climbLabel.load(settings);
-	altitudeLabel.setSamplingInterval(vario.samplingInterval());
-	altitudeLabel.load(settings);
+	// user interface settings
+	ui.setAltitudeSamplingInterval(vario.samplingInterval());
+	ui.setClimbSamplingInterval(vario.samplingInterval());
+	ui.setSpeedSamplingInterval(1); // TODO: Update with data from GPS
+	ui.load(settings);
 }
 
 Kystsoft::Settings Kystsoft::ColorVario::Controller::settingsFromFile()
@@ -293,19 +205,6 @@ void Kystsoft::ColorVario::Controller::onTouch(const Dali::TouchData& touch)
 		{
 			if (!vario.isStarted())
 				vario.start();
-			else if (touch.GetScreenPosition(0).y < climbLabel.GetCurrentPosition().y)
-			{
-				lastIconBoxTouch = std::time(nullptr);
-				if (!iconBox.IsVisible())
-					iconBox.SetVisible(true);
-				else
-				{
-					if (touch.GetScreenPosition(0).x < climbLabel.GetCurrentSize().width / 2)
-						climbAudio.toggleMuteUnmute();
-					else
-						display.toggleLockUnlock();
-				}
-			}
 		}
 	}
 	catch (std::exception& e)
@@ -321,8 +220,8 @@ void Kystsoft::ColorVario::Controller::onKeyEvent(const Dali::KeyEvent& event)
 		// TODO: Go back to previous app instead of quitting
 		if (Dali::IsKey(event, Dali::DALI_KEY_ESCAPE) ||
 		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
-//			app.GetWindow().Lower();
-			app.Quit();
+			app.GetWindow().Lower();
+//			app.Quit(); // TODO: Remove!
 	}
 }
 
@@ -344,10 +243,13 @@ void Kystsoft::ColorVario::Controller::onLocationUpdated(const Location& locatio
 		gpsBestAccuracy = accuracy;
 		vario.setCurrentAltitude(location.altitude);
 		if (accuracy < 10)
-			altitudeLabel.setTextColor(Dali::Color::WHITE);
+			ui.setAltitudeTextColor(Dali::Color::WHITE);
 		else if (accuracy < 100)
-			altitudeLabel.setTextColor(Dali::Color::YELLOW);
+			ui.setAltitudeTextColor(Dali::Color::YELLOW);
 	}
+
+	// update user interface
+	ui.setSpeed(location.speed);
 
 	// consider stopping the gps
 	double seconds = 0;
@@ -364,38 +266,14 @@ void Kystsoft::ColorVario::Controller::onLocationUpdated(const Location& locatio
 //		bleAdvertiser->stop();
 }
 
-void Kystsoft::ColorVario::Controller::onAudioMuted(bool muted)
-{
-	mutedIcon.SetVisible(muted);
-	unmutedIcon.SetVisible(!muted);
-}
-
-void Kystsoft::ColorVario::Controller::onDisplayLocked(bool locked)
-{
-	lockedIcon.SetVisible(locked);
-	unlockedIcon.SetVisible(!locked);
-}
-
 void Kystsoft::ColorVario::Controller::onDisplayStateChanged(display_state_e state)
 {
 	if (state == DISPLAY_STATE_NORMAL)
 		app.GetWindow().Activate();
 }
 
-void Kystsoft::ColorVario::Controller::setClimb(double climb)
-{
-	if (iconBox.IsVisible() && std::difftime(std::time(nullptr), lastIconBoxTouch) > 15)
-		iconBox.SetVisible(false);
-
-	climbAudio.setClimb(climb);
-	climbRing.setClimb(climb);
-	climbLabel.setClimb(climb);
-}
-
 void Kystsoft::ColorVario::Controller::setAltitude(double altitude)
 {
 	if (gps && !gps->isStarted())
 		gps.reset(); // destroy gps
-
-	altitudeLabel.setAltitude(altitude);
 }

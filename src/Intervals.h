@@ -2,6 +2,7 @@
 #define KYSTSOFT_INTERVALS_H
 
 #include "Interval.h"
+#include <vector>
 
 namespace Kystsoft {
 

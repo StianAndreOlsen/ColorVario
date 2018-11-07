@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>lOQjazY9NfgQgFnPw6urI9AO91VBeGguWpPm0g1lxHo=</DigestValue>
+<DigestValue>pdGzkkjX5iOW7mtJY3Nt5NQ453CjLZHJL93n1CAjo18=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>SMEVLFzcuZtr4ZRQU0lwFC+E+8jckvDFV4oGUTmUZl0=</DigestValue>
+<DigestValue>o8eiKuusQDjPy0CFg83PH28/1wjJuz5UTN9qSCZ1+8Q=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FAudioMuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -18,9 +18,21 @@
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>y1dMkyvF+p1X77wAdRXzakpHD0rCApEwCMSxiT/3t9I=</DigestValue>
 </Reference>
+<Reference URI="shared%2Fres%2FBluetoothConnected.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>K4+6RRopOJCl/Hks8/8KrdSNGnWalJbgqgvRHyIP1iA=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FBluetoothDisabled.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>xM4VLTXu4xgNL1MWkjrTcRBOdFf3VqxBFDEYi/rVyEU=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FBluetoothEnabled.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>igE8iCh1hkg1uUpCA40u9JrYt85H2eAjrMi2+Ggu7mU=</DigestValue>
+</Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>IYdNm/oyXgwh5XzvP5t+bEr4NVtmZwLLydA+ICaZ0B8=</DigestValue>
+<DigestValue>Ky11tHOEYkged5IWm+uQ8LCv4+mAJjU+64IgvYlfebI=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -38,9 +50,21 @@
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>UYS2LnWE0hyRh1ThTdLI3kdn6Iil3GOwZ4iu7SNxUkE=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2FLocation.png">
+<Reference URI="shared%2Fres%2FLocationDisabled.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>P61o2fe7uGqXZ0CHbc0Vv03uW4P6PqIc1jrtxSRVNE4=</DigestValue>
+<DigestValue>VnfaPArZQnQ0NG1wsILik2DEBuSQpPhgmoPFbXUGj8E=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FLocationEnabled.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>WKGrsPUOzVd3Iw+2GHrVqD3g5Xrr45zwAIS7c7/mOlw=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FQuitSelected.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>QOPuzAD8KQkZBmwaMu0GLTC2Nw1i/lVu2v79kRj/MmY=</DigestValue>
+</Reference>
+<Reference URI="shared%2Fres%2FQuitUnselected.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>+FMOf9ThbT7M7tGcseHTCUYp0Z/62ymvqS6/6Wv1nBc=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -55,11 +79,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-TWBCdovzDqPRbVYY0XAj7KKKfNB+DkVk3Yw2iGD00TgUDY6oVUmhTfJCm7bfFpPgE2TZUt99LOzV
-VL6K72EdvMORSd7SeiolyYJ7MJpvgMcA0w2oY96RBLLbDF0hXuajRauiRU1itmI/RiadrhxR6sEI
-LWX0nQ3Rhpof9L5aSLnVAhrl0vwX7G3lX3x6mBwZAsodHK0aGuy437vJ5XeTPyUe2ejth8be0qsH
-xXMXRMMb+yGbiUFBljJL/mf7WCuvOsVzP/lLHg/EMQEQgNaEOtHDkGC7ku8AwId0DCDuCYO75RGT
-5yZ1//lKX+NFzM5KNCmDsD+ve35cu1eW9pMWHQ==
+oPHN8bkp9/tnbitYHXWU79pCbafqBxT/O/z9GyRUh4gdafqhdNXYNWX0qdKVFPVpmoyAgxhpUxFt
+Cv0+bwmBduv2Vb9OkCnt8hy/O0sFXy4mV2OXwP5Rb5OZG0uB2CjHzATjaTQywDGB4qnhDfXJSLwi
+vfGYaA/ClrIuIU8hPeyS5mk+56rIVLmmumglXlER742493dQa5+CmaRQwpqupo29c/YRXn9UY+88
+IucxcthLBWdgwyQY5GiAqm2lw+8HWSfgHXpIH1iKFef+9VX1iKOo6oo2c+fIT5PCFmYXAaHJH+LQ
+NMc9FdUf+nZS/2nSgGRpCEaZnEc58PUpyVyKzw==
 </SignatureValue>
 <KeyInfo>
 <X509Data>
