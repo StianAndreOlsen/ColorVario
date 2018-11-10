@@ -15,6 +15,8 @@ public:
 	void setText(const std::string& text) { SetProperty(Property::TEXT, text); }
 	float pointSize() const { return GetProperty<float>(Property::POINT_SIZE); }
 	void setPointSize(float size) { SetProperty(Property::POINT_SIZE, size); }
+	bool multiLine() const { return GetProperty<bool>(Property::MULTI_LINE); }
+	void setMultiLine(bool multiLine) { SetProperty(Property::MULTI_LINE, multiLine); }
 	std::string horizontalAlignment() const { return GetProperty<std::string>(Property::HORIZONTAL_ALIGNMENT); }
 	void setHorizontalAlignment(const std::string& align) { SetProperty(Property::HORIZONTAL_ALIGNMENT, align); }
 	std::string verticalAlignment() const { return GetProperty<std::string>(Property::VERTICAL_ALIGNMENT); }

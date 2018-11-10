@@ -1,0 +1,5 @@
+This button is made (using GIMP) from Quit.png:
+1. Change the white to transparency (Colors | Color to Alpha)
+2. Change the red to a darker faded red (804040) (Colors | Map | Color Exchange)
+3. Make an elliptic selection that covers internals that are supposed to be white and create a layer from the selection (Layer | New from Visible)
+4. Fill the layer with white and push it to the back (Layer | Stack | Lower Layer)

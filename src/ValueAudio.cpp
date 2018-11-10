@@ -14,17 +14,24 @@ Kystsoft::ValueAudio::ValueAudio()
 	soundStream.focusChangedSignal().connect(this, &ValueAudio::onSoundStreamFocusChanged);
 	audioOutput.setSoundStreamInfo(soundStream);
 	audioOutput.writeCallback().connect(this, &ValueAudio::onAudioRequested);
+	mutedId = mutedSignal.connect(this, &ValueAudio::stop);
 }
 
 Kystsoft::ValueAudio::~ValueAudio() noexcept
 {
-	// Note: It is important to mute before audioOutput is destroyed. If not,
+	// disconnect from the muted signal since it doesn't die with us
+	mutedSignal.disconnect(mutedId);
+
+	// Note: It's important to stop before audioOutput is destroyed. If not,
 	// the sound stream focus will be released when soundStream is destroyed
 	// and if that happens after audioOutput has been destroyed our call to
 	// audioOutput.unprepare() will crash the application.
-	try { mute(); }
+	try { stop(); }
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 }
+
+bool Kystsoft::ValueAudio::muted = true;
+Kystsoft::Signal<> Kystsoft::ValueAudio::mutedSignal;
 
 void Kystsoft::ValueAudio::setMuted(bool muted)
 {
@@ -36,33 +43,57 @@ void Kystsoft::ValueAudio::setMuted(bool muted)
 
 void Kystsoft::ValueAudio::mute()
 {
-	if (isMuted())
-		return;
-	soundStream.releasePlaybackFocus();
-}
-
-void Kystsoft::ValueAudio::unmute()
-{
-	if (!isMuted())
-		return;
-	soundStream.acquirePlaybackFocus();
+	muted = true;
+	mutedSignal.emit();
 }
 
 void Kystsoft::ValueAudio::toggleMuteUnmute()
 {
-	if (isMuted())
+	if (muted)
 		unmute();
 	else
 		mute();
+}
+
+void Kystsoft::ValueAudio::setStarted(bool started)
+{
+	if (started)
+		start();
+	else
+		stop();
+}
+
+void Kystsoft::ValueAudio::start()
+{
+	if (!muted)
+		soundStream.acquirePlaybackFocus();
+}
+
+void Kystsoft::ValueAudio::toggleStartStop()
+{
+	if (isStarted())
+		stop();
+	else
+		start();
 }
 
 void Kystsoft::ValueAudio::setValue(double value)
 {
 	averageValue += value;
 
+	if (isStarted())
+	{
+		// Note: If audio is muted while the sound stream focus is temporarily
+		// lost we might get the focus again, even if we no longer want it.
+		if (muted)
+			stop();
+		else if (!audioOutput.isPrepared())
+			audioOutput.prepare();
+	}
+
 	// TODO: Remove if this never happens (check log file after a long period of testing)
 	// restart audio if it has stopped (for some mysterious reason)
-	if (!isMuted() && lastWriteTime > 0 && std::difftime(std::time(nullptr), lastWriteTime) > 2)
+	if (audioOutput.isPrepared() && lastWriteTime > 0 && std::difftime(std::time(nullptr), lastWriteTime) > 2)
 	{
 		lastWriteTime = 0;
 		audioOutput.unprepare();
@@ -73,10 +104,8 @@ void Kystsoft::ValueAudio::setValue(double value)
 
 void Kystsoft::ValueAudio::load(const Settings& settings, const std::string& section)
 {
-	// TODO: Figure out why the below line crashes the app
-//	setMuted(settings.value("Sound.muted", false));
-	setAveragingInterval(settings.value(section + ".averagingInterval", 1.0));
 	sound.load(settings, section);
+	setAveragingInterval(settings.value(section + ".averagingInterval", 1.0));
 }
 
 void Kystsoft::ValueAudio::onSoundStreamFocusChanged(int focus)
@@ -84,15 +113,15 @@ void Kystsoft::ValueAudio::onSoundStreamFocusChanged(int focus)
 	lastWriteTime = 0;
 	if (focus & SOUND_STREAM_FOCUS_FOR_PLAYBACK)
 	{
-		// focus gained --> start audio
-		audioOutput.prepare();
-		mutedSignl.emit(false);
+		// focus gained --> start audio if we are not muted in the meantime
+		if (!muted)
+			audioOutput.prepare();
+		// Note: It's not allowed to release the focus in this callback
 	}
 	else
 	{
-		// focus lost --> stop audio
+		// focus lost --> always stop audio
 		audioOutput.unprepare();
-		mutedSignl.emit(true);
 	}
 }
 
@@ -113,7 +142,7 @@ void Kystsoft::ValueAudio::onAudioRequested(AudioOutput& audioOutput, size_t byt
 	double duty = sound.duty(value);
 
 	// create silence points
-	if (frequency <= 0 || period <= 0 || duty <= 0)
+	if (muted || frequency <= 0 || period <= 0 || duty <= 0)
 	{
 		lastCyclePhase = 0;
 		lastTonePhase = 0;

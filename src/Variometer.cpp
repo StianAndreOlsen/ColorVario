@@ -26,6 +26,27 @@ void Kystsoft::Variometer::setSamplingInterval(double interval)
 	}
 }
 
+void Kystsoft::Variometer::setStarted(bool started)
+{
+	if (!isStarted() && started)
+		lastTimestamp = 0;
+	pressureListener.setStarted(started);
+}
+
+void Kystsoft::Variometer::start()
+{
+	if (!isStarted())
+		lastTimestamp = 0;
+	pressureListener.start();
+}
+
+void Kystsoft::Variometer::toggleStartStop()
+{
+	if (!isStarted())
+		lastTimestamp = 0;
+	pressureListener.toggleStartStop();
+}
+
 void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event_s* event)
 {
 	// get event values
@@ -35,6 +56,14 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	// calculate altitude (https://en.wikipedia.org/wiki/Pressure_altitude)
 	double altitude = (1 - std::pow(pressure / referencePressure, 0.190284)) * 145366.45;
 	altitude *= 0.3048; // convert from feet to meters
+
+	// check if this is the first sensor event
+	if (lastTimestamp == 0)
+	{
+		lastTimestamp = timestamp;
+		lastAltitude = altitude;
+		return;
+	}
 
 	// calculate climb
 	double seconds = (timestamp - lastTimestamp) / 1000000.0;

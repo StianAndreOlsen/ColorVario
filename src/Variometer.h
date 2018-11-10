@@ -17,10 +17,10 @@ public:
 	double samplingInterval() const { return interval_ms / 1000.0; }
 	void setSamplingInterval(double interval);
 	bool isStarted() const { return pressureListener.isStarted(); }
-	void setStarted(bool started) { pressureListener.setStarted(started); }
-	void start() { pressureListener.start(); }
+	void setStarted(bool started);
+	void start();
 	void stop() { pressureListener.stop(); }
-	void toggleStartStop() { pressureListener.toggleStartStop(); }
+	void toggleStartStop();
 	void setCurrentAltitude(double altitude) { currentAltitude = altitude; } // calibrates the altimeter
 	const Signal<double>& climbSignal() const { return climbSignl; }
 	const Signal<double>& altitudeSignal() const { return altitudeSignl; }

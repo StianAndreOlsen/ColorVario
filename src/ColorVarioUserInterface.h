@@ -16,10 +16,12 @@
 namespace Kystsoft {
 namespace ColorVario {
 
-// TODO: Figure out if it is ok to have two ConnectionTracker classes
 class UserInterface : public Dali::ConnectionTracker
 {
 public:
+	UserInterface();
+	void create();
+	void load(const Settings& settings);
 	enum class Page
 	{
 		Quit,
@@ -28,9 +30,6 @@ public:
 		Speed,
 		Error
 	};
-	UserInterface();
-	void create();
-	void load(const Settings& settings);
 	Page currentPage() const { return Page(curPage); }
 	void setCurrentPage(Page page) { showPage(int(page)); }
 	void showNextPage() { showPage(curPage + 1); }
@@ -44,31 +43,32 @@ public:
 	void setAltitude(double altitude);
 	void setClimb(double climb);
 	void setSpeed(double speed);
-	void onDisplayLocked(bool locked);
-	void onBluetoothEnabled(bool enabled);
-	void onBluetoothConnected(bool connected);
+	void setErrorMessage(const std::string& message);
+	void setAudioMuted(bool muted);
+	void setDisplayLocked(bool locked);
+	void setBluetoothEnabled(bool enabled);
+	void setBluetoothConnected(bool connected);
+	void setLocationEnabled(bool enabled);
 	const Signal<>& quitSignal() const { return quitSignl; }
 	const Signal<bool>& lockDisplaySignal() const { return lockDisplaySignl; }
 	const Signal<bool>& enableBluetoothSignal() const { return enableBluetoothSignl; }
 private:
-	Dali::Toolkit::Control page(int p) { return pages[size_t(p)]; }
+	int pageCount() const { return int(pages.size()); }
+	Dali::Toolkit::Control page(int i) { return pages[size_t(i)]; }
 	Dali::Toolkit::Control page(Page p) { return pages[size_t(p)]; }
 	Dali::Toolkit::Control quitPage() { return page(Page::Quit); }
 	Dali::Toolkit::Control altitudePage() { return page(Page::Altitude); }
 	Dali::Toolkit::Control climbPage() { return page(Page::Climb); }
 	Dali::Toolkit::Control speedPage() { return page(Page::Speed); }
 	Dali::Toolkit::Control errorPage() { return page(Page::Error); }
-	void createAltitudeRing(Dali::Vector2 pageSize);
-	void createClimbRing(Dali::Vector2 pageSize);
-	void createQuitPage(Dali::Vector2 pageSize);
-	void createAltitudePageLabels(Dali::Vector2 pageSize);
-	void createClimbPageLabels(Dali::Vector2 pageSize);
-	void createSpeedPageLabels(Dali::Vector2 pageSize);
+	void createQuitPageContents(Dali::Vector2 pageSize);
+	void createAltitudePageContents(Dali::Vector2 pageSize);
+	void createClimbPageContents(Dali::Vector2 pageSize);
+	void createSpeedPageContents(Dali::Vector2 pageSize);
+	void createErrorPageContents(Dali::Vector2 pageSize);
 	void createUpperToolbar(Dali::Vector2 pageSize);
 	void createLowerToolbar(Dali::Vector2 pageSize);
 	void showPage(int newPage);
-	void onAltitudeAudioMuted(bool muted);
-	void onClimbAudioMuted(bool muted);
 	void onTouch(const Dali::TouchData& touch);
 	void onWheelEvent(const Dali::WheelEvent& event);
 	bool onQuitButtonClicked(Dali::Toolkit::Button button);
@@ -76,21 +76,22 @@ private:
 	bool onLockDisplayButtonClicked(Dali::Toolkit::Button button);
 	bool onEnableBluetoothButtonClicked(Dali::Toolkit::Button button);
 	AltitudeAudio altitudeAudio;
-	AltitudeLabel altitudeLabel;
-	AltitudeRing altitudeRing;
 	ClimbAudio climbAudio;
-	ClimbLabel climbLabel;
+	AltitudeRing altitudeRing;
 	ClimbRing climbRing;
+	AltitudeLabel altitudeLabel;
+	ClimbLabel climbLabel;
 	SpeedLabel speedLabel;
-	int curPage = 0;
+	int curPage = -1;
 	std::vector<Dali::Toolkit::Control> pages;
 	PushButton quitButton;
 	TextLabel altitudePageAltitudeLabel;
-	TextLabel climbPageClimbLabel;
 	TextLabel climbPageAltitudeLabel;
+	TextLabel climbPageClimbLabel;
 	TextLabel speedPageAltitudeLabel;
 	TextLabel speedPageClimbLabel;
 	TextLabel speedPageSpeedLabel;
+	TextLabel errorLabel;
 	Dali::Toolkit::Control upperToolbar;
 	PushButton muteAudioButton;
 	PushButton lockDisplayButton;

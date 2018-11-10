@@ -23,7 +23,6 @@ public:
 	void lock();
 	void unlock();
 	void toggleLockUnlock();
-	const Signal<bool>& lockedSignal() const { return lockedSignl; }
 private:
 	void addStateChangedCallback();
 	void removeStateChangedCallback();
@@ -34,7 +33,6 @@ private:
 	double initialBrightness = -1;
 	double wantedBrightness = -1;
 	bool locked = false;
-	Signal<bool> lockedSignl;
 };
 
 } // namespace Kystsoft

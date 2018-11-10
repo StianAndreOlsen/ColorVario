@@ -18,12 +18,16 @@ public:
 	ValueAudio& operator=(const ValueAudio& rhs) = delete;
 	virtual ~ValueAudio() noexcept;
 	virtual void load(const Settings& settings) = 0;
-	bool isMuted() const { return !audioOutput.isPrepared(); }
-	void setMuted(bool muted);
-	void mute();
-	void unmute();
-	void toggleMuteUnmute();
-	const Signal<bool>& mutedSignal() const { return mutedSignl; }
+	static bool isMuted() { return muted; }
+	static void setMuted(bool muted);
+	static void mute();
+	static void unmute() { muted = false; }
+	static void toggleMuteUnmute();
+	bool isStarted() const { return soundStream.hasPlaybackFocus(); }
+	void setStarted(bool started);
+	void start();
+	void stop() { soundStream.releasePlaybackFocus(); }
+	void toggleStartStop();
 	const ValueSound& valueSound() const { return sound; }
 	void setValueSound(const ValueSound& valueSound) { sound = valueSound; }
 	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
@@ -34,14 +38,16 @@ protected:
 private:
 	void onSoundStreamFocusChanged(int focus);
 	void onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested);
+	static bool muted;
+	static Signal<> mutedSignal;
+	Signal<>::ConnectionId mutedId;
 	SoundStream soundStream;
 	AudioOutput audioOutput;
 	double lastCyclePhase = 0;
 	double lastTonePhase = 0;
 	time_t lastWriteTime = 0;
-	Signal<bool> mutedSignl;
-	Averager<double> averageValue;
 	ValueSound sound;
+	Averager<double> averageValue;
 };
 
 } // namespace Kystsoft

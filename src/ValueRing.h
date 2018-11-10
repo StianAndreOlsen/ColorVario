@@ -24,8 +24,8 @@ public:
 protected:
 	void load(const Settings& settings, const std::string& section);
 private:
-	Averager<double> averageValue;
 	ValueColor color;
+	Averager<double> averageValue;
 	Color currentColor = Dali::Color::TRANSPARENT;
 };
 

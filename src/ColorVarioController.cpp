@@ -23,7 +23,6 @@ Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	vario.climbSignal().connect(&ui, &UserInterface::setClimb);
 
 	// connect display signals
-	display.lockedSignal().connect(&ui, &UserInterface::onDisplayLocked);
 	display.stateChangedSignal().connect(this, &Controller::onDisplayStateChanged);
 
 	// connect user interface signals
@@ -45,7 +44,7 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		{
 			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS);
 			gps->loadGeoid(appSharedResourcePath() + "Geoid.dat");
-//			gps->startedSignal().connect(dynamic_cast<Dali::Actor*>(&locationIcon), &Dali::Actor::SetVisible);
+			gps->startedSignal().connect(&ui, &UserInterface::setLocationEnabled);
 			gps->locationSignal().connect(this, &Controller::onLocationUpdated);
 			gps->start();
 		}
@@ -63,9 +62,7 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		catch (std::exception& e)
 		{
 			dlog(DLOG_ERROR) << e.what();
-			// TODO: Consider showing a separate error label
-//			climbLabel.setText("No pressure");
-//			altitudeLabel.setText("signal!");
+			ui.setErrorMessage("No pressure signal!");
 		}
 
 		// TODO: Create a function/class for this
@@ -113,26 +110,29 @@ void Kystsoft::ColorVario::Controller::createUi()
 
 void Kystsoft::ColorVario::Controller::load(const Settings& settings)
 {
-	// enable debug logging
+	// debug logging
 	if (settings.value("Debug.enableLogging", false))
 		setDebugLogFile(internalStorageRoot() + '/' + appName() + '/' + appName() + ".log");
 	else
 		setDebugLogFile(""); // terminate string stream buffering
 
-	// set sound volume
+	// sound
 	soundManager.setVolume(settings.value("Sound.volume", -100.0) / 100);
+	ui.setAudioMuted(settings.value("Sound.muted", false));
 
-	// control display
+	// display
 	display.setBrightness(settings.value("Display.brightness", -100.0) / 100);
-	display.setLocked(settings.value("Display.locked", false));
+	ui.setDisplayLocked(settings.value("Display.locked", false));
 
-	// variometer settings
+	// variometer
 	vario.load(settings);
 
-	// user interface settings
+	// sampling intervals
 	ui.setAltitudeSamplingInterval(vario.samplingInterval());
 	ui.setClimbSamplingInterval(vario.samplingInterval());
 	ui.setSpeedSamplingInterval(1); // TODO: Update with data from GPS
+
+	// sounds, colors and labels
 	ui.load(settings);
 }
 

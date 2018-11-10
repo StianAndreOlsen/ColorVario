@@ -78,7 +78,6 @@ void Kystsoft::Display::lock()
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_power_request_lock", error);
 	locked = true;
-	lockedSignl.emit(locked);
 }
 
 void Kystsoft::Display::unlock()
@@ -90,7 +89,6 @@ void Kystsoft::Display::unlock()
 	if (error != DEVICE_ERROR_NONE)
 		throw TizenError("device_power_release_lock", error);
 	locked = false;
-	lockedSignl.emit(locked);
 }
 
 void Kystsoft::Display::toggleLockUnlock()
