@@ -30,7 +30,6 @@ private:
 	void onContextRegained(); // TODO: Remove after testing
 	void onTouch(const Dali::TouchData& touch);
 	void onKeyEvent(const Dali::KeyEvent& event);
-	void onWheelEvent(const Dali::WheelEvent& event);
 	void onLocationUpdated(const Location& location);
 	void onDisplayStateChanged(display_state_e state);
 	void setAltitude(double altitude);

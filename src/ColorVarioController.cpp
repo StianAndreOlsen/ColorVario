@@ -103,7 +103,6 @@ void Kystsoft::ColorVario::Controller::createUi()
 	Dali::Stage stage = Dali::Stage::GetCurrent();
 	stage.TouchSignal().Connect(this, &Controller::onTouch);
 	stage.KeyEventSignal().Connect(this, &Controller::onKeyEvent);
-	stage.WheelEventSignal().Connect(this, &Controller::onWheelEvent);
 	stage.ContextLostSignal().Connect(this, &Controller::onContextLost);
 	stage.ContextRegainedSignal().Connect(this, &Controller::onContextRegained);
 }
@@ -217,19 +216,10 @@ void Kystsoft::ColorVario::Controller::onKeyEvent(const Dali::KeyEvent& event)
 {
 	if (event.state == Dali::KeyEvent::Up)
 	{
-		// TODO: Go back to previous app instead of quitting
 		if (Dali::IsKey(event, Dali::DALI_KEY_ESCAPE) ||
 		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
 			app.GetWindow().Lower();
-//			app.Quit(); // TODO: Remove!
 	}
-}
-
-void Kystsoft::ColorVario::Controller::onWheelEvent(const Dali::WheelEvent& event)
-{
-	// TODO: Fix page changing code. This is just to check that the wheel event trigger this function.
-//	if (event.z > 0)
-//		app.Quit();
 }
 
 void Kystsoft::ColorVario::Controller::onLocationUpdated(const Location& location)

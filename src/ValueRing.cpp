@@ -16,11 +16,13 @@ void Kystsoft::ValueRing::setValue(double value)
 	map[Dali::Toolkit::GradientVisual::Property::RADIUS] = 0.5f;
 	Dali::Property::Array stopOffsets;
 	stopOffsets.PushBack(0.5f + 0.5f / std::sqrt(2.0f));
-	stopOffsets.PushBack(1.0f);
+	stopOffsets.PushBack(0.99f);
+	stopOffsets.PushBack(0.99f);
 	map[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
 	Dali::Property::Array stopColors;
 	stopColors.PushBack(Dali::Color::TRANSPARENT);
 	stopColors.PushBack(newColor);
+	stopColors.PushBack(Dali::Color::TRANSPARENT);
 	map[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
 	SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, map);
 }

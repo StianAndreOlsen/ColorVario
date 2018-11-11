@@ -18,7 +18,7 @@ void Kystsoft::ValueColor::load(const Settings& settings, const std::string& sec
 Kystsoft::Color Kystsoft::ValueColor::color(double value) const
 {
 	if (zones.isOff(value))
-		return Dali::Color::BLACK;
+		return Dali::Color::TRANSPARENT;
 	if (colorPoints.empty())
 		return Dali::Color::RED;
 	if (colorPoints.size() < 2)
