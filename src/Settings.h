@@ -9,9 +9,9 @@
 
 namespace Kystsoft {
 
-// Reads ini-files (https://en.wikipedia.org/wiki/INI_file) and store the
-// contents as key-value pairs. The final keys contain the section name as
-// in 'section.name'
+// Reads ini-files and store the contents as key-value pairs
+// The final keys contain the section name as in 'section.name'
+// https://en.wikipedia.org/wiki/INI_file
 class Settings
 {
 public:

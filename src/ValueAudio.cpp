@@ -192,16 +192,16 @@ void Kystsoft::ValueAudio::onAudioRequested(AudioOutput& audioOutput, size_t byt
 			double y = 0;
 			switch (sound.waveform())
 			{
-			case Waveform::Sine: // sine wave (https://en.wikipedia.org/wiki/Sine_wave)
+			case Waveform::Sine: // sine wave, https://en.wikipedia.org/wiki/Sine_wave
 				y = std::sin(2 * 3.14159265358979 * x);
 				break;
-			case Waveform::Square: // square wave (https://en.wikipedia.org/wiki/Square_wave)
+			case Waveform::Square: // square wave, https://en.wikipedia.org/wiki/Square_wave
 				y = 2 * (2 * std::floor(x) - std::floor(2 * x)) + 1;
 				break;
-			case Waveform::Triangle: // triangle wave (https://en.wikipedia.org/wiki/Triangle_wave)
+			case Waveform::Triangle: // triangle wave, https://en.wikipedia.org/wiki/Triangle_wave
 				y = 2 * std::abs(2 * (x + 0.25 - std::floor(x + 0.75))) - 1;
 				break;
-			case Waveform::Sawtooth: // sawtooth wave (https://en.wikipedia.org/wiki/Sawtooth_wave)
+			case Waveform::Sawtooth: // sawtooth wave, https://en.wikipedia.org/wiki/Sawtooth_wave
 				y = 2 * (x - std::floor(x + 0.5));
 				break;
 			}

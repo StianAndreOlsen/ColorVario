@@ -53,7 +53,7 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	uint64_t timestamp = event->timestamp;
 	double pressure = event->values[0];
 
-	// calculate altitude (https://en.wikipedia.org/wiki/Pressure_altitude)
+	// calculate altitude, https://en.wikipedia.org/wiki/Pressure_altitude
 	double altitude = (1 - std::pow(pressure / referencePressure, 0.190284)) * 145366.45;
 	altitude *= 0.3048; // convert from feet to meters
 
@@ -77,7 +77,7 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 		currentAltitude /= 0.3048; // convert from meters to feet
 		referencePressure = pressure / std::pow(1 - currentAltitude / 145366.45, 1 / 0.190284);
 
-		// recalculate altitude (https://en.wikipedia.org/wiki/Pressure_altitude)
+		// recalculate altitude, https://en.wikipedia.org/wiki/Pressure_altitude
 		altitude = (1 - std::pow(pressure / referencePressure, 0.190284)) * 145366.45;
 		altitude *= 0.3048; // convert from feet to meters
 

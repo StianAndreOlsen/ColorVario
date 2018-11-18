@@ -4,24 +4,24 @@
 
 void Kystsoft::ColorVario::UserInterface::create()
 {
-	// page size
+	// page size and count
 	Dali::Stage stage = Dali::Stage::GetCurrent();
 	Dali::Vector2 pageSize = stage.GetSize();
+	constexpr size_t pageCount = 5; // TODO: Find a better solution
 
 	// create page strip
 	pageStrip = Dali::Toolkit::Control::New();
 	pageStrip.SetSize(pageCount * pageSize.width, pageSize.height);
 	pageStrip.SetParentOrigin(Dali::ParentOrigin::TOP_LEFT);
 	pageStrip.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	pageStrip.SetPosition(-int(curPage) * pageSize.width, 0);
+	pageStrip.SetPosition(-curPageIndex * pageSize.width, 0);
 //	pageStrip.SetBackgroundColor(Dali::Color::BLUE);
 	stage.Add(pageStrip);
 
-	// create empty pages
+	// create pages
 	for (size_t i = 0; i < pageCount; ++i)
 	{
-		Dali::Toolkit::Control page = Dali::Toolkit::Control::New();
-		page.SetSize(pageSize);
+		Page page = Page::New(Page::Type(i));
 		page.SetParentOrigin(Dali::ParentOrigin::TOP_LEFT);
 		page.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
 		page.SetPosition(i * pageSize.width, 0);
@@ -29,12 +29,8 @@ void Kystsoft::ColorVario::UserInterface::create()
 		pageStrip.Add(page);
 	}
 
-	// create page contents
-	createQuitPageContents(pageSize);
-	createAltitudePageContents(pageSize);
-	createClimbPageContents(pageSize);
-	createSpeedPageContents(pageSize);
-	createErrorPageContents(pageSize);
+	// connect page signals
+	quitButton().ClickedSignal().Connect(this, &UserInterface::onQuitButtonClicked);
 
 	// create menu
 	createMenu();
@@ -43,9 +39,9 @@ void Kystsoft::ColorVario::UserInterface::create()
 	climbAudio.start();
 	altitudeRing = altitudePage();
 	climbRing = climbPage();
-	altitudeLabel = climbPageAltitudeLabel;
-	climbLabel = climbPageClimbLabel;
-	speedLabel = speedPageSpeedLabel;
+	altitudeLabel = climbPageAltitudeLabel();
+	climbLabel = climbPageClimbLabel();
+	speedLabel = speedPageSpeedLabel();
 
 	// connect stage signals
 	stage.TouchSignal().Connect(this, &UserInterface::onTouch);
@@ -56,7 +52,7 @@ void Kystsoft::ColorVario::UserInterface::create()
 	// TODO: Maybe it is possible to check if animation is ok and if not we can just position the page strip without any animations
 	// TODO: If I am able to call showPage here, go back to set curPage = Page::Quit in the header, and don't start the audio above
 	// TODO: I suspect something is wrong with the pages current sizes. Maybe they haven't been calculated properly.
-//	showPage(Page::Climb);
+//	showPage(Page::Type::Climb);
 }
 
 void Kystsoft::ColorVario::UserInterface::load(const Settings& settings)
@@ -75,67 +71,78 @@ void Kystsoft::ColorVario::UserInterface::load(const Settings& settings)
 	speedLabel.load(settings);
 }
 
-void Kystsoft::ColorVario::UserInterface::showPage(Page page)
+void Kystsoft::ColorVario::UserInterface::showPage(int pageIndex)
 {
-	if (page == Page::Error && errorLabel.text().empty())
+	pageIndex = std::clamp(pageIndex, 0, int(pages.size()) - 1);
+	Page::Type pageType = Page::Type(pageIndex);
+	if (pageType == Page::Type::Error && errorLabel().text().empty())
 		return; // stay on the existing page
-	if (page == curPage)
+	if (pageIndex == curPageIndex)
 		return;
 
 	// sound
-	if (page == Page::Altitude)
+	if (pageType == Page::Type::Altitude)
 	{
 		climbAudio.stop();
 		altitudeAudio.start();
 	}
-	else if (curPage == Page::Altitude)
+	else if (curPageIndex == int(Page::Type::Altitude))
 	{
 		altitudeAudio.stop();
 		climbAudio.start();
 	}
 
 	// color and labels
-	switch (page)
+	switch (pageType)
 	{
-	case Page::Quit:
+	case Page::Type::Quit:
 		climbRing = quitPage();
 		break;
-	case Page::Altitude:
+	case Page::Type::Altitude:
 		// altitudeRing always paints to altitudePage
-		altitudeLabel = altitudePageAltitudeLabel;
+		altitudeLabel = altitudePageAltitudeLabel();
 		break;
-	case Page::Climb:
+	case Page::Type::Climb:
 		climbRing = climbPage();
-		climbLabel = climbPageClimbLabel;
-		altitudeLabel = climbPageAltitudeLabel;
+		climbLabel = climbPageClimbLabel();
+		altitudeLabel = climbPageAltitudeLabel();
 		break;
-	case Page::Speed:
+	case Page::Type::Speed:
 		climbRing = speedPage();
-		altitudeLabel = speedPageAltitudeLabel;
-		climbLabel = speedPageClimbLabel;
+		altitudeLabel = speedPageAltitudeLabel();
+		climbLabel = speedPageClimbLabel();
 		// speedLabel always writes to speedPageSpeedLabel
 		break;
-	case Page::Error:
+	case Page::Type::Error:
 		climbRing = errorPage();
 		break;
 	}
 
-	Dali::Animation animation = Dali::Animation::New(0.25f);
 	Dali::Vector3 pos = pageStrip.GetCurrentPosition();
-	pos.x = -int(page) * quitPage().GetCurrentSize().width;
-	animation.AnimateTo(Dali::Property(pageStrip, Dali::Actor::Property::POSITION), pos);
-	animation.Play();
+	float targetX = -pageIndex * quitPage().GetTargetSize().width;
+	if (pos.x != targetX)
+	{
+		pos.x = targetX;
+		Dali::Animation animation = Dali::Animation::New(0.25f);
+		animation.AnimateTo(Dali::Property(pageStrip, Dali::Actor::Property::POSITION), pos);
+		animation.Play();
+	}
 
-	curPage = page;
+	curPageIndex = pageIndex;
 }
 
-void Kystsoft::ColorVario::UserInterface::showMenu(bool show)
+void Kystsoft::ColorVario::UserInterface::setMenuVisible(bool visible)
 {
-	Dali::Animation animation = Dali::Animation::New(0.25f);
 	Dali::Vector3 pos = menu.GetCurrentPosition();
-	pos.y = show ? 0 : -menu.GetCurrentSize().height;
-	animation.AnimateTo(Dali::Property(menu, Dali::Actor::Property::POSITION), pos);
-	animation.Play();
+	float targetY = visible ? 0 : -menu.GetTargetSize().height;
+	if (pos.y != targetY)
+	{
+		pos.y = targetY;
+		Dali::Animation animation = Dali::Animation::New(0.25f);
+		animation.AnimateTo(Dali::Property(menu, Dali::Actor::Property::POSITION), pos);
+		animation.Play();
+	}
+	lastMenuTouch = std::time(nullptr);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitudeSamplingInterval(double interval)
@@ -159,30 +166,30 @@ void Kystsoft::ColorVario::UserInterface::setSpeedSamplingInterval(double interv
 
 void Kystsoft::ColorVario::UserInterface::setAltitudeTextColor(const Dali::Vector4& color)
 {
-	altitudePageAltitudeLabel.setTextColor(color);
-	climbPageAltitudeLabel.setTextColor(color);
-	speedPageAltitudeLabel.setTextColor(color);
+	altitudePageAltitudeLabel().setTextColor(color);
+	climbPageAltitudeLabel().setTextColor(color);
+	speedPageAltitudeLabel().setTextColor(color);
 }
 
 void Kystsoft::ColorVario::UserInterface::setClimbTextColor(const Dali::Vector4& color)
 {
-	climbPageClimbLabel.setTextColor(color);
-	speedPageClimbLabel.setTextColor(color);
+	climbPageClimbLabel().setTextColor(color);
+	speedPageClimbLabel().setTextColor(color);
 }
 
 void Kystsoft::ColorVario::UserInterface::setSpeedTextColor(const Dali::Vector4& color)
 {
-	speedPageSpeedLabel.setTextColor(color);
+	speedPageSpeedLabel().setTextColor(color);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
 {
 	// hide menu
-	if (menu.GetCurrentPosition().y == 0 && std::difftime(std::time(nullptr), lastMenuTouch) > 15)
-		showMenu(false);
+	if (isMenuVisible() && std::difftime(std::time(nullptr), lastMenuTouch) > 15)
+		hideMenu();
 
 	// synchronize mute audio button
-	if (curPage == Page::Altitude)
+	if (curPageIndex == int(Page::Type::Altitude))
 		muteAudioButton.setChecked(!altitudeAudio.isStarted());
 	else
 		muteAudioButton.setChecked(!climbAudio.isStarted());
@@ -208,8 +215,8 @@ void Kystsoft::ColorVario::UserInterface::setErrorMessage(const std::string& mes
 {
 	// TODO: Add the possibility of several error messages instead of overwriting the previous
 	// TODO: Don't add an error already added, and then don't show the error page again!
-	errorLabel.setText(message);
-	showPage(Page::Error);
+	errorLabel().setText(message);
+	showPage(Page::Type::Error);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAudioMuted(bool muted)
@@ -234,122 +241,6 @@ void Kystsoft::ColorVario::UserInterface::setBluetoothConnected(bool connected)
 {
 	std::string file = connected ? "BluetoothConnected.png" : "BluetoothEnabled.png";
 	enableBluetoothButton.setSelectedImage(appSharedResourcePath() + file);
-}
-
-void Kystsoft::ColorVario::UserInterface::createQuitPageContents(const Dali::Vector2& pageSize)
-{
-	float height = pageSize.height / 2;
-	float width = height;
-	std::string resourceDir = appSharedResourcePath();
-
-	quitButton = PushButton::New();
-	quitButton.SetSize(width, height);
-	quitButton.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	quitButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	quitButton.SetPosition(0, 0);
-	quitButton.setUnselectedImage(resourceDir + "QuitUnselected.png");
-	quitButton.setSelectedImage(resourceDir + "QuitSelected.png");
-	quitButton.ClickedSignal().Connect(this, &UserInterface::onQuitButtonClicked);
-	quitPage().Add(quitButton);
-}
-
-void Kystsoft::ColorVario::UserInterface::createAltitudePageContents(const Dali::Vector2& pageSize)
-{
-	float width = pageSize.width;
-	float height = pageSize.height / 4;
-
-	altitudePageAltitudeLabel = TextLabel::New("Altitude");
-	altitudePageAltitudeLabel.SetSize(width, height);
-	altitudePageAltitudeLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	altitudePageAltitudeLabel.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	altitudePageAltitudeLabel.SetPosition(0, 0);
-	altitudePageAltitudeLabel.setVerticalAlignment("CENTER");
-	altitudePageAltitudeLabel.setHorizontalAlignment("CENTER");
-	altitudePageAltitudeLabel.setTextColor(Dali::Color::RED);
-	altitudePageAltitudeLabel.setPointSize(15);
-	altitudePage().Add(altitudePageAltitudeLabel);
-}
-
-void Kystsoft::ColorVario::UserInterface::createClimbPageContents(const Dali::Vector2& pageSize)
-{
-	float width = pageSize.width;
-	float height = pageSize.height / 4;
-
-	climbPageClimbLabel = TextLabel::New("Climb");
-	climbPageClimbLabel.SetSize(width, height);
-	climbPageClimbLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	climbPageClimbLabel.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
-	climbPageClimbLabel.SetPosition(0, 0);
-	climbPageClimbLabel.setVerticalAlignment("CENTER");
-	climbPageClimbLabel.setHorizontalAlignment("CENTER");
-	climbPageClimbLabel.setTextColor(Dali::Color::WHITE);
-	climbPageClimbLabel.setPointSize(15);
-	climbPage().Add(climbPageClimbLabel);
-
-	climbPageAltitudeLabel = TextLabel::New("Altitude");
-	climbPageAltitudeLabel.SetSize(width, height);
-	climbPageAltitudeLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	climbPageAltitudeLabel.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
-	climbPageAltitudeLabel.SetPosition(0, 0);
-	climbPageAltitudeLabel.setVerticalAlignment("CENTER");
-	climbPageAltitudeLabel.setHorizontalAlignment("CENTER");
-	climbPageAltitudeLabel.setTextColor(Dali::Color::RED);
-	climbPage().Add(climbPageAltitudeLabel);
-}
-
-void Kystsoft::ColorVario::UserInterface::createSpeedPageContents(const Dali::Vector2& pageSize)
-{
-	float width = pageSize.width;
-	float height = pageSize.height / 4;
-
-	speedPageAltitudeLabel = TextLabel::New("Altitude");
-	speedPageAltitudeLabel.SetSize(width, height * 3 / 4);
-	speedPageAltitudeLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	speedPageAltitudeLabel.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
-	speedPageAltitudeLabel.SetPosition(0, -height / 2);
-	speedPageAltitudeLabel.setVerticalAlignment("CENTER");
-	speedPageAltitudeLabel.setHorizontalAlignment("CENTER");
-	speedPageAltitudeLabel.setTextColor(Dali::Color::RED);
-	speedPage().Add(speedPageAltitudeLabel);
-
-	speedPageClimbLabel = TextLabel::New("Climb");
-	speedPageClimbLabel.SetSize(width, height);
-	speedPageClimbLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	speedPageClimbLabel.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	speedPageClimbLabel.SetPosition(0, 0);
-	speedPageClimbLabel.setVerticalAlignment("CENTER");
-	speedPageClimbLabel.setHorizontalAlignment("CENTER");
-	speedPageClimbLabel.setTextColor(Dali::Color::WHITE);
-	speedPageClimbLabel.setPointSize(15);
-	speedPage().Add(speedPageClimbLabel);
-
-	speedPageSpeedLabel = TextLabel::New("Speed");
-	speedPageSpeedLabel.SetSize(width, height * 3 / 4);
-	speedPageSpeedLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	speedPageSpeedLabel.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
-	speedPageSpeedLabel.SetPosition(0, height / 2);
-	speedPageSpeedLabel.setVerticalAlignment("CENTER");
-	speedPageSpeedLabel.setHorizontalAlignment("CENTER");
-	speedPageSpeedLabel.setTextColor(Dali::Color::WHITE);
-	speedPage().Add(speedPageSpeedLabel);
-}
-
-void Kystsoft::ColorVario::UserInterface::createErrorPageContents(const Dali::Vector2& pageSize)
-{
-	float width = pageSize.width / std::sqrt(2);
-	float height = pageSize.height / std::sqrt(2);
-
-	errorLabel = TextLabel::New("Kyrre og Stian er to skikkelig kule fyrer!");
-//	errorLabel = TextLabel::New();
-	errorLabel.SetSize(width, height);
-	errorLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	errorLabel.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	errorLabel.SetPosition(0, 0);
-	errorLabel.setVerticalAlignment("CENTER");
-	errorLabel.setHorizontalAlignment("CENTER");
-	errorLabel.setTextColor(Dali::Color::WHITE);
-	errorLabel.setMultiLine(true);
-	errorPage().Add(errorLabel);
 }
 
 void Kystsoft::ColorVario::UserInterface::createMenu()
@@ -386,8 +277,7 @@ void Kystsoft::ColorVario::UserInterface::createMenu()
 	stopOffsets.PushBack(0.99f);
 	map[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
 	Dali::Property::Array stopColors;
-	stopColors.PushBack(Color(0.0f, 0.207f, 0.29f, 0.9f)); // standard button color, https://developer.tizen.org/design/wearable/visual-design/colors
-//	stopColors.PushBack(Color(0.0f, 0.18f, 0.255f, 1.0f)); // standard button color merged with a black background
+	stopColors.PushBack(Color::button());
 	stopColors.PushBack(Dali::Color::TRANSPARENT);
 	map[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
 	menu.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, map);
@@ -465,8 +355,10 @@ void Kystsoft::ColorVario::UserInterface::onTouch(const Dali::TouchData& touch)
 	{
 		float y = touch.GetScreenPosition(0).y;
 		float height = Dali::Stage::GetCurrent().GetSize().height;
-		showMenu(y < height / 4);
-		lastMenuTouch = std::time(nullptr);
+		if (y < height / 4)
+			showMenu();
+		else if (y > height / 2)
+			hideMenu();
 	}
 }
 
@@ -497,7 +389,7 @@ bool Kystsoft::ColorVario::UserInterface::onMuteAudioButtonClicked(Dali::Toolkit
 	else
 	{
 		ValueAudio::unmute();
-		if (curPage == Page::Altitude)
+		if (curPageIndex == int(Page::Type::Altitude))
 			altitudeAudio.start();
 		else
 			climbAudio.start();

@@ -7,6 +7,7 @@
 #include "ClimbAudio.h"
 #include "ClimbLabel.h"
 #include "ClimbRing.h"
+#include "ColorVarioPage.h"
 #include "PushButton.h"
 #include "Signal.h"
 #include "SpeedLabel.h"
@@ -16,29 +17,21 @@
 namespace Kystsoft {
 namespace ColorVario {
 
-// Note: The pages can be re-arranged just by changing the order in the below enum
-enum class Page : int
-{
-	Quit,
-	Altitude,
-	Climb,
-	Speed,
-	Error
-};
-constexpr int pageCount = 5;
-inline Page operator+(Page p, int i) { return Page(std::clamp(int(p) + 1, 0, pageCount - 1)); }
-inline Page operator-(Page p, int i) { return Page(std::clamp(int(p) - 1, 0, pageCount - 1)); }
-
 class UserInterface : public Dali::ConnectionTracker
 {
 public:
 	void create();
 	void load(const Settings& settings);
-	Page currentPage() const { return curPage; }
-	void showPage(Page page);
-	void showNextPage() { showPage(curPage + 1); }
-	void showPreviousPage() { showPage(curPage - 1); }
-	void showMenu(bool show);
+	int currentPageIndex() const { return curPageIndex; }
+	Page::Type currentPageType() const { return Page::Type(curPageIndex); }
+	void showPage(int pageIndex);
+	void showPage(Page::Type pageType) { showPage(int(pageType)); }
+	void showNextPage() { showPage(curPageIndex + 1); }
+	void showPreviousPage() { showPage(curPageIndex - 1); }
+	bool isMenuVisible() const { return menu.GetCurrentPosition().y > -menu.GetTargetSize().height; }
+	void setMenuVisible(bool visible);
+	void showMenu() { setMenuVisible(true); }
+	void hideMenu() { setMenuVisible(false); }
 	void setAltitudeSamplingInterval(double interval);
 	void setClimbSamplingInterval(double interval);
 	void setSpeedSamplingInterval(double interval);
@@ -58,17 +51,20 @@ public:
 	const Signal<bool>& lockDisplaySignal() const { return lockDisplaySignl; }
 	const Signal<bool>& enableBluetoothSignal() const { return enableBluetoothSignl; }
 private:
-	Dali::Toolkit::Control page(Page p) { return pages[size_t(p)]; }
-	Dali::Toolkit::Control quitPage() { return page(Page::Quit); }
-	Dali::Toolkit::Control altitudePage() { return page(Page::Altitude); }
-	Dali::Toolkit::Control climbPage() { return page(Page::Climb); }
-	Dali::Toolkit::Control speedPage() { return page(Page::Speed); }
-	Dali::Toolkit::Control errorPage() { return page(Page::Error); }
-	void createQuitPageContents(const Dali::Vector2& pageSize);
-	void createAltitudePageContents(const Dali::Vector2& pageSize);
-	void createClimbPageContents(const Dali::Vector2& pageSize);
-	void createSpeedPageContents(const Dali::Vector2& pageSize);
-	void createErrorPageContents(const Dali::Vector2& pageSize);
+	Page page(Page::Type type) { return pages[size_t(type)]; }
+	Page quitPage() { return page(Page::Type::Quit); }
+	Page altitudePage() { return page(Page::Type::Altitude); }
+	Page climbPage() { return page(Page::Type::Climb); }
+	Page speedPage() { return page(Page::Type::Speed); }
+	Page errorPage() { return page(Page::Type::Error); }
+	PushButton quitButton() { return PushButton::DownCast(quitPage().GetChildAt(0)); }
+	TextLabel altitudePageAltitudeLabel() { return TextLabel::DownCast(altitudePage().GetChildAt(0)); }
+	TextLabel climbPageAltitudeLabel() { return TextLabel::DownCast(climbPage().GetChildAt(1)); }
+	TextLabel climbPageClimbLabel() { return TextLabel::DownCast(climbPage().GetChildAt(0)); }
+	TextLabel speedPageAltitudeLabel() { return TextLabel::DownCast(speedPage().GetChildAt(0)); }
+	TextLabel speedPageClimbLabel() { return TextLabel::DownCast(speedPage().GetChildAt(1)); }
+	TextLabel speedPageSpeedLabel() { return TextLabel::DownCast(speedPage().GetChildAt(2)); }
+	TextLabel errorLabel() { return TextLabel::DownCast(errorPage().GetChildAt(0)); }
 	void createMenu();
 	void onTouch(const Dali::TouchData& touch);
 	void onWheelEvent(const Dali::WheelEvent& event);
@@ -84,17 +80,9 @@ private:
 	AltitudeLabel altitudeLabel;
 	ClimbLabel climbLabel;
 	SpeedLabel speedLabel;
-	Page curPage = Page::Climb;
-	std::vector<Dali::Toolkit::Control> pages;
+	int curPageIndex = int(Page::Type::Climb);
+	std::vector<Page> pages;
 	Dali::Toolkit::Control pageStrip;
-	PushButton quitButton;
-	TextLabel altitudePageAltitudeLabel;
-	TextLabel climbPageAltitudeLabel;
-	TextLabel climbPageClimbLabel;
-	TextLabel speedPageAltitudeLabel;
-	TextLabel speedPageClimbLabel;
-	TextLabel speedPageSpeedLabel;
-	TextLabel errorLabel;
 	Dali::Toolkit::Control menu;
 	PushButton muteAudioButton;
 	PushButton lockDisplayButton;

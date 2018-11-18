@@ -11,6 +11,7 @@ public:
 	TextLabel() {}
 	TextLabel(const Dali::Toolkit::TextLabel& other) : Dali::Toolkit::TextLabel(other) {}
 	TextLabel& operator=(const Dali::Toolkit::TextLabel& rhs) { Dali::Toolkit::TextLabel::operator=(rhs); return *this; }
+	static TextLabel DownCast(BaseHandle handle) { return Dali::Toolkit::TextLabel::DownCast(handle); }
 	std::string text() const { return GetProperty<std::string>(Property::TEXT); }
 	void setText(const std::string& text) { SetProperty(Property::TEXT, text); }
 	float pointSize() const { return GetProperty<float>(Property::POINT_SIZE); }

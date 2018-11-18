@@ -11,6 +11,7 @@ public:
 	PushButton() {}
 	PushButton(const Dali::Toolkit::PushButton& other) : Dali::Toolkit::PushButton(other) {}
 	PushButton& operator=(const Dali::Toolkit::PushButton& rhs) { Dali::Toolkit::PushButton::operator=(rhs); return *this; }
+	static PushButton DownCast(BaseHandle handle) { return Dali::Toolkit::PushButton::DownCast(handle); }
 	bool isDisabled() const { return GetProperty<bool>(Button::Property::DISABLED); }
 	void setDisabled(bool disable) { SetProperty(Button::Property::DISABLED, disable); }
 	void disable() { setDisabled(true); }
