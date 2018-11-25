@@ -1,5 +1,6 @@
 #include "ColorVarioPage.h"
 #include "AppFunctions.h"
+#include "Color.h"
 #include "PushButton.h"
 #include "TextLabel.h"
 #include <cmath>
@@ -63,7 +64,7 @@ void Kystsoft::ColorVario::Page::createAltitudePageContents(const Dali::Vector2&
 	altitudeLabel.SetPosition(0, 0);
 	altitudeLabel.setVerticalAlignment("CENTER");
 	altitudeLabel.setHorizontalAlignment("CENTER");
-	altitudeLabel.setTextColor(Dali::Color::RED);
+	altitudeLabel.setTextColor(Color::error());
 	altitudeLabel.setPointSize(15);
 	parent.Add(altitudeLabel);
 }
@@ -80,7 +81,7 @@ void Kystsoft::ColorVario::Page::createClimbPageContents(const Dali::Vector2& pa
 	climbLabel.SetPosition(0, 0);
 	climbLabel.setVerticalAlignment("CENTER");
 	climbLabel.setHorizontalAlignment("CENTER");
-	climbLabel.setTextColor(Dali::Color::WHITE);
+	climbLabel.setTextColor(Color::mainText());
 	climbLabel.setPointSize(15);
 	parent.Add(climbLabel);
 
@@ -91,7 +92,7 @@ void Kystsoft::ColorVario::Page::createClimbPageContents(const Dali::Vector2& pa
 	altitudeLabel.SetPosition(0, 0);
 	altitudeLabel.setVerticalAlignment("CENTER");
 	altitudeLabel.setHorizontalAlignment("CENTER");
-	altitudeLabel.setTextColor(Dali::Color::RED);
+	altitudeLabel.setTextColor(Color::error());
 	parent.Add(altitudeLabel);
 }
 
@@ -107,7 +108,7 @@ void Kystsoft::ColorVario::Page::createSpeedPageContents(const Dali::Vector2& pa
 	altitudeLabel.SetPosition(0, -height / 2);
 	altitudeLabel.setVerticalAlignment("CENTER");
 	altitudeLabel.setHorizontalAlignment("CENTER");
-	altitudeLabel.setTextColor(Dali::Color::RED);
+	altitudeLabel.setTextColor(Color::error());
 	parent.Add(altitudeLabel);
 
 	TextLabel climbLabel = TextLabel::New("Climb");
@@ -117,7 +118,7 @@ void Kystsoft::ColorVario::Page::createSpeedPageContents(const Dali::Vector2& pa
 	climbLabel.SetPosition(0, 0);
 	climbLabel.setVerticalAlignment("CENTER");
 	climbLabel.setHorizontalAlignment("CENTER");
-	climbLabel.setTextColor(Dali::Color::WHITE);
+	climbLabel.setTextColor(Color::mainText());
 	climbLabel.setPointSize(15);
 	parent.Add(climbLabel);
 
@@ -128,7 +129,7 @@ void Kystsoft::ColorVario::Page::createSpeedPageContents(const Dali::Vector2& pa
 	speedLabel.SetPosition(0, height / 2);
 	speedLabel.setVerticalAlignment("CENTER");
 	speedLabel.setHorizontalAlignment("CENTER");
-	speedLabel.setTextColor(Dali::Color::WHITE);
+	speedLabel.setTextColor(Color::subText());
 	parent.Add(speedLabel);
 }
 
@@ -137,15 +138,39 @@ void Kystsoft::ColorVario::Page::createErrorPageContents(const Dali::Vector2& pa
 	float width = pageSize.width / std::sqrt(2);
 	float height = pageSize.height / std::sqrt(2);
 
-	TextLabel errorLabel = TextLabel::New("Kyrre og Stian er to skikkelig kule fyrer!");
-//	errorLabel = TextLabel::New();
+	std::string about
+	(
+		"<font size='7' weight='bold'>"
+		"<color value='" + Color::information().hexStringARGB() + "'>"
+			"ColorVario 2.0.0\n"
+			"\n"
+		"</color>"
+		"</font>"
+		"<font size='7'>"
+			"Developed by\n"      // hard line breaks are required
+			"Kyrre Holm and\n"    // since TextLabel breaks lines
+			"Stian Andre Olsen\n" // even at no-break spaces
+			"\n"
+			"Please visit https://www.facebook.com/ColorVariometer/"
+		"</font>"
+	);
+//	TextLabel errorLabel = TextLabel::New(about);
+	TextLabel errorLabel = TextLabel::New();
 	errorLabel.SetSize(width, height);
 	errorLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
 	errorLabel.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	errorLabel.SetPosition(0, 0);
 	errorLabel.setVerticalAlignment("CENTER");
 	errorLabel.setHorizontalAlignment("CENTER");
-	errorLabel.setTextColor(Dali::Color::WHITE);
+	errorLabel.setTextColor(Color::defaultText());
+	errorLabel.setPointSize(8);
 	errorLabel.setMultiLine(true);
+	errorLabel.enableMarkup();
+//	errorLabel.enableAutoScroll();
+//	errorLabel.setAutoScrollSpeed(200);
+//	errorLabel.setAutoScrollLoopCount(5);
+//	errorLabel.setAutoScrollGap(100);
+	errorLabel.setText(about);
+//	errorLabel.setText("Dette er en lang tekst som må scrolles for å vises i sin helhet!");
 	parent.Add(errorLabel);
 }

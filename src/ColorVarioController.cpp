@@ -218,7 +218,7 @@ void Kystsoft::ColorVario::Controller::onKeyEvent(const Dali::KeyEvent& event)
 	{
 		if (Dali::IsKey(event, Dali::DALI_KEY_ESCAPE) ||
 		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
-			app.GetWindow().Lower();
+			app.Lower(); // probably the same as calling app.GetWindow().Lower();
 	}
 }
 
@@ -232,10 +232,7 @@ void Kystsoft::ColorVario::Controller::onLocationUpdated(const Location& locatio
 	{
 		gpsBestAccuracy = accuracy;
 		vario.setCurrentAltitude(location.altitude);
-		if (accuracy < 10)
-			ui.setAltitudeTextColor(Dali::Color::WHITE);
-		else if (accuracy < 100)
-			ui.setAltitudeTextColor(Dali::Color::YELLOW);
+		ui.setAltitudeAccuracy(accuracy);
 	}
 
 	// update user interface

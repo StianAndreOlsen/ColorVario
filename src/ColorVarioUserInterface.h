@@ -35,9 +35,7 @@ public:
 	void setAltitudeSamplingInterval(double interval);
 	void setClimbSamplingInterval(double interval);
 	void setSpeedSamplingInterval(double interval);
-	void setAltitudeTextColor(const Dali::Vector4& color);
-	void setClimbTextColor(const Dali::Vector4& color);
-	void setSpeedTextColor(const Dali::Vector4& color);
+	void setAltitudeAccuracy(double accuracy);
 	void setAltitude(double altitude);
 	void setClimb(double climb);
 	void setSpeed(double speed);
@@ -87,6 +85,8 @@ private:
 	PushButton muteAudioButton;
 	PushButton lockDisplayButton;
 	PushButton enableBluetoothButton;
+	PushButton quitButton2; // TODO: Rename!
+	PushButton informationButton;
 	Dali::Toolkit::ImageView locationIcon;
 	time_t lastMenuTouch = 0;
 	Signal<> quitSignl;

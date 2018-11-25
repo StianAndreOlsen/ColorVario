@@ -2,9 +2,6 @@
 #define KYSTSOFT_VALUECOLORPOINT_H
 
 #include "Color.h"
-#include <istream>
-#include <sstream>
-#include <string>
 
 namespace Kystsoft {
 
@@ -14,8 +11,7 @@ struct ValueColorPoint
 	Color color;
 	ValueColorPoint() {}
 	ValueColorPoint(double v, const Color& c) : value(v), color(c) {}
-	bool load(const std::string& str) { std::istringstream is(str); return load(is); }
-	bool load(std::istream& is);
+	bool load(const std::string& str);
 };
 
 } // namespace Kystsoft

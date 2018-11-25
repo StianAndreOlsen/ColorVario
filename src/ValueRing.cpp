@@ -1,6 +1,14 @@
 #include "ValueRing.h"
 #include <cmath>
 
+Kystsoft::ValueRing& Kystsoft::ValueRing::operator=(const Dali::Toolkit::Control& rhs)
+{
+	Dali::Toolkit::Control::operator=(rhs);
+	// set an invalid color to make sure that the new control is updated in the next call to setValue
+	currentColor = Color(-1, -1, -1);
+	return *this;
+}
+
 void Kystsoft::ValueRing::setValue(double value)
 {
 	averageValue += value;
@@ -8,6 +16,9 @@ void Kystsoft::ValueRing::setValue(double value)
 	if (newColor == currentColor)
 		return;
 	currentColor = newColor;
+
+	// alpha blend the new color on top of the background color since Dali don't use gamma correction
+	newColor.alphaBlend(Color::window());
 
 	// radial gradient
 	Dali::Property::Map map;

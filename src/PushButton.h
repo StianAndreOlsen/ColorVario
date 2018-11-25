@@ -5,6 +5,8 @@
 
 namespace Kystsoft {
 
+// https://developer.tizen.org/development/guides/native-application/user-interface/dali/ui-components/buttons
+// https://developer.tizen.org/development/guides/.net-application/natural-user-interface/ui-components/button
 class PushButton : public Dali::Toolkit::PushButton
 {
 public:

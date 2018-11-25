@@ -13,7 +13,7 @@ class ValueRing : public Dali::Toolkit::Control
 public:
 	ValueRing() {}
 	ValueRing(const Dali::Toolkit::Control& other) : Dali::Toolkit::Control(other) {}
-	ValueRing& operator=(const Dali::Toolkit::Control& rhs) { Dali::Toolkit::Control::operator=(rhs); return *this; }
+	ValueRing& operator=(const Dali::Toolkit::Control& rhs);
 	virtual ~ValueRing() noexcept {}
 	virtual void load(const Settings& settings) = 0;
 	const ValueColor& valueColor() const { return color; }
@@ -26,7 +26,7 @@ protected:
 private:
 	ValueColor color;
 	Averager<double> averageValue;
-	Color currentColor = Dali::Color::TRANSPARENT;
+	Color currentColor = Color(-1, -1, -1); // an invalid color
 };
 
 } // namespace Kystsoft
