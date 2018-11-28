@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>VFq7gp1AjE49zGlfxaAnq5eyARBpchKNdEeh/y294gA=</DigestValue>
+<DigestValue>WPdVmfrX9K1+4X1zyutKqgQBEBEdqKGR2C6TpUtMDlI=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>Vlvtd5KWNpgtvBzFIWTY8TcqTTVAhoguM6dXRkJExBM=</DigestValue>
+<DigestValue>quCAws+V6RuYC+EkNftxVC/ZY4fHmSWpeUvlHHM72xc=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FAudioMuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -32,7 +32,7 @@
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.ini">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>cBX3wbitPNn53ebDe22WedEjHXcAZ7d9LcVPO6QRB28=</DigestValue>
+<DigestValue>TzvLA6o+rLn5W1S2Mcx/eSVNaPFaCQb+WPZZSef3QB0=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -107,11 +107,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-gHpQy3lkms6daxBB7PZAIs4AsTdMzPxrXMAWFA4Rl0aNsCcFLDhMQs+l/nLXFOuR9YHNJE0ENM9D
-onSlgSzWB439Zzldg0zEqjATdPjdXN+LfynkvIM6lsZvWpRYDcUq7vtyLPexDMxKLKKH515FyyJS
-HGknXcBjkjsHvpOF3RelpxSaXvNxbUYxypG7VCOE4nT0HTUUR7U14mlfdvPku4yZ5OZWclRVgBYj
-95hDnAE01YlxkJ5z8aL5e1OxLkjHDp1YoVHxDYsf5ookDMON9j4zJtyDhvsV67No3LxQ9tNtlKUU
-ELpVu08wG26D5SHYViO5lUo6ki5WdL1JDFD5yA==
+NWb9Y1/dnojg/+fNb19Q1jTAAOPn6EtebWyoagNzzdXG/47reRP3FylYN2hlN06S/DjsOOa2+xt5
+EkAMrlChGn6dlgrRlLWVTtlp9WYtT0pTqcKFR6+tc2S1JbDLUnjyWaCq3qbrLQUsLorxY/wof63p
+mqeVAU5NO49ZEEaxEHRU7KESpKm3FSPstvLuneI54sVY71syeTWla9JJGEphlf6l0Mn7CwmP6kX/
+H6LRq8sAsoE8/32x6zknr5thsDLZZjaI799piHqiSZmtpxpmxQQL+BvulqfmQ3r9IG8ZnpzBhbjS
+oFbFXR0GiTmFLVI69PyPYJJTOaLspwFidZWMoA==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

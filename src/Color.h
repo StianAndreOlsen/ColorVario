@@ -29,7 +29,7 @@ struct Color : public Dali::Vector4
 	static Color fromARGB(uint32_t ARGB) { return fromRGBA(byte2(ARGB), byte3(ARGB), byte4(ARGB), byte1(ARGB)); }
 	static Color fromRGBA(const std::string& R, const std::string& G, const std::string& B, const std::string& A) { return Color(value(R), value(G), value(B), value(A)); }
 	static Color fromRGBA(const std::string& R, const std::string& G, const std::string& B, float A = 1) { return Color(value(R), value(G), value(B), A); }
-	static Color fromRGBA(const std::string& R, const std::string& G, const std::string& B, int A) { return Color(value(R), value(G), value(B), A); }
+	static Color fromRGBA(const std::string& R, const std::string& G, const std::string& B, int A) { return Color(value(R), value(G), value(B), value(A)); }
 	static Color fromRGBA(const std::string& RGBA);
 	static Color fromARGB(const std::string& ARGB);
 
@@ -44,16 +44,16 @@ struct Color : public Dali::Vector4
 	std::string fltStringARGB(const std::string& delim = "\t") const { return fltString(alpha(), red(), green(), blue(), delim); }
 	std::string decStringRGBA(const std::string& delim = "\t") const { return decString(red(), green(), blue(), alpha(), delim); }
 	std::string decStringARGB(const std::string& delim = "\t") const { return decString(alpha(), red(), green(), blue(), delim); }
-	std::string hexStringRGBA() const { return hexString(RGBA()); } // opaque green: 0x00FF00FF
-	std::string hexStringARGB() const { return hexString(ARGB()); } // opaque green: 0xFF00FF00
+	std::string hexStringRGBA() const { return hexString(RGBA()); } // e.g. opaque green: 0x00FF00FF
+	std::string hexStringARGB() const { return hexString(ARGB()); } // e.g. opaque green: 0xFF00FF00
 
 	// conversion helpers
 	static float value(int v) { return v / 255.0f; }
 	static float value(const std::string& str);
-	static uint8_t byte1(uint32_t word) { return uint8_t((word >> 24u) & 0xFFu); }
-	static uint8_t byte2(uint32_t word) { return uint8_t((word >> 16u) & 0xFFu); }
-	static uint8_t byte3(uint32_t word) { return uint8_t((word >>  8u) & 0xFFu); }
-	static uint8_t byte4(uint32_t word) { return uint8_t(word & 0xFFu); }
+	static uint8_t byte1(uint32_t word) { return uint8_t((word >> 24) & 0xFF); }
+	static uint8_t byte2(uint32_t word) { return uint8_t((word >> 16) & 0xFF); }
+	static uint8_t byte3(uint32_t word) { return uint8_t((word >>  8) & 0xFF); }
+	static uint8_t byte4(uint32_t word) { return uint8_t(word & 0xFF); }
 	static uint8_t byte(float v) { return uint8_t(v * 255 + 0.5f); }
 	static uint32_t word(float v1, float v2, float v3, float v4);
 	static uint32_t word(const std::string& str);

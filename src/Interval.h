@@ -9,6 +9,7 @@
 
 namespace Kystsoft {
 
+// Interval is lower inclusive and upper exclusive
 template<typename T>
 class Interval
 {
@@ -17,13 +18,9 @@ public:
 	Interval(T lower, T upper) : low(lower), upp(upper) {}
 	bool load(const std::string& str) { std::istringstream is(str); return load(is); }
 	bool load(std::istream& is);
-	bool isValid() const { return low <= upp; }
+	bool isValid() const { return low < upp; }
 	bool isFinite() const { T inf = std::numeric_limits<T>::infinity(); return -inf < low && upp < inf; }
-	bool includes(T x) const { return low <= x && x <= upp; }
-	bool operator<(T x) const { return upp < x; }
-	bool operator<=(T x) const { return upp <= x; }
-	bool operator>(T x) const { return low > x; }
-	bool operator>=(T x) const { return low >= x; }
+	bool includes(T x) const { return low <= x && x < upp; }
 	T width() const { return upp - low; }
 	T lower() const { return low; }
 	T upper() const { return upp; }

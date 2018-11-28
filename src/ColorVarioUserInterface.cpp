@@ -325,25 +325,9 @@ void Kystsoft::ColorVario::UserInterface::createMenu()
 		buttonMap[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
 	}
 
-	// create lock display button
+	// create enable bluetooth button
 	float x = -Rc * std::sin(2 * alpha);
 	float y =  Rc * std::cos(2 * alpha) - R;
-	lockDisplayButton = PushButton::New();
-	lockDisplayButton.SetSize(width, height);
-	lockDisplayButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
-	lockDisplayButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	lockDisplayButton.SetPosition(x, y);
-	lockDisplayButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, buttonMap);
-	lockDisplayButton.setUnselectedImage(resourceDir + "DisplayUnlocked.png");
-	lockDisplayButton.setSelectedImage(resourceDir + "DisplayLocked.png");
-	lockDisplayButton.setCheckable(true);
-	lockDisplayButton.setChecked(false);
-	lockDisplayButton.ClickedSignal().Connect(this, &UserInterface::onLockDisplayButtonClicked);
-	menu.Add(lockDisplayButton);
-
-	// create enable bluetooth button
-	x = -Rc * std::sin(alpha);
-	y =  Rc * std::cos(alpha) - R;
 	enableBluetoothButton = PushButton::New();
 	enableBluetoothButton.SetSize(width, height);
 	enableBluetoothButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
@@ -357,6 +341,22 @@ void Kystsoft::ColorVario::UserInterface::createMenu()
 	enableBluetoothButton.setChecked(false);
 	enableBluetoothButton.ClickedSignal().Connect(this, &UserInterface::onEnableBluetoothButtonClicked);
 	menu.Add(enableBluetoothButton);
+
+	// create lock display button
+	x = -Rc * std::sin(alpha);
+	y =  Rc * std::cos(alpha) - R;
+	lockDisplayButton = PushButton::New();
+	lockDisplayButton.SetSize(width, height);
+	lockDisplayButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
+	lockDisplayButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
+	lockDisplayButton.SetPosition(x, y);
+	lockDisplayButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, buttonMap);
+	lockDisplayButton.setUnselectedImage(resourceDir + "DisplayUnlocked.png");
+	lockDisplayButton.setSelectedImage(resourceDir + "DisplayLocked.png");
+	lockDisplayButton.setCheckable(true);
+	lockDisplayButton.setChecked(false);
+	lockDisplayButton.ClickedSignal().Connect(this, &UserInterface::onLockDisplayButtonClicked);
+	menu.Add(lockDisplayButton);
 
 	// create mute audio button
 	x = 0;

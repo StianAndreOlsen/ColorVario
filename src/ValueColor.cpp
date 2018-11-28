@@ -39,12 +39,8 @@ Kystsoft::Color Kystsoft::ValueColor::color(double value) const
 size_t Kystsoft::ValueColor::colorPointInterval(double value) const
 {
 	if (colorPoints.size() > 2)
-	{
-		size_t i = 0;
-		for (; i < colorPoints.size() - 2; ++i)
-			if (value <= colorPoints[i+1].value)
+		for (size_t i = colorPoints.size() - 2; i > 0; --i)
+			if (value >= colorPoints[i].value)
 				return i;
-		return i;
-	}
 	return 0;
 }

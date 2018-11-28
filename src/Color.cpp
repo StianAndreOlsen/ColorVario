@@ -50,7 +50,7 @@ uint32_t Kystsoft::Color::word(float v1, float v2, float v3, float v4)
 	uint32_t b2 = byte(v2);
 	uint32_t b3 = byte(v3);
 	uint32_t b4 = byte(v4);
-	return (b1 << 24u) | (b2 << 16u) | (b3 << 8u) | b4;
+	return (b1 << 24) | (b2 << 16) | (b3 << 8) | b4;
 }
 
 uint32_t Kystsoft::Color::word(const std::string& str)

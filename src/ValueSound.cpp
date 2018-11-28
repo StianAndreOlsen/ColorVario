@@ -92,12 +92,8 @@ double Kystsoft::ValueSound::duty(double value) const
 size_t Kystsoft::ValueSound::soundPointInterval(double value) const
 {
 	if (soundPoints.size() > 2)
-	{
-		size_t i = 0;
-		for (; i < soundPoints.size() - 2; ++i)
-			if (value <= soundPoints[i+1].value)
+		for (size_t i = soundPoints.size() - 2; i > 0; --i)
+			if (value >= soundPoints[i].value)
 				return i;
-		return i;
-	}
 	return 0;
 }
