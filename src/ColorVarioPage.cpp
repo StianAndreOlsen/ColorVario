@@ -7,10 +7,12 @@
 
 Kystsoft::ColorVario::Page Kystsoft::ColorVario::Page::New(Type type)
 {
-	Dali::Vector2 size = Dali::Stage::GetCurrent().GetSize();
+	auto size = Dali::Stage::GetCurrent().GetSize();
 
 	// empty page
-	Dali::Toolkit::Control page = Dali::Toolkit::Control::New();
+	auto page = Dali::Toolkit::Control::New();
+	page.SetParentOrigin(Dali::ParentOrigin::TOP_LEFT);
+	page.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
 	page.SetSize(size);
 
 	// page contents
@@ -33,7 +35,7 @@ Kystsoft::ColorVario::Page Kystsoft::ColorVario::Page::New(Type type)
 		break;
 	}
 
-	return Page(page);
+	return page;
 }
 
 void Kystsoft::ColorVario::Page::createQuitPageContents(const Dali::Vector2& pageSize, Dali::Actor parent)

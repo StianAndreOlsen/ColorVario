@@ -4,49 +4,29 @@
 
 void Kystsoft::ColorVario::UserInterface::create()
 {
-	// stage background
-	Dali::Stage stage = Dali::Stage::GetCurrent();
-	stage.SetBackgroundColor(Color::window());
+	createPageLayer();
+	createMenuLayer();
 
-	// page size and count
-	Dali::Vector2 pageSize = stage.GetSize();
-	constexpr size_t pageCount = 5; // TODO: Find a better solution
-
-	// create page strip
-	pageStrip = Dali::Toolkit::Control::New();
-	pageStrip.SetSize(pageCount * pageSize.width, pageSize.height);
-	pageStrip.SetParentOrigin(Dali::ParentOrigin::TOP_LEFT);
-	pageStrip.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	pageStrip.SetPosition(-curPageIndex * pageSize.width, 0);
-	stage.Add(pageStrip);
-
-	// create pages
-	for (size_t i = 0; i < pageCount; ++i)
-	{
-		Page page = Page::New(Page::Type(i));
-		page.SetParentOrigin(Dali::ParentOrigin::TOP_LEFT);
-		page.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-		page.SetPosition(i * pageSize.width, 0);
-		pages.push_back(page);
-		pageStrip.Add(page);
-	}
-
-	// connect page signals
-	quitButton().ClickedSignal().Connect(this, &UserInterface::onQuitButtonClicked);
-
-	// create menu
-	createMenu();
+	// gestures for showing and hiding the menu
+	tapDetector = Dali::TapGestureDetector::New();
+	tapDetector.Attach(pageView);
+	tapDetector.DetectedSignal().Connect(this, &UserInterface::onTapGesture);
+	panDetector = Dali::PanGestureDetector::New();
+	panDetector.AddDirection(Dali::PanGestureDetector::DIRECTION_VERTICAL);
+	panDetector.Attach(pageView);
+	panDetector.Attach(menu);
+	panDetector.DetectedSignal().Connect(this, &UserInterface::onPanGesture);
 
 	// make sure the 'drivers' are active and connected correctly to the initial page
 	climbAudio.start();
-	altitudeRing = altitudePage();
-	climbRing = climbPage();
-	altitudeLabel = climbPageAltitudeLabel();
-	climbLabel = climbPageClimbLabel();
-	speedLabel = speedPageSpeedLabel();
+	altitudeRing = altitudePage;
+	climbRing = climbPage;
+	altitudeLabel = climbPage.altitudeLabel();
+	climbLabel = climbPage.climbLabel();
+	speedLabel = speedPage.speedLabel();
 
 	// connect stage signals
-	stage.TouchSignal().Connect(this, &UserInterface::onTouch);
+	auto stage = Dali::Stage::GetCurrent();
 	stage.WheelEventSignal().Connect(this, &UserInterface::onWheelEvent);
 
 	// for some reason the animation doesn't work at this stage
@@ -73,6 +53,7 @@ void Kystsoft::ColorVario::UserInterface::load(const Settings& settings)
 	speedLabel.load(settings);
 }
 
+/*
 void Kystsoft::ColorVario::UserInterface::showPage(int pageIndex)
 {
 	pageIndex = std::clamp(pageIndex, 0, int(pages.size()) - 1);
@@ -97,26 +78,20 @@ void Kystsoft::ColorVario::UserInterface::showPage(int pageIndex)
 	// color and labels
 	switch (pageType)
 	{
-	case Page::Type::Quit:
-		climbRing = quitPage();
-		break;
 	case Page::Type::Altitude:
 		// altitudeRing always paints to altitudePage
-		altitudeLabel = altitudePageAltitudeLabel();
+		altitudeLabel = altitudePage.altitudeLabel();
 		break;
 	case Page::Type::Climb:
-		climbRing = climbPage();
-		climbLabel = climbPageClimbLabel();
-		altitudeLabel = climbPageAltitudeLabel();
+		climbRing = climbPage;
+		climbLabel = climbPage.climbLabel();
+		altitudeLabel = climbPage.altitudeLabel();
 		break;
 	case Page::Type::Speed:
-		climbRing = speedPage();
-		altitudeLabel = speedPageAltitudeLabel();
-		climbLabel = speedPageClimbLabel();
-		// speedLabel always writes to speedPageSpeedLabel
-		break;
-	case Page::Type::Error:
-		climbRing = errorPage();
+		climbRing = speedPage;
+		altitudeLabel = speedPage.altitudeLabel();
+		climbLabel = speedPage.climbLabel();
+		// speedLabel always writes to speedPage.speedLabel()
 		break;
 	}
 
@@ -132,11 +107,12 @@ void Kystsoft::ColorVario::UserInterface::showPage(int pageIndex)
 
 	curPageIndex = pageIndex;
 }
+*/
 
 void Kystsoft::ColorVario::UserInterface::setMenuVisible(bool visible)
 {
-	Dali::Vector3 pos = menu.GetCurrentPosition();
-	float targetY = visible ? 0 : -menu.GetTargetSize().height;
+	auto pos = menu.GetCurrentPosition();
+	auto targetY = visible ? 0.0f : -menu.GetTargetSize().height;
 	if (pos.y != targetY)
 	{
 		pos.y = targetY;
@@ -145,6 +121,29 @@ void Kystsoft::ColorVario::UserInterface::setMenuVisible(bool visible)
 		animation.Play();
 	}
 	lastMenuTouch = std::time(nullptr);
+}
+
+void Kystsoft::ColorVario::UserInterface::showOrHideMenu(float vy)
+{
+	if (vy == 0)
+	{
+		auto posY = menu.GetCurrentPosition().y;
+		auto height = menu.GetTargetSize().height;
+		auto visibleHeight = height + posY;
+		setMenuVisible(visibleHeight >= height / 2);
+	}
+	else
+		setMenuVisible(vy > 0);
+}
+
+void Kystsoft::ColorVario::UserInterface::translateMenu(float dy)
+{
+	auto posY = menu.GetCurrentPosition().y;
+	auto minY = -menu.GetTargetSize().height;
+	auto maxY = 0.0f;
+	auto targetY = std::clamp(posY + dy, minY, maxY);
+	if (posY != targetY)
+		menu.TranslateBy(Dali::Vector3(0, targetY - posY, 0));
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitudeSamplingInterval(double interval)
@@ -173,9 +172,9 @@ void Kystsoft::ColorVario::UserInterface::setAltitudeAccuracy(double accuracy)
 		color = Color::subText();
 	else if (accuracy < 100)
 		color = Color::warning();
-	altitudePageAltitudeLabel().setTextColor(color);
-	climbPageAltitudeLabel().setTextColor(color);
-	speedPageAltitudeLabel().setTextColor(color);
+	altitudePage.altitudeLabel().setTextColor(color);
+	climbPage.altitudeLabel().setTextColor(color);
+	speedPage.altitudeLabel().setTextColor(color);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
@@ -185,10 +184,10 @@ void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
 		hideMenu();
 
 	// synchronize mute audio button
-	if (curPageIndex == int(Page::Type::Altitude))
-		muteAudioButton.setChecked(!altitudeAudio.isStarted());
+	if (pageView.currentPageIndex() == 0)
+		menu.muteAudioButton().setChecked(!altitudeAudio.isStarted());
 	else
-		muteAudioButton.setChecked(!climbAudio.isStarted());
+		menu.muteAudioButton().setChecked(!climbAudio.isStarted());
 
 	altitudeAudio.setAltitude(altitude);
 	altitudeRing.setAltitude(altitude);
@@ -211,242 +210,182 @@ void Kystsoft::ColorVario::UserInterface::setErrorMessage(const std::string& mes
 {
 	// TODO: Add the possibility of several error messages instead of overwriting the previous
 	// TODO: Don't add an error already added, and then don't show the error page again!
-	errorLabel().setText(message);
-	showPage(Page::Type::Error);
+//	errorLabel().setText(message);
+//	showPage(Page::Type::Error);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAudioMuted(bool muted)
 {
-	muteAudioButton.setChecked(muted);
-	onMuteAudioButtonClicked(muteAudioButton);
+	menu.muteAudioButton().setChecked(muted);
+	onMuteAudioButtonClicked(menu.muteAudioButton());
 }
 
 void Kystsoft::ColorVario::UserInterface::setDisplayLocked(bool locked)
 {
-	lockDisplayButton.setChecked(locked);
-	onLockDisplayButtonClicked(lockDisplayButton);
+	menu.lockDisplayButton().setChecked(locked);
+	onLockDisplayButtonClicked(menu.lockDisplayButton());
 }
 
 void Kystsoft::ColorVario::UserInterface::setBluetoothEnabled(bool enabled)
 {
-	enableBluetoothButton.setChecked(enabled);
-	onEnableBluetoothButtonClicked(enableBluetoothButton);
+	menu.enableBluetoothButton().setChecked(enabled);
+	onEnableBluetoothButtonClicked(menu.enableBluetoothButton());
 }
 
 void Kystsoft::ColorVario::UserInterface::setBluetoothConnected(bool connected)
 {
 	std::string file = connected ? "BluetoothConnected.png" : "BluetoothEnabled.png";
-	enableBluetoothButton.setSelectedImage(appSharedResourcePath() + file);
+	menu.enableBluetoothButton().setSelectedImage(appSharedResourcePath() + file);
 }
 
-void Kystsoft::ColorVario::UserInterface::createMenu()
+void Kystsoft::ColorVario::UserInterface::createPageLayer()
 {
-	// menu size and position
-	Dali::Stage stage = Dali::Stage::GetCurrent();
-	Dali::Vector2 stageSize = stage.GetSize();
-	float width = stageSize.width;
-	float height = stageSize.height / 2;
-	float R = stageSize.height; // menu radius
+	auto stage = Dali::Stage::GetCurrent();
+	auto size = stage.GetSize();
 
-	// make sure the menu is drawn on top
-	Dali::Layer menuLayer = Dali::Layer::New();
-	menuLayer.SetSize(width, height);
-	menuLayer.SetParentOrigin(Dali::ParentOrigin::TOP_LEFT);
-	menuLayer.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	menuLayer.SetPosition(0, 0);
-	menuLayer.RaiseToTop();
-	stage.Add(menuLayer);
+	auto layer = Dali::Layer::New();
+	layer.SetSize(size);
+	layer.SetParentOrigin(Dali::ParentOrigin::CENTER);
+	layer.SetAnchorPoint(Dali::AnchorPoint::CENTER);
+	layer.SetPosition(0, 0);
+	layer.RaiseToTop();
+	stage.Add(layer);
 
-	// menu background
-	Dali::Property::Map menuMap;
-	{
-		menuMap[Dali::Toolkit::Visual::Property::TYPE] = Dali::Toolkit::Visual::GRADIENT;
-		menuMap[Dali::Toolkit::GradientVisual::Property::UNITS] = Dali::Toolkit::GradientVisual::Units::USER_SPACE;
-		menuMap[Dali::Toolkit::GradientVisual::Property::CENTER] = Dali::Vector2(0, -R + height / 2);
-		menuMap[Dali::Toolkit::GradientVisual::Property::RADIUS] = R;
-		Dali::Property::Array stopOffsets;
-		stopOffsets.PushBack(0.99f);
-		stopOffsets.PushBack(0.99f);
-		menuMap[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
-		Dali::Property::Array stopColors;
-		stopColors.PushBack(Color::button());
-		stopColors.PushBack(Dali::Color::TRANSPARENT);
-		menuMap[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
-	}
+	pageView.create(size);
+	pageView.currentPageChangedSignal().connect(this, &UserInterface::onCurrentPageChanged);
+	layer.Add(pageView);
 
-	// create menu
-	menu = Dali::Toolkit::Control::New();
-	menu.SetSize(width, height);
-	menu.SetParentOrigin(Dali::ParentOrigin::TOP_LEFT);
-	menu.SetAnchorPoint(Dali::AnchorPoint::TOP_LEFT);
-	menu.SetPosition(0, 0);
-	menu.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, menuMap);
-	menuLayer.Add(menu);
+	altitudePage = AltitudePage::New(size);
+	climbPage = ClimbPage::New(size);
+	speedPage = SpeedPage::New(size);
+	altitudePage.SetPosition(0 * size.width, 0);
+	climbPage.SetPosition(1 * size.width, 0);
+	speedPage.SetPosition(2 * size.width, 0);
+	pageView.addPage(altitudePage);
+	pageView.addPage(climbPage);
+	pageView.addPage(speedPage);
+
+	pageView.showPage(1);
+}
+
+void Kystsoft::ColorVario::UserInterface::createMenuLayer()
+{
+	auto stage = Dali::Stage::GetCurrent();
+	auto size = stage.GetSize();
+	size.height /= 2;
+
+	auto layer = Dali::Layer::New();
+	layer.SetSize(size);
+	layer.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
+	layer.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
+	layer.SetPosition(0, 0);
+	layer.RaiseToTop();
+	stage.Add(layer);
+
+	menu = Menu::New();
+	layer.Add(menu);
+
 	menu.TouchSignal().Connect(this, &UserInterface::onMenuTouched);
 	lastMenuTouch = std::time(nullptr);
 
-	// create application label
-	TextLabel appLabel = TextLabel::New(appName());
-//	appLabel.SetSize(width, height);
-	appLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	appLabel.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
-	appLabel.SetPosition(0, 0);
-	appLabel.setVerticalAlignment("CENTER");
-	appLabel.setHorizontalAlignment("CENTER");
-	appLabel.setTextColor(Color::subText());
-	appLabel.setPointSize(8);
-	menu.Add(appLabel);
-
-	// buttons size and position
-	width = stageSize.height / 6;
-	height = width;
-	float r = height / 2; // button radius
-	float margin = r / 4; // margin towards menu radius
-	float spacing = r / 5; // spacing between buttons
-	float Rc = R - margin - r; // button center point radius
-	float alpha = 2 * std::asin((r + spacing / 2) / Rc); // angle between buttons
-
-	// get resource directory
-	std::string resourceDir = appSharedResourcePath();
-
-	// button background
-	Dali::Property::Map buttonMap;
-	{
-		buttonMap[Dali::Toolkit::Visual::Property::TYPE] = Dali::Toolkit::Visual::GRADIENT;
-		buttonMap[Dali::Toolkit::GradientVisual::Property::CENTER] = Dali::Vector2(0, 0);
-		buttonMap[Dali::Toolkit::GradientVisual::Property::RADIUS] = 0.5f;
-		Dali::Property::Array stopOffsets;
-		stopOffsets.PushBack(0.99f);
-		stopOffsets.PushBack(0.99f);
-		buttonMap[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
-		Dali::Property::Array stopColors;
-		stopColors.PushBack(Color::button().shaded(0.5f));
-		stopColors.PushBack(Dali::Color::TRANSPARENT);
-		buttonMap[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
-	}
-
-	// create enable bluetooth button
-	float x = -Rc * std::sin(2 * alpha);
-	float y =  Rc * std::cos(2 * alpha) - R;
-	enableBluetoothButton = PushButton::New();
-	enableBluetoothButton.SetSize(width, height);
-	enableBluetoothButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
-	enableBluetoothButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	enableBluetoothButton.SetPosition(x, y);
-	enableBluetoothButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, buttonMap);
-	enableBluetoothButton.setUnselectedImage(resourceDir + "BluetoothDisabled.png");
-	enableBluetoothButton.setSelectedImage(resourceDir + "BluetoothEnabled.png");
-//	enableBluetoothButton.setSelectedImage(resourceDir + "BluetoothConnected.png");
-	enableBluetoothButton.setCheckable(true);
-	enableBluetoothButton.setChecked(false);
-	enableBluetoothButton.ClickedSignal().Connect(this, &UserInterface::onEnableBluetoothButtonClicked);
-	menu.Add(enableBluetoothButton);
-
-	// create lock display button
-	x = -Rc * std::sin(alpha);
-	y =  Rc * std::cos(alpha) - R;
-	lockDisplayButton = PushButton::New();
-	lockDisplayButton.SetSize(width, height);
-	lockDisplayButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
-	lockDisplayButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	lockDisplayButton.SetPosition(x, y);
-	lockDisplayButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, buttonMap);
-	lockDisplayButton.setUnselectedImage(resourceDir + "DisplayUnlocked.png");
-	lockDisplayButton.setSelectedImage(resourceDir + "DisplayLocked.png");
-	lockDisplayButton.setCheckable(true);
-	lockDisplayButton.setChecked(false);
-	lockDisplayButton.ClickedSignal().Connect(this, &UserInterface::onLockDisplayButtonClicked);
-	menu.Add(lockDisplayButton);
-
-	// create mute audio button
-	x = 0;
-	y = Rc - R;
-	muteAudioButton = PushButton::New();
-	muteAudioButton.SetSize(width, height);
-	muteAudioButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
-	muteAudioButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	muteAudioButton.SetPosition(x, y);
-	muteAudioButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, buttonMap);
-	muteAudioButton.setUnselectedImage(resourceDir + "AudioUnmuted.png");
-	muteAudioButton.setSelectedImage(resourceDir + "AudioMuted.png");
-	muteAudioButton.setCheckable(true);
-	muteAudioButton.setChecked(true);
-	muteAudioButton.ClickedSignal().Connect(this, &UserInterface::onMuteAudioButtonClicked);
-	menu.Add(muteAudioButton);
-
-	// create information button
-	x = Rc * std::sin(alpha);
-	y = Rc * std::cos(alpha) - R;
-	informationButton = PushButton::New();
-	informationButton.SetSize(width, height);
-	informationButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
-	informationButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	informationButton.SetPosition(x, y);
-	informationButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, buttonMap);
-	informationButton.setUnselectedImage(resourceDir + "Information.png");
-	informationButton.setSelectedImage(resourceDir + "InformationPressed.png");
-//	informationButton.setUnselectedImage(resourceDir + "Warning.png");
-//	informationButton.setSelectedImage(resourceDir + "WarningPressed.png");
-//	informationButton.setUnselectedImage(resourceDir + "Error.png");
-//	informationButton.setSelectedImage(resourceDir + "ErrorPressed.png");
-//	informationButton.ClickedSignal().Connect(this, &UserInterface::onInformationButtonClicked);
-	menu.Add(informationButton);
-
-	// quit button background
-	{
-		Dali::Property::Array stopColors;
-		stopColors.PushBack(Color::error().shaded(0.9f));
-		stopColors.PushBack(Dali::Color::TRANSPARENT);
-		buttonMap[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
-	}
-
-	// create quit button
-	x = Rc * std::sin(2 * alpha);
-	y = Rc * std::cos(2 * alpha) - R;
-	quitButton2 = PushButton::New();
-	quitButton2.SetSize(width, height);
-	quitButton2.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
-	quitButton2.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	quitButton2.SetPosition(x, y);
-	quitButton2.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, buttonMap);
-	quitButton2.setUnselectedImage(resourceDir + "Quit.png");
-	quitButton2.setSelectedImage(resourceDir + "QuitPressed.png");
-	quitButton2.ClickedSignal().Connect(this, &UserInterface::onQuitButtonClicked);
-	menu.Add(quitButton2);
-
-	// icon size and position
-	height = height * 2 / 3;
-	width = height;
-	margin = height / 8;
-
-	// create location icon
-	locationIcon = Dali::Toolkit::ImageView::New(resourceDir + "Location.png");
-	locationIcon.SetSize(width, height);
-	locationIcon.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
-	locationIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
-	locationIcon.SetPosition(0, margin);
-	menu.Add(locationIcon);
+	menu.enableBluetoothButton().ClickedSignal().Connect(this, &UserInterface::onEnableBluetoothButtonClicked);
+	menu.lockDisplayButton().ClickedSignal().Connect(this, &UserInterface::onLockDisplayButtonClicked);
+	menu.muteAudioButton().ClickedSignal().Connect(this, &UserInterface::onMuteAudioButtonClicked);
+	menu.informationButton().ClickedSignal().Connect(this, &UserInterface::onInformationButtonClicked);
+	menu.quitButton().ClickedSignal().Connect(this, &UserInterface::onQuitButtonClicked);
 }
 
-void Kystsoft::ColorVario::UserInterface::onTouch(const Dali::TouchData& touch)
+void Kystsoft::ColorVario::UserInterface::onTapGesture(Dali::Actor /*actor*/, const Dali::TapGesture& gesture)
 {
-	if (touch.GetPointCount() > 0 && touch.GetState(0) == Dali::PointState::FINISHED)
+	auto y = gesture.screenPoint.y;
+	auto height = Dali::Stage::GetCurrent().GetSize().height;
+	if (y < height / 4)
+		showMenu();
+	else if (y > height * 9 / 16)
+		hideMenu();
+}
+
+void Kystsoft::ColorVario::UserInterface::onPanGesture(Dali::Actor /*actor*/, const Dali::PanGesture& gesture)
+{
+	switch (gesture.state)
 	{
-		float y = touch.GetScreenPosition(0).y;
-		float height = Dali::Stage::GetCurrent().GetSize().height;
-		if (y < height / 4)
-			showMenu();
-		else if (y > height * 3 / 4)
-			hideMenu();
+	case Dali::Gesture::Started:
+	case Dali::Gesture::Continuing:
+		translateMenu(gesture.displacement.y);
+		break;
+	case Dali::Gesture::Finished:
+		showOrHideMenu(gesture.velocity.y);
+		break;
+	default:
+		hideMenu();
+		break;
 	}
 }
 
+// TODO: Remove if not used!
 void Kystsoft::ColorVario::UserInterface::onWheelEvent(const Dali::WheelEvent& event)
 {
-	if (event.z > 0)
-		showNextPage();
-	else if (event.z < 0)
-		showPreviousPage();
+//	pageView.onWheelEvent(event);
+
+//	if (!pageView.HasKeyInputFocus())
+//		pageView.SetKeyInputFocus(); // TODO: Set this after pageView is on stage and see if wheel events occur
+//	Dali::Toolkit::KeyboardFocusManager::Get().SetCurrentFocusActor(pageView);
+
+//	if (event.z > 0)
+//		showNextPage();
+//	else if (event.z < 0)
+//		showPreviousPage();
+
+//	auto pos = pageView.GetCurrentScrollPosition();
+//	auto step = pageView.GetWheelScrollDistanceStep();
+//	if (event.z > 0)
+//		pos += step;
+//	else if (event.z < 0)
+//		pos -= step;
+//	pageView.ScrollTo(pos);
+//	pageView.ScrollToSnapPoint();
+
+//	auto page = pageView.GetCurrentPage();
+//	if (event.z > 0)
+//		page++;
+//	else if (event.z < 0)
+//		page--;
+//	pageView.ScrollTo(page);
+}
+
+void Kystsoft::ColorVario::UserInterface::onCurrentPageChanged(int newPageIndex)
+{
+	// sound
+	if (newPageIndex == 0)
+	{
+		climbAudio.stop();
+		altitudeAudio.start();
+	}
+	else if (!climbAudio.isStarted())
+	{
+		altitudeAudio.stop();
+		climbAudio.start();
+	}
+
+	// color and labels
+	switch (newPageIndex)
+	{
+	case 0: // altitude
+		// altitudeRing always paints to altitudePage
+		altitudeLabel = altitudePage.altitudeLabel();
+		break;
+	case 1: // climb
+		climbRing = climbPage;
+		climbLabel = climbPage.climbLabel();
+		altitudeLabel = climbPage.altitudeLabel();
+		break;
+	case 2: // speed
+		climbRing = speedPage;
+		altitudeLabel = speedPage.altitudeLabel();
+		climbLabel = speedPage.climbLabel();
+		// speedLabel always writes to speedPage.speedLabel()
+		break;
+	}
 }
 
 bool Kystsoft::ColorVario::UserInterface::onMenuTouched(Dali::Actor /*actor*/, const Dali::TouchData& /*touch*/)
@@ -455,20 +394,26 @@ bool Kystsoft::ColorVario::UserInterface::onMenuTouched(Dali::Actor /*actor*/, c
 	return true;
 }
 
-bool Kystsoft::ColorVario::UserInterface::onQuitButtonClicked(Dali::Toolkit::Button /*button*/)
+bool Kystsoft::ColorVario::UserInterface::onEnableBluetoothButtonClicked(Dali::Toolkit::Button /*button*/)
 {
-	quitSignl.emit();
+	enableBluetoothSignl.emit(menu.enableBluetoothButton().isChecked());
+	return true;
+}
+
+bool Kystsoft::ColorVario::UserInterface::onLockDisplayButtonClicked(Dali::Toolkit::Button /*button*/)
+{
+	lockDisplaySignl.emit(menu.lockDisplayButton().isChecked());
 	return true;
 }
 
 bool Kystsoft::ColorVario::UserInterface::onMuteAudioButtonClicked(Dali::Toolkit::Button /*button*/)
 {
-	if (muteAudioButton.isChecked())
+	if (menu.muteAudioButton().isChecked())
 		ValueAudio::mute();
 	else
 	{
 		ValueAudio::unmute();
-		if (curPageIndex == int(Page::Type::Altitude))
+		if (pageView.currentPageIndex() == 0)
 			altitudeAudio.start();
 		else
 			climbAudio.start();
@@ -476,14 +421,13 @@ bool Kystsoft::ColorVario::UserInterface::onMuteAudioButtonClicked(Dali::Toolkit
 	return true;
 }
 
-bool Kystsoft::ColorVario::UserInterface::onLockDisplayButtonClicked(Dali::Toolkit::Button /*button*/)
+bool Kystsoft::ColorVario::UserInterface::onInformationButtonClicked(Dali::Toolkit::Button /*button*/)
 {
-	lockDisplaySignl.emit(lockDisplayButton.isChecked());
 	return true;
 }
 
-bool Kystsoft::ColorVario::UserInterface::onEnableBluetoothButtonClicked(Dali::Toolkit::Button /*button*/)
+bool Kystsoft::ColorVario::UserInterface::onQuitButtonClicked(Dali::Toolkit::Button /*button*/)
 {
-	enableBluetoothSignl.emit(enableBluetoothButton.isChecked());
+	quitSignl.emit();
 	return true;
 }

@@ -10,7 +10,7 @@ std::string Kystsoft::currentDate()
 		return "?";
 
 	// create formatted date string
-	char date[11] = "?";
+	char date[11] = "";
 	if (std::strftime(date, sizeof(date), "%Y-%m-%d", lt) != 10)
 		return "?";
 
@@ -26,7 +26,7 @@ std::string Kystsoft::currentTime()
 		return "?";
 
 	// create formatted time string
-	char time[9] = "?";
+	char time[9] = "";
 	if (std::strftime(time, sizeof(time), "%H:%M:%S", lt) != 8)
 		return "?";
 
@@ -42,7 +42,7 @@ std::string Kystsoft::currentDateAndTime()
 		return "?";
 
 	// create formatted date and time string
-	char date_time[20] = "?";
+	char date_time[20] = "";
 	if (std::strftime(date_time, sizeof(date_time), "%Y-%m-%d %H:%M:%S", lt) != 19)
 		return "?";
 

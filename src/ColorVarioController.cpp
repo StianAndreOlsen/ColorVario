@@ -198,13 +198,13 @@ void Kystsoft::ColorVario::Controller::onContextRegained()
 
 void Kystsoft::ColorVario::Controller::onTouch(const Dali::TouchData& touch)
 {
+	if (vario.isStarted())
+		return;
 	try
 	{
+		// TODO: Consider using a tap gesture instead
 		if (touch.GetPointCount() > 0 && touch.GetState(0) == Dali::PointState::FINISHED)
-		{
-			if (!vario.isStarted())
-				vario.start();
-		}
+			vario.start();
 	}
 	catch (std::exception& e)
 	{
@@ -218,7 +218,12 @@ void Kystsoft::ColorVario::Controller::onKeyEvent(const Dali::KeyEvent& event)
 	{
 		if (Dali::IsKey(event, Dali::DALI_KEY_ESCAPE) ||
 		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
-			app.Lower(); // probably the same as calling app.GetWindow().Lower();
+		{
+			if (ui.isMenuVisible())
+				ui.hideMenu();
+			else
+				app.Lower(); // probably the same as calling app.GetWindow().Lower();
+		}
 	}
 }
 

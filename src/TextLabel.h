@@ -13,36 +13,38 @@ public:
 	TextLabel() {}
 	TextLabel(const Dali::Toolkit::TextLabel& other) : Dali::Toolkit::TextLabel(other) {}
 	TextLabel& operator=(const Dali::Toolkit::TextLabel& rhs) { Dali::Toolkit::TextLabel::operator=(rhs); return *this; }
+	static TextLabel New() { return Dali::Toolkit::TextLabel::New(); }
+	static TextLabel New(const std::string& text) { return Dali::Toolkit::TextLabel::New(text); }
 	static TextLabel DownCast(BaseHandle handle) { return Dali::Toolkit::TextLabel::DownCast(handle); }
-	std::string text() const { return GetProperty<std::string>(Property::TEXT); }
+	auto text() const { return GetProperty<std::string>(Property::TEXT); }
 	void setText(const std::string& text) { SetProperty(Property::TEXT, text); }
-	std::string fontFamily() const { return GetProperty<std::string>(Property::FONT_FAMILY); }
+	auto fontFamily() const { return GetProperty<std::string>(Property::FONT_FAMILY); }
 	void setFontFamily(const std::string& fontFamily) { SetProperty(Property::FONT_FAMILY, fontFamily); }
-	std::string fontStyle() const { return GetProperty<std::string>(Property::FONT_STYLE); }
+	auto fontStyle() const { return GetProperty<std::string>(Property::FONT_STYLE); }
 	void setFontStyle(const std::string& fontStyle) { SetProperty(Property::FONT_STYLE, fontStyle); }
-	float pointSize() const { return GetProperty<float>(Property::POINT_SIZE); }
+	auto pointSize() const { return GetProperty<float>(Property::POINT_SIZE); }
 	void setPointSize(float size) { SetProperty(Property::POINT_SIZE, size); }
-	bool isMultiLine() const { return GetProperty<bool>(Property::MULTI_LINE); }
+	auto isMultiLine() const { return GetProperty<bool>(Property::MULTI_LINE); }
 	void setMultiLine(bool multiLine) { SetProperty(Property::MULTI_LINE, multiLine); }
-	std::string horizontalAlignment() const { return GetProperty<std::string>(Property::HORIZONTAL_ALIGNMENT); }
+	auto horizontalAlignment() const { return GetProperty<std::string>(Property::HORIZONTAL_ALIGNMENT); }
 	void setHorizontalAlignment(const std::string& align) { SetProperty(Property::HORIZONTAL_ALIGNMENT, align); }
-	std::string verticalAlignment() const { return GetProperty<std::string>(Property::VERTICAL_ALIGNMENT); }
+	auto verticalAlignment() const { return GetProperty<std::string>(Property::VERTICAL_ALIGNMENT); }
 	void setVerticalAlignment(const std::string& align) { SetProperty(Property::VERTICAL_ALIGNMENT, align); }
-	Dali::Vector4 textColor() const { return GetProperty<Dali::Vector4>(Property::TEXT_COLOR); }
+	auto textColor() const { return GetProperty<Dali::Vector4>(Property::TEXT_COLOR); }
 	void setTextColor(const Dali::Vector4& color) { SetProperty(Property::TEXT_COLOR, color); }
-	bool isMarkupEnabled() const { return GetProperty<bool>(Property::ENABLE_MARKUP); }
+	auto isMarkupEnabled() const { return GetProperty<bool>(Property::ENABLE_MARKUP); }
 	void enableMarkup(bool enable = true) { SetProperty(Property::ENABLE_MARKUP, enable); }
 	void disableMarkup(bool disable = true) { enableMarkup(!disable); }
-	bool isAutoScrollEnabled() const { return GetProperty<bool>(Property::ENABLE_AUTO_SCROLL); }
+	auto isAutoScrollEnabled() const { return GetProperty<bool>(Property::ENABLE_AUTO_SCROLL); }
 	void enableAutoScroll(bool enable = true) { SetProperty(Property::ENABLE_AUTO_SCROLL, enable); }
 	void disableAutoScroll(bool disable = true) { enableAutoScroll(!disable); }
-	int autoScrollSpeed() const { return GetProperty<int>(Property::AUTO_SCROLL_SPEED); }
+	auto autoScrollSpeed() const { return GetProperty<int>(Property::AUTO_SCROLL_SPEED); }
 	void setAutoScrollSpeed(int speed) { SetProperty(Property::AUTO_SCROLL_SPEED, speed); }
-	int autoScrollLoopCount() const { return GetProperty<int>(Property::AUTO_SCROLL_LOOP_COUNT); }
+	auto autoScrollLoopCount() const { return GetProperty<int>(Property::AUTO_SCROLL_LOOP_COUNT); }
 	void setAutoScrollLoopCount(int count) { SetProperty(Property::AUTO_SCROLL_LOOP_COUNT, count); }
-	int autoScrollGap() const { return GetProperty<int>(Property::AUTO_SCROLL_GAP); }
+	auto autoScrollGap() const { return GetProperty<int>(Property::AUTO_SCROLL_GAP); }
 	void setAutoScrollGap(int gap) { SetProperty(Property::AUTO_SCROLL_GAP, gap); }
-	float lineSpacing() const { return GetProperty<float>(Property::LINE_SPACING); }
+	auto lineSpacing() const { return GetProperty<float>(Property::LINE_SPACING); }
 	void setLineSpacing(float spacing) { SetProperty(Property::LINE_SPACING, spacing); }
 };
 

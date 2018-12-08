@@ -21,8 +21,8 @@ public:
 	Page() {}
 	Page(const Dali::Toolkit::Control& other) : Dali::Toolkit::Control(other) {}
 	Page& operator=(const Dali::Toolkit::Control& rhs) { Dali::Toolkit::Control::operator=(rhs); return *this; }
-	static Page DownCast(BaseHandle handle) { return Dali::Toolkit::Control::DownCast(handle); }
 	static Page New(Type type);
+	static Page DownCast(BaseHandle handle) { return Dali::Toolkit::Control::DownCast(handle); }
 private:
 	static void createQuitPageContents(const Dali::Vector2& pageSize, Dali::Actor parent);
 	static void createAltitudePageContents(const Dali::Vector2& pageSize, Dali::Actor parent);
