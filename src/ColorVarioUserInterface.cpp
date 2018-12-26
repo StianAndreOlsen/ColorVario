@@ -6,6 +6,7 @@ void Kystsoft::ColorVario::UserInterface::create()
 {
 	createPageLayer();
 	createMenuLayer();
+	createDialogLayer();
 
 	// gestures for showing and hiding the menu
 	tapDetector = Dali::TapGestureDetector::New();
@@ -28,13 +29,6 @@ void Kystsoft::ColorVario::UserInterface::create()
 	// connect stage signals
 	auto stage = Dali::Stage::GetCurrent();
 	stage.WheelEventSignal().Connect(this, &UserInterface::onWheelEvent);
-
-	// for some reason the animation doesn't work at this stage
-	// --> calling showPage at this stage doesn't work
-	// TODO: Maybe it is possible to check if animation is ok and if not we can just position the page strip without any animations
-	// TODO: If I am able to call showPage here, go back to set curPage = Page::Quit in the header, and don't start the audio above
-	// TODO: I suspect something is wrong with the pages current sizes. Maybe they haven't been calculated properly.
-//	showPage(Page::Type::Climb);
 }
 
 void Kystsoft::ColorVario::UserInterface::load(const Settings& settings)
@@ -295,6 +289,41 @@ void Kystsoft::ColorVario::UserInterface::createMenuLayer()
 	menu.quitButton().ClickedSignal().Connect(this, &UserInterface::onQuitButtonClicked);
 }
 
+void Kystsoft::ColorVario::UserInterface::createDialogLayer()
+{
+	auto stage = Dali::Stage::GetCurrent();
+	auto size = stage.GetSize();
+
+	auto layer = Dali::Layer::New();
+	layer.SetSize(size);
+	layer.SetParentOrigin(Dali::ParentOrigin::CENTER);
+	layer.SetAnchorPoint(Dali::AnchorPoint::CENTER);
+	layer.SetPosition(0, 0);
+	layer.RaiseToTop();
+	stage.Add(layer);
+
+	messageDialog.create(size);
+	layer.Add(messageDialog);
+
+	std::string about
+	(
+		"<font size='7' weight='bold'>"
+		"<color value='" + Color::information().hexStringARGB() + "'>"
+			"ColorVario 2.0.0\n"
+			"\n"
+		"</color>"
+		"</font>"
+		"<font size='7'>"
+			"Developed by\n"      // hard line breaks are required
+			"Kyrre Holm and\n"    // since TextLabel breaks lines
+			"Stian Andre Olsen\n" // even at no-break spaces
+			"\n"
+			"Please visit facebook.com/ColorVariometer"
+		"</font>"
+	);
+	messageDialog.addMessage(Message(Message::Type::Information, about));
+}
+
 void Kystsoft::ColorVario::UserInterface::onTapGesture(Dali::Actor /*actor*/, const Dali::TapGesture& gesture)
 {
 	auto y = gesture.screenPoint.y;
@@ -322,35 +351,12 @@ void Kystsoft::ColorVario::UserInterface::onPanGesture(Dali::Actor /*actor*/, co
 	}
 }
 
-// TODO: Remove if not used!
 void Kystsoft::ColorVario::UserInterface::onWheelEvent(const Dali::WheelEvent& event)
 {
-//	pageView.onWheelEvent(event);
-
-//	if (!pageView.HasKeyInputFocus())
-//		pageView.SetKeyInputFocus(); // TODO: Set this after pageView is on stage and see if wheel events occur
-//	Dali::Toolkit::KeyboardFocusManager::Get().SetCurrentFocusActor(pageView);
-
-//	if (event.z > 0)
-//		showNextPage();
-//	else if (event.z < 0)
-//		showPreviousPage();
-
-//	auto pos = pageView.GetCurrentScrollPosition();
-//	auto step = pageView.GetWheelScrollDistanceStep();
-//	if (event.z > 0)
-//		pos += step;
-//	else if (event.z < 0)
-//		pos -= step;
-//	pageView.ScrollTo(pos);
-//	pageView.ScrollToSnapPoint();
-
-//	auto page = pageView.GetCurrentPage();
-//	if (event.z > 0)
-//		page++;
-//	else if (event.z < 0)
-//		page--;
-//	pageView.ScrollTo(page);
+	if (messageDialog.isVisible())
+		messageDialog.onWheelEvent(event);
+	else
+		pageView.onWheelEvent(event);
 }
 
 void Kystsoft::ColorVario::UserInterface::onCurrentPageChanged(int newPageIndex)
@@ -423,6 +429,8 @@ bool Kystsoft::ColorVario::UserInterface::onMuteAudioButtonClicked(Dali::Toolkit
 
 bool Kystsoft::ColorVario::UserInterface::onInformationButtonClicked(Dali::Toolkit::Button /*button*/)
 {
+	messageDialog.show();
+	messageDialog.showMessage(0); // TODO: Fix!
 	return true;
 }
 

@@ -23,17 +23,24 @@ void Kystsoft::PageView::create(const Dali::Vector2& pageSize)
 	scrollView.SetScrollingDirection(Dali::PanGestureDetector::DIRECTION_HORIZONTAL);
 
 	scrollView.OnStageSignal().Connect(this, &PageView::onStageEntered);
+	scrollView.KeyEventSignal().Connect(this, &PageView::onKeyEvent);
 	scrollView.ScrollCompletedSignal().Connect(this, &PageView::onScrollCompleted);
-
-	// use stage signal since scrollView.WheelEventSignal() never triggers
-	auto stage = Dali::Stage::GetCurrent();
-	stage.WheelEventSignal().Connect(this, &PageView::onWheelEvent);
 }
 
 void Kystsoft::PageView::addPage(Dali::Actor page)
 {
 	scrollView.Add(page);
 	rulerX->SetDomain(Dali::Toolkit::RulerDomain(0, pageCount() * pageWidth));
+}
+
+void Kystsoft::PageView::onWheelEvent(const Dali::WheelEvent& event)
+{
+	int page = targetPage;
+	if (event.z > 0)
+		++page;
+	else if (event.z < 0)
+		--page;
+	scrollTo(page);
 }
 
 void Kystsoft::PageView::scrollTo(int pageIndex)
@@ -55,18 +62,18 @@ void Kystsoft::PageView::scrollTo(int pageIndex)
 	}
 }
 
-void Kystsoft::PageView::onWheelEvent(const Dali::WheelEvent& event)
+bool Kystsoft::PageView::onKeyEvent(Dali::Toolkit::Control /*control*/, const Dali::KeyEvent& event)
 {
-	// TODO: Debug and check if this works when a dialog is on top
-	if (!scrollView.IsVisible() || !scrollView.HasKeyInputFocus())
-		return;
-
-	int page = targetPage;
-	if (event.z > 0)
-		++page;
-	else if (event.z < 0)
-		--page;
-	scrollTo(page);
+	if (event.state == Dali::KeyEvent::Up)
+	{
+		if (Dali::IsKey(event, Dali::DALI_KEY_ESCAPE) ||
+		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
+		{
+			backSignl.emit();
+			return true;
+		}
+	}
+	return false;
 }
 
 void Kystsoft::PageView::onScrollCompleted(const Dali::Vector2& /*currentScrollPosition*/)

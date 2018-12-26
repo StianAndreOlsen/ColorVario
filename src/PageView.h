@@ -19,17 +19,20 @@ public:
 	int currentPageIndex() const { return currentPage; }
 	int targetPageIndex() const { return targetPage; }
 	void showPage(int pageIndex) { scrollTo(pageIndex); }
+	void onWheelEvent(const Dali::WheelEvent& event);
+	const Signal<>& backSignal() const { return backSignl; }
 	const Signal<int>& currentPageChangedSignal() const { return currentPageChangedSignl; }
 private:
 	void scrollTo(int pageIndex);
 	void onStageEntered(Dali::Actor) { scrollView.SetKeyInputFocus(); }
-	void onWheelEvent(const Dali::WheelEvent& event);
+	bool onKeyEvent(Dali::Toolkit::Control control, const Dali::KeyEvent& event);
 	void onScrollCompleted(const Dali::Vector2& currentScrollPosition);
 	float pageWidth = 0;
 	Dali::Toolkit::ScrollView scrollView;
 	Dali::Toolkit::RulerPtr rulerX;
 	int currentPage = 0;
 	int targetPage = 0;
+	Signal<> backSignl;
 	Signal<int> currentPageChangedSignl;
 };
 

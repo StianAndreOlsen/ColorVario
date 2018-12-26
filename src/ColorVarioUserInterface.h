@@ -10,6 +10,7 @@
 #include "ClimbPage.h"
 #include "ClimbRing.h"
 #include "ColorVarioMenu.h"
+#include "MessageDialog.h"
 #include "PageView.h"
 #include "Signal.h"
 #include "SpeedLabel.h"
@@ -52,6 +53,7 @@ public:
 private:
 	void createPageLayer();
 	void createMenuLayer();
+	void createDialogLayer();
 	void onTapGesture(Dali::Actor actor, const Dali::TapGesture& gesture);
 	void onPanGesture(Dali::Actor actor, const Dali::PanGesture& gesture);
 	void onWheelEvent(const Dali::WheelEvent& event);
@@ -77,6 +79,7 @@ private:
 	time_t lastMenuTouch = 0;
 	Dali::TapGestureDetector tapDetector;
 	Dali::PanGestureDetector panDetector;
+	MessageDialog messageDialog;
 	Signal<> quitSignl;
 	Signal<bool> lockDisplaySignl;
 	Signal<bool> enableBluetoothSignl;
