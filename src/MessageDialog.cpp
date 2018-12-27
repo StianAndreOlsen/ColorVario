@@ -1,5 +1,5 @@
 #include "MessageDialog.h"
-#include "Color.h"
+#include "algorithm.h"
 
 void Kystsoft::MessageDialog::create(const Dali::Vector2& size)
 {
@@ -25,7 +25,7 @@ bool Kystsoft::MessageDialog::contains(const Message& message) const
 	return false;
 }
 
-bool Kystsoft::MessageDialog::addMessage(const Message& message)
+bool Kystsoft::MessageDialog::add(const Message& message)
 {
 	if (contains(message))
 		return false;
@@ -33,9 +33,17 @@ bool Kystsoft::MessageDialog::addMessage(const Message& message)
 	return true;
 }
 
-bool Kystsoft::MessageDialog::removeMessage(const Message& message)
+bool Kystsoft::MessageDialog::remove(const Message& message)
 {
 	auto count = messages.size();
 	std::remove(messages.begin(), messages.end(), message);
 	return messages.size() < count;
+}
+
+void Kystsoft::MessageDialog::showMessage(size_t index)
+{
+	if (messages.empty())
+		return;
+	index = std::clamp(index, 0u, messages.size() - 1);
+	textView.setText(messages[index].text());
 }

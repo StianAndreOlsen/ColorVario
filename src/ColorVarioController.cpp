@@ -26,8 +26,9 @@ Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	display.stateChangedSignal().connect(this, &Controller::onDisplayStateChanged);
 
 	// connect user interface signals
-	ui.quitSignal().connect(this, &Controller::quit);
+	ui.goBackSignal().connect(this, &Controller::goBack);
 	ui.lockDisplaySignal().connect(&display, &Display::setLocked);
+	ui.quitSignal().connect(this, &Controller::quit);
 }
 
 // The init signal is received only once during the application lifetime
@@ -62,7 +63,8 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		catch (std::exception& e)
 		{
 			dlog(DLOG_ERROR) << e.what();
-			ui.setErrorMessage("No pressure signal!");
+			// TODO: Improve error message! Look at error message in message dialog.
+			ui.addMessage(Message::error("Pressure Sensor Error", "No pressure signal! Touch screen to restart pressure sensor."));
 		}
 
 		// TODO: Create a function/class for this
@@ -102,7 +104,6 @@ void Kystsoft::ColorVario::Controller::createUi()
 	// connect stage signals
 	Dali::Stage stage = Dali::Stage::GetCurrent();
 	stage.TouchSignal().Connect(this, &Controller::onTouch);
-	stage.KeyEventSignal().Connect(this, &Controller::onKeyEvent);
 	stage.ContextLostSignal().Connect(this, &Controller::onContextLost);
 	stage.ContextRegainedSignal().Connect(this, &Controller::onContextRegained);
 }
@@ -209,21 +210,6 @@ void Kystsoft::ColorVario::Controller::onTouch(const Dali::TouchData& touch)
 	catch (std::exception& e)
 	{
 		dlog(DLOG_ERROR) << e.what();
-	}
-}
-
-void Kystsoft::ColorVario::Controller::onKeyEvent(const Dali::KeyEvent& event)
-{
-	if (event.state == Dali::KeyEvent::Up)
-	{
-		if (Dali::IsKey(event, Dali::DALI_KEY_ESCAPE) ||
-		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
-		{
-			if (ui.isMenuVisible())
-				ui.hideMenu();
-			else
-				app.Lower(); // probably the same as calling app.GetWindow().Lower();
-		}
 	}
 }
 

@@ -18,15 +18,7 @@ void Kystsoft::ColorVario::UserInterface::create()
 	panDetector.Attach(menu);
 	panDetector.DetectedSignal().Connect(this, &UserInterface::onPanGesture);
 
-	// make sure the 'drivers' are active and connected correctly to the initial page
-	climbAudio.start();
-	altitudeRing = altitudePage;
-	climbRing = climbPage;
-	altitudeLabel = climbPage.altitudeLabel();
-	climbLabel = climbPage.climbLabel();
-	speedLabel = speedPage.speedLabel();
-
-	// connect stage signals
+	// connect signals
 	auto stage = Dali::Stage::GetCurrent();
 	stage.WheelEventSignal().Connect(this, &UserInterface::onWheelEvent);
 }
@@ -45,99 +37,6 @@ void Kystsoft::ColorVario::UserInterface::load(const Settings& settings)
 	altitudeLabel.load(settings);
 	climbLabel.load(settings);
 	speedLabel.load(settings);
-}
-
-/*
-void Kystsoft::ColorVario::UserInterface::showPage(int pageIndex)
-{
-	pageIndex = std::clamp(pageIndex, 0, int(pages.size()) - 1);
-	Page::Type pageType = Page::Type(pageIndex);
-	if (pageType == Page::Type::Error && errorLabel().text().empty())
-		return; // stay on the existing page
-	if (pageIndex == curPageIndex)
-		return;
-
-	// sound
-	if (pageType == Page::Type::Altitude)
-	{
-		climbAudio.stop();
-		altitudeAudio.start();
-	}
-	else if (curPageIndex == int(Page::Type::Altitude))
-	{
-		altitudeAudio.stop();
-		climbAudio.start();
-	}
-
-	// color and labels
-	switch (pageType)
-	{
-	case Page::Type::Altitude:
-		// altitudeRing always paints to altitudePage
-		altitudeLabel = altitudePage.altitudeLabel();
-		break;
-	case Page::Type::Climb:
-		climbRing = climbPage;
-		climbLabel = climbPage.climbLabel();
-		altitudeLabel = climbPage.altitudeLabel();
-		break;
-	case Page::Type::Speed:
-		climbRing = speedPage;
-		altitudeLabel = speedPage.altitudeLabel();
-		climbLabel = speedPage.climbLabel();
-		// speedLabel always writes to speedPage.speedLabel()
-		break;
-	}
-
-	Dali::Vector3 pos = pageStrip.GetCurrentPosition();
-	float targetX = -pageIndex * quitPage().GetTargetSize().width;
-	if (pos.x != targetX)
-	{
-		pos.x = targetX;
-		Dali::Animation animation = Dali::Animation::New(0.25f);
-		animation.AnimateTo(Dali::Property(pageStrip, Dali::Actor::Property::POSITION), pos);
-		animation.Play();
-	}
-
-	curPageIndex = pageIndex;
-}
-*/
-
-void Kystsoft::ColorVario::UserInterface::setMenuVisible(bool visible)
-{
-	auto pos = menu.GetCurrentPosition();
-	auto targetY = visible ? 0.0f : -menu.GetTargetSize().height;
-	if (pos.y != targetY)
-	{
-		pos.y = targetY;
-		Dali::Animation animation = Dali::Animation::New(0.25f);
-		animation.AnimateTo(Dali::Property(menu, Dali::Actor::Property::POSITION), pos);
-		animation.Play();
-	}
-	lastMenuTouch = std::time(nullptr);
-}
-
-void Kystsoft::ColorVario::UserInterface::showOrHideMenu(float vy)
-{
-	if (vy == 0)
-	{
-		auto posY = menu.GetCurrentPosition().y;
-		auto height = menu.GetTargetSize().height;
-		auto visibleHeight = height + posY;
-		setMenuVisible(visibleHeight >= height / 2);
-	}
-	else
-		setMenuVisible(vy > 0);
-}
-
-void Kystsoft::ColorVario::UserInterface::translateMenu(float dy)
-{
-	auto posY = menu.GetCurrentPosition().y;
-	auto minY = -menu.GetTargetSize().height;
-	auto maxY = 0.0f;
-	auto targetY = std::clamp(posY + dy, minY, maxY);
-	if (posY != targetY)
-		menu.TranslateBy(Dali::Vector3(0, targetY - posY, 0));
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitudeSamplingInterval(double interval)
@@ -173,14 +72,10 @@ void Kystsoft::ColorVario::UserInterface::setAltitudeAccuracy(double accuracy)
 
 void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
 {
-	// hide menu
-	if (isMenuVisible() && std::difftime(std::time(nullptr), lastMenuTouch) > 15)
-		hideMenu();
-
 	// synchronize mute audio button
 	if (pageView.currentPageIndex() == 0)
 		menu.muteAudioButton().setChecked(!altitudeAudio.isStarted());
-	else
+	else if (pageView.currentPageIndex() > 0)
 		menu.muteAudioButton().setChecked(!climbAudio.isStarted());
 
 	altitudeAudio.setAltitude(altitude);
@@ -198,14 +93,6 @@ void Kystsoft::ColorVario::UserInterface::setClimb(double climb)
 void Kystsoft::ColorVario::UserInterface::setSpeed(double speed)
 {
 	speedLabel.setSpeed(speed);
-}
-
-void Kystsoft::ColorVario::UserInterface::setErrorMessage(const std::string& message)
-{
-	// TODO: Add the possibility of several error messages instead of overwriting the previous
-	// TODO: Don't add an error already added, and then don't show the error page again!
-//	errorLabel().setText(message);
-//	showPage(Page::Type::Error);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAudioMuted(bool muted)
@@ -232,6 +119,26 @@ void Kystsoft::ColorVario::UserInterface::setBluetoothConnected(bool connected)
 	menu.enableBluetoothButton().setSelectedImage(appSharedResourcePath() + file);
 }
 
+bool Kystsoft::ColorVario::UserInterface::addMessage(const Message& message)
+{
+	if (messageDialog.add(message))
+	{
+		updateMessageButton();
+		return true;
+	}
+	return false;
+}
+
+bool Kystsoft::ColorVario::UserInterface::removeMessage(const Message& message)
+{
+	if (messageDialog.remove(message))
+	{
+		updateMessageButton();
+		return true;
+	}
+	return false;
+}
+
 void Kystsoft::ColorVario::UserInterface::createPageLayer()
 {
 	auto stage = Dali::Stage::GetCurrent();
@@ -246,6 +153,7 @@ void Kystsoft::ColorVario::UserInterface::createPageLayer()
 	stage.Add(layer);
 
 	pageView.create(size);
+	pageView.goBackSignal().connect(this, &UserInterface::onGoBack);
 	pageView.currentPageChangedSignal().connect(this, &UserInterface::onCurrentPageChanged);
 	layer.Add(pageView);
 
@@ -276,16 +184,13 @@ void Kystsoft::ColorVario::UserInterface::createMenuLayer()
 	layer.RaiseToTop();
 	stage.Add(layer);
 
-	menu = Menu::New();
+	menu.create(size);
 	layer.Add(menu);
-
-	menu.TouchSignal().Connect(this, &UserInterface::onMenuTouched);
-	lastMenuTouch = std::time(nullptr);
 
 	menu.enableBluetoothButton().ClickedSignal().Connect(this, &UserInterface::onEnableBluetoothButtonClicked);
 	menu.lockDisplayButton().ClickedSignal().Connect(this, &UserInterface::onLockDisplayButtonClicked);
 	menu.muteAudioButton().ClickedSignal().Connect(this, &UserInterface::onMuteAudioButtonClicked);
-	menu.informationButton().ClickedSignal().Connect(this, &UserInterface::onInformationButtonClicked);
+	menu.messageButton().ClickedSignal().Connect(this, &UserInterface::onMessageButtonClicked);
 	menu.quitButton().ClickedSignal().Connect(this, &UserInterface::onQuitButtonClicked);
 }
 
@@ -307,21 +212,13 @@ void Kystsoft::ColorVario::UserInterface::createDialogLayer()
 
 	std::string about
 	(
-		"<font size='7' weight='bold'>"
-		"<color value='" + Color::information().hexStringARGB() + "'>"
-			"ColorVario 2.0.0\n"
-			"\n"
-		"</color>"
-		"</font>"
-		"<font size='7'>"
-			"Developed by\n"      // hard line breaks are required
-			"Kyrre Holm and\n"    // since TextLabel breaks lines
-			"Stian Andre Olsen\n" // even at no-break spaces
-			"\n"
-			"Please visit facebook.com/ColorVariometer"
-		"</font>"
+		"Developed by\n"      // hard line breaks are required
+		"Kyrre Holm and\n"    // since TextLabel breaks lines
+		"Stian Andre Olsen\n" // even at no-break spaces
+		"\n"
+		"Please visit facebook.com/ColorVariometer"
 	);
-	messageDialog.addMessage(Message(Message::Type::Information, about));
+	addMessage(Message::information("ColorVario 2.0.0", about));
 }
 
 void Kystsoft::ColorVario::UserInterface::onTapGesture(Dali::Actor /*actor*/, const Dali::TapGesture& gesture)
@@ -329,9 +226,9 @@ void Kystsoft::ColorVario::UserInterface::onTapGesture(Dali::Actor /*actor*/, co
 	auto y = gesture.screenPoint.y;
 	auto height = Dali::Stage::GetCurrent().GetSize().height;
 	if (y < height / 4)
-		showMenu();
+		menu.show();
 	else if (y > height * 9 / 16)
-		hideMenu();
+		menu.hide();
 }
 
 void Kystsoft::ColorVario::UserInterface::onPanGesture(Dali::Actor /*actor*/, const Dali::PanGesture& gesture)
@@ -340,13 +237,13 @@ void Kystsoft::ColorVario::UserInterface::onPanGesture(Dali::Actor /*actor*/, co
 	{
 	case Dali::Gesture::Started:
 	case Dali::Gesture::Continuing:
-		translateMenu(gesture.displacement.y);
+		menu.translate(gesture.displacement.y);
 		break;
 	case Dali::Gesture::Finished:
-		showOrHideMenu(gesture.velocity.y);
+		menu.showOrHide(gesture.velocity.y);
 		break;
 	default:
-		hideMenu();
+		menu.hide();
 		break;
 	}
 }
@@ -377,27 +274,27 @@ void Kystsoft::ColorVario::UserInterface::onCurrentPageChanged(int newPageIndex)
 	switch (newPageIndex)
 	{
 	case 0: // altitude
-		// altitudeRing always paints to altitudePage
+		altitudeRing = altitudePage;
+		climbRing = Dali::Toolkit::Control();
 		altitudeLabel = altitudePage.altitudeLabel();
+		climbLabel = TextLabel();
+		speedLabel = TextLabel();
 		break;
 	case 1: // climb
+		altitudeRing = Dali::Toolkit::Control();
 		climbRing = climbPage;
-		climbLabel = climbPage.climbLabel();
 		altitudeLabel = climbPage.altitudeLabel();
+		climbLabel = climbPage.climbLabel();
+		speedLabel = TextLabel();
 		break;
 	case 2: // speed
+		altitudeRing = Dali::Toolkit::Control();
 		climbRing = speedPage;
 		altitudeLabel = speedPage.altitudeLabel();
 		climbLabel = speedPage.climbLabel();
-		// speedLabel always writes to speedPage.speedLabel()
+		speedLabel = speedPage.speedLabel();
 		break;
 	}
-}
-
-bool Kystsoft::ColorVario::UserInterface::onMenuTouched(Dali::Actor /*actor*/, const Dali::TouchData& /*touch*/)
-{
-	lastMenuTouch = std::time(nullptr);
-	return true;
 }
 
 bool Kystsoft::ColorVario::UserInterface::onEnableBluetoothButtonClicked(Dali::Toolkit::Button /*button*/)
@@ -421,16 +318,16 @@ bool Kystsoft::ColorVario::UserInterface::onMuteAudioButtonClicked(Dali::Toolkit
 		ValueAudio::unmute();
 		if (pageView.currentPageIndex() == 0)
 			altitudeAudio.start();
-		else
+		else if (pageView.currentPageIndex() > 0)
 			climbAudio.start();
 	}
 	return true;
 }
 
-bool Kystsoft::ColorVario::UserInterface::onInformationButtonClicked(Dali::Toolkit::Button /*button*/)
+bool Kystsoft::ColorVario::UserInterface::onMessageButtonClicked(Dali::Toolkit::Button /*button*/)
 {
 	messageDialog.show();
-	messageDialog.showMessage(0); // TODO: Fix!
+	messageDialog.showLastMessage();
 	return true;
 }
 
@@ -438,4 +335,24 @@ bool Kystsoft::ColorVario::UserInterface::onQuitButtonClicked(Dali::Toolkit::But
 {
 	quitSignl.emit();
 	return true;
+}
+
+void Kystsoft::ColorVario::UserInterface::updateMessageButton()
+{
+	auto resourceDir = appSharedResourcePath();
+	if (messageDialog.hasErrorMessages())
+	{
+		menu.messageButton().setUnselectedImage(resourceDir + "Error.png");
+		menu.messageButton().setSelectedImage(resourceDir + "ErrorPressed.png");
+	}
+	else if (messageDialog.hasWarningMessages())
+	{
+		menu.messageButton().setUnselectedImage(resourceDir + "Warning.png");
+		menu.messageButton().setSelectedImage(resourceDir + "WarningPressed.png");
+	}
+	else
+	{
+		menu.messageButton().setUnselectedImage(resourceDir + "Information.png");
+		menu.messageButton().setSelectedImage(resourceDir + "InformationPressed.png");
+	}
 }

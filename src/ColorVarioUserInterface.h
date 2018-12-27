@@ -15,7 +15,6 @@
 #include "Signal.h"
 #include "SpeedLabel.h"
 #include "SpeedPage.h"
-#include <ctime>
 
 namespace Kystsoft {
 namespace ColorVario {
@@ -28,12 +27,6 @@ public:
 	UserInterface& operator=(const UserInterface& rhs) = delete;
 	void create();
 	void load(const Settings& settings);
-	bool isMenuVisible() const { return menu.GetCurrentPosition().y > -menu.GetTargetSize().height; }
-	void setMenuVisible(bool visible);
-	void showMenu() { setMenuVisible(true); }
-	void hideMenu() { setMenuVisible(false); }
-	void showOrHideMenu(float vy);
-	void translateMenu(float dy);
 	void setAltitudeSamplingInterval(double interval);
 	void setClimbSamplingInterval(double interval);
 	void setSpeedSamplingInterval(double interval);
@@ -41,15 +34,17 @@ public:
 	void setAltitude(double altitude);
 	void setClimb(double climb);
 	void setSpeed(double speed);
-	void setErrorMessage(const std::string& message);
 	void setAudioMuted(bool muted);
 	void setDisplayLocked(bool locked);
 	void setBluetoothEnabled(bool enabled);
 	void setBluetoothConnected(bool connected);
 	void setLocationEnabled(bool enabled) { menu.locationIcon().SetVisible(enabled); }
-	const Signal<>& quitSignal() const { return quitSignl; }
-	const Signal<bool>& lockDisplaySignal() const { return lockDisplaySignl; }
+	bool addMessage(const Message& message);
+	bool removeMessage(const Message& message);
+	const Signal<>& goBackSignal() const { return goBackSignl; }
 	const Signal<bool>& enableBluetoothSignal() const { return enableBluetoothSignl; }
+	const Signal<bool>& lockDisplaySignal() const { return lockDisplaySignl; }
+	const Signal<>& quitSignal() const { return quitSignl; }
 private:
 	void createPageLayer();
 	void createMenuLayer();
@@ -57,13 +52,14 @@ private:
 	void onTapGesture(Dali::Actor actor, const Dali::TapGesture& gesture);
 	void onPanGesture(Dali::Actor actor, const Dali::PanGesture& gesture);
 	void onWheelEvent(const Dali::WheelEvent& event);
+	void onGoBack() { goBackSignl.emit(); }
 	void onCurrentPageChanged(int newPageIndex);
-	bool onMenuTouched(Dali::Actor actor, const Dali::TouchData& touch);
 	bool onEnableBluetoothButtonClicked(Dali::Toolkit::Button button);
 	bool onLockDisplayButtonClicked(Dali::Toolkit::Button button);
 	bool onMuteAudioButtonClicked(Dali::Toolkit::Button button);
-	bool onInformationButtonClicked(Dali::Toolkit::Button button);
+	bool onMessageButtonClicked(Dali::Toolkit::Button button);
 	bool onQuitButtonClicked(Dali::Toolkit::Button button);
+	void updateMessageButton();
 	AltitudeAudio altitudeAudio;
 	ClimbAudio climbAudio;
 	AltitudeRing altitudeRing;
@@ -76,13 +72,13 @@ private:
 	ClimbPage climbPage;
 	SpeedPage speedPage;
 	Menu menu;
-	time_t lastMenuTouch = 0;
 	Dali::TapGestureDetector tapDetector;
 	Dali::PanGestureDetector panDetector;
 	MessageDialog messageDialog;
-	Signal<> quitSignl;
-	Signal<bool> lockDisplaySignl;
+	Signal<> goBackSignl;
 	Signal<bool> enableBluetoothSignl;
+	Signal<bool> lockDisplaySignl;
+	Signal<> quitSignl;
 };
 
 } // namespace ColorVario

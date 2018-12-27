@@ -19,10 +19,11 @@ public:
 	bool hasWarningMessages() const { return hasMessagesOfType(Message::Type::Warning); }
 	bool hasErrorMessages() const { return hasMessagesOfType(Message::Type::Error); }
 	bool contains(const Message& message) const;
-	bool addMessage(const Message& message);
-	bool removeMessage(const Message& message);
+	bool add(const Message& message);
+	bool remove(const Message& message);
 	auto messageCount() const { return messages.size(); }
-	void showMessage(size_t index) { textView.setText(messages[index].text()); }
+	void showMessage(size_t index);
+	void showLastMessage() { showMessage(messageCount() - 1); }
 	void onWheelEvent(const Dali::WheelEvent& event) { textView.onWheelEvent(event); }
 private:
 	std::vector<Message> messages;

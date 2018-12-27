@@ -20,7 +20,7 @@ public:
 	int targetPageIndex() const { return targetPage; }
 	void showPage(int pageIndex) { scrollTo(pageIndex); }
 	void onWheelEvent(const Dali::WheelEvent& event);
-	const Signal<>& backSignal() const { return backSignl; }
+	const Signal<>& goBackSignal() const { return goBackSignl; }
 	const Signal<int>& currentPageChangedSignal() const { return currentPageChangedSignl; }
 private:
 	void scrollTo(int pageIndex);
@@ -30,9 +30,9 @@ private:
 	float pageWidth = 0;
 	Dali::Toolkit::ScrollView scrollView;
 	Dali::Toolkit::RulerPtr rulerX;
-	int currentPage = 0;
+	int currentPage = -1; // current page must be initialized using showPage
 	int targetPage = 0;
-	Signal<> backSignl;
+	Signal<> goBackSignl;
 	Signal<int> currentPageChangedSignl;
 };
 

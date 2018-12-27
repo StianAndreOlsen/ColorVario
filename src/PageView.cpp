@@ -69,7 +69,7 @@ bool Kystsoft::PageView::onKeyEvent(Dali::Toolkit::Control /*control*/, const Da
 		if (Dali::IsKey(event, Dali::DALI_KEY_ESCAPE) ||
 		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
 		{
-			backSignl.emit();
+			goBackSignl.emit();
 			return true;
 		}
 	}

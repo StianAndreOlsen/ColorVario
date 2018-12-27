@@ -3,23 +3,25 @@
 
 Kystsoft::ValueRing& Kystsoft::ValueRing::operator=(const Dali::Toolkit::Control& rhs)
 {
-	Dali::Toolkit::Control::operator=(rhs);
-	// set an invalid color to make sure that the new control is updated in the next call to setValue
-	currentColor = Color(-1, -1, -1);
+	if (*this != rhs)
+	{
+		if (*this)
+		{
+			auto gradient = colorGradient(Dali::Color::TRANSPARENT);
+			SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
+		}
+		Dali::Toolkit::Control::operator=(rhs);
+		if (*this)
+		{
+			auto gradient = colorGradient();
+			SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
+		}
+	}
 	return *this;
 }
 
-void Kystsoft::ValueRing::setValue(double value)
+Dali::Property::Map Kystsoft::ValueRing::colorGradient(Color color)
 {
-	averageValue += value;
-	Color newColor = color(averageValue);
-	if (newColor == currentColor)
-		return;
-	currentColor = newColor;
-
-	// alpha blend the new color on top of the background color since Dali don't use gamma correction
-	newColor.alphaBlend(Color::window());
-
 	// radial gradient
 	Dali::Property::Map map;
 	map[Dali::Toolkit::Visual::Property::TYPE] = Dali::Toolkit::Visual::GRADIENT;
@@ -35,10 +37,25 @@ void Kystsoft::ValueRing::setValue(double value)
 	Dali::Property::Array stopColors;
 	stopColors.PushBack(Dali::Color::TRANSPARENT);
 	stopColors.PushBack(Dali::Color::TRANSPARENT);
-	stopColors.PushBack(newColor);
-	stopColors.PushBack(newColor);
+	stopColors.PushBack(color);
+	stopColors.PushBack(color);
 	map[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
-	SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, map);
+	return map;
+}
+
+void Kystsoft::ValueRing::setValue(double value)
+{
+	averageValue += value;
+	Color newColor = color(averageValue);
+	newColor.alphaBlend(Color::window()); // alpha blend the new color on top of the background color since Dali don't use gamma correction
+	if (newColor == currentColor)
+		return;
+	currentColor = newColor;
+	if (*this)
+	{
+		auto gradient = colorGradient();
+		SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
+	}
 }
 
 void Kystsoft::ValueRing::load(const Settings& settings, const std::string& section)

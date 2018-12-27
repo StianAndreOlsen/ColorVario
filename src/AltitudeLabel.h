@@ -12,6 +12,7 @@ public:
 	AltitudeLabel(const Dali::Toolkit::TextLabel& other) : ValueLabel(other) {}
 	AltitudeLabel& operator=(const Dali::Toolkit::TextLabel& rhs) { ValueLabel::operator=(rhs); return *this; }
 	void load(const Settings& settings) override { ValueLabel::load(settings, "AltitudeLabel"); }
+	std::string name() const override { return "Altitude"; }
 	void setUnit(const std::string& unit) override;
 	void setAltitude(double altitude) { setValue(altitude); }
 };

@@ -4,7 +4,7 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>0EHzX9y0T/HdPm4mR/hPWvNCWhmgEasWRDkCtNyX7Ec=</DigestValue>
+<DigestValue>0ki696tw4Zz/R59K+dnxi8BOHlefkJl1KI2eASKHfD4=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FAudioMuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -103,11 +103,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-QNdaLsOElnShyHu3AtfYnZnPvVncDJTC2Sg9PJYaKJ52DGnbB6udSctPLhzuf25Si2gdRBAN4fEv
-sJsI+9kqrk3zNVbTnhLEwx2jPO7tiGK6hHn0efG0+19KrcLIG9qbwb9zmFudw5grXR5x6AT7JQdE
-e/BcBItrMM04a6R7SptKdMXALAC0uiKIfD8vrCGiPv1zgvPniAzHvTpHHtfNlJCtTW0Oy0jV50GY
-ylFEq3tHKGgVDHbj52sgNqWnRA56aO8amkfX7s41lki4Ry3EroeUDq7r7IBqXrJy9O5jrJ/ncknz
-l1ifdKkzoi2czJUv7rORKLJmmpOoOWdwWMKT2Q==
+Lt+v6taQdYoYUG3OeKJ7CKQ8cPqLczNeH7OrNXq/Qm8vZ77XnKWcBTpL8Z+3tJOI4XgkUXLLEkGN
+IfranmRH9ELr4TwcUV8oS1N6ejub2x3s6Rn/s9RgOzXOrwaRTNFYOxbUqxUrXsMvkZ8neUwkLWX6
+aAO7vLZ3hy5fGei+LokcSfY8f0V1GjVBu5rIpIwelviA6fBwF2QazMtAuFDtI1b9WnF2IXFNmK0O
+kE1EzJW4OqQfbiT8d+b1+oSJr6j1+gQ2C/kbYWON+4T7rwj2zbKHqMs6CrgiDQvUmANjyYqBB1my
+xvoQ1AN1I13oDMFLlbOLO0nuv+2rf5GBSZlr0Q==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

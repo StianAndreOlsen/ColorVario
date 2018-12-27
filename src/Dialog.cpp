@@ -25,7 +25,7 @@ void Kystsoft::Dialog::setVisible(bool visible)
 		from = Dali::Vector3(1, 1, 1);
 	control.SetScale(from);
 	control.SetVisible(true);
-	Dali::Animation animation = Dali::Animation::New(0.25f);
+	auto animation = Dali::Animation::New(0.25f);
 	animation.AnimateTo(Dali::Property(control, Dali::Actor::Property::SCALE), to);
 	animation.AnimateTo(Dali::Property(control, Dali::Actor::Property::VISIBLE), visible);
 	animation.Play();

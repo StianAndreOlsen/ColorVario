@@ -13,13 +13,16 @@ public:
 	TextView& operator=(const TextView& rhs) = delete;
 	operator Dali::Toolkit::ScrollView() const { return scrollView; }
 	void create(const Dali::Vector2& size);
+	void setTopMargin(float margin);
+	void setBottomMargin(float margin);
 	void setText(const std::string& text);
-//	void setTopMargin(float margin);
-//	void setBottomMargin(float margin);
 	void onWheelEvent(const Dali::WheelEvent& event);
 private:
+	void updateRuler();
+	float height = 0;
 	Dali::Toolkit::ScrollView scrollView;
 	Dali::Toolkit::RulerPtr rulerY;
+	float targetY = 0;
 	float topMargin = 0;
 	float bottomMargin = 0;
 	TextLabel textLabel;

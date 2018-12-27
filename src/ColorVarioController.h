@@ -23,13 +23,13 @@ private:
 	void createUi();
 	void load(const Settings& settings);
 	Settings settingsFromFile();
+	void goBack() { app.Lower(); }
 	void quit() { app.Quit(); }
 	void onPause(Dali::Application& application);
 	void onResume(Dali::Application& application);
 	void onContextLost(); // TODO: Remove after testing
 	void onContextRegained(); // TODO: Remove after testing
 	void onTouch(const Dali::TouchData& touch);
-	void onKeyEvent(const Dali::KeyEvent& event);
 	void onLocationUpdated(const Location& location);
 	void onDisplayStateChanged(display_state_e state);
 	void setAltitude(double altitude);

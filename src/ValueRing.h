@@ -16,6 +16,8 @@ public:
 	ValueRing& operator=(const Dali::Toolkit::Control& rhs);
 	virtual ~ValueRing() noexcept {}
 	virtual void load(const Settings& settings) = 0;
+	static Dali::Property::Map colorGradient(Color color);
+	Dali::Property::Map colorGradient() const { return colorGradient(currentColor); }
 	const ValueColor& valueColor() const { return color; }
 	void setValueColor(const ValueColor& valueColor) { color = valueColor; }
 	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
@@ -26,7 +28,7 @@ protected:
 private:
 	ValueColor color;
 	Averager<double> averageValue;
-	Color currentColor = Color(-1, -1, -1); // an invalid color
+	Color currentColor;
 };
 
 } // namespace Kystsoft

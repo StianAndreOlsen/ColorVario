@@ -1,15 +1,36 @@
 #include "ValueLabel.h"
 #include "MathFunctions.h"
+#include <sstream>
+
+Kystsoft::ValueLabel& Kystsoft::ValueLabel::operator=(const Dali::Toolkit::TextLabel& rhs)
+{
+	if (*this != rhs)
+	{
+		if (*this)
+			setText(name());
+		TextLabel::operator=(rhs);
+		if (*this)
+			setText(label());
+	}
+	return *this;
+}
+
+std::string Kystsoft::ValueLabel::label() const
+{
+	std::ostringstream os;
+	os.precision(15);
+	os << mround(averageValue, multipl);
+	if (showUnt)
+		os << ' ' << unt;
+	return os.str();
+}
 
 void Kystsoft::ValueLabel::setValue(double value)
 {
 	convertCb.execute(value, &value);
 	averageValue += value;
-	os.str("");
-	os << mround(averageValue, multipl);
-	if (showUnt)
-		os << ' ' << unt;
-	setText(os.str());
+	if (*this)
+		setText(label());
 }
 
 void Kystsoft::ValueLabel::load(const Settings& settings, const std::string& section)

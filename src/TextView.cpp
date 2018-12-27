@@ -4,6 +4,10 @@
 
 void Kystsoft::TextView::create(const Dali::Vector2& size)
 {
+	// save height since both scrollView.GetTargetSize() and
+	// scrollView.GetCurrentSize() returns 0 before scrollView is shown
+	height = size.height;
+
 	scrollView = Dali::Toolkit::ScrollView::New();
 	scrollView.SetSize(size);
 	scrollView.SetParentOrigin(Dali::ParentOrigin::CENTER);
@@ -16,6 +20,8 @@ void Kystsoft::TextView::create(const Dali::Vector2& size)
 	rulerY = new Dali::Toolkit::FixedRuler();
 	scrollView.SetRulerY(rulerY);
 	scrollView.SetScrollingDirection(Dali::PanGestureDetector::DIRECTION_VERTICAL);
+	// TODO: Search for functions that enables scrolling to continue after a flick
+//	scrollView.SetScrollFlickAlphaFunction(Dali::AlphaFunction::EASE_OUT);
 
 	// default margins
 	auto r = Dali::Stage::GetCurrent().GetSize().height / 2;
@@ -33,31 +39,52 @@ void Kystsoft::TextView::create(const Dali::Vector2& size)
 	textLabel.setVerticalAlignment("TOP");
 	textLabel.setHorizontalAlignment("CENTER");
 	textLabel.setTextColor(Color::defaultText());
-	textLabel.setPointSize(8); // TODO: 7 or 8?
+	textLabel.setPointSize(8);
 	textLabel.setMultiLine(true);
 	textLabel.enableMarkup();
-
 	scrollView.Add(textLabel);
+}
+
+void Kystsoft::TextView::setTopMargin(float margin)
+{
+	topMargin = margin;
+	textLabel.SetPosition(0, topMargin);
+	updateRuler();
+}
+
+void Kystsoft::TextView::setBottomMargin(float margin)
+{
+	bottomMargin = margin;
+	updateRuler();
 }
 
 void Kystsoft::TextView::setText(const std::string& text)
 {
 	textLabel.setText(text);
-
-	auto textWidth = textLabel.GetRelayoutSize(Dali::Dimension::WIDTH);
-	auto textHeight = textLabel.GetHeightForWidth(textWidth);
-	auto scrollHeight = scrollView.GetTargetSize().height;
-	scrollHeight = std::max(scrollHeight, topMargin + textHeight + bottomMargin);
-	rulerY->SetDomain(Dali::Toolkit::RulerDomain(0, scrollHeight));
+	updateRuler();
 }
 
 void Kystsoft::TextView::onWheelEvent(const Dali::WheelEvent& event)
 {
-	auto scrollDistance = scrollView.GetTargetSize().height / 3;
-	auto scrollPosition = scrollView.GetCurrentScrollPosition();
+	auto distance = height - topMargin - bottomMargin;
 	if (event.z > 0)
-		scrollPosition.y += scrollDistance;
+		targetY += distance;
 	else if (event.z < 0)
-		scrollPosition.y -= scrollDistance;
-	scrollView.ScrollTo(scrollPosition);
+		targetY -= distance;
+	// ScrollView doesn't show overshoot effects when scrolling vertically
+	// --> we can clamp to scroll limits
+	auto maxY = rulerY->GetDomain().max - height;
+	targetY = std::clamp(targetY, 0.0f, maxY);
+	auto position = scrollView.GetCurrentScrollPosition();
+	position.y = targetY;
+	scrollView.ScrollTo(position);
+}
+
+void Kystsoft::TextView::updateRuler()
+{
+	auto textWidth = textLabel.GetRelayoutSize(Dali::Dimension::WIDTH);
+	auto textHeight = textLabel.GetHeightForWidth(textWidth);
+	auto scrollHeight = topMargin + textHeight + bottomMargin;
+	scrollHeight = std::max(scrollHeight, height);
+	rulerY->SetDomain(Dali::Toolkit::RulerDomain(0, scrollHeight));
 }

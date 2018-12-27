@@ -6,25 +6,37 @@
 namespace Kystsoft {
 namespace ColorVario {
 
-class Menu : public Dali::Toolkit::Control
+class Menu : public Dali::ConnectionTracker
 {
 public:
 	Menu() {}
-	Menu(const Menu& other) : Dali::Toolkit::Control(other) {}
-	Menu& operator=(const Menu& rhs) { Dali::Toolkit::Control::operator=(rhs); return *this; }
-	static Menu New();
-	auto buttonLayer() const { return Dali::Layer::DownCast(GetChildAt(1)); }
+	Menu(const Menu& other) = delete;
+	Menu& operator=(const Menu& rhs) = delete;
+	operator Dali::Toolkit::Control() const { return control; }
+	void create(const Dali::Vector2& size);
+	bool isVisible() const { return control.GetCurrentPosition().y > -control.GetTargetSize().height; }
+	void setVisible(bool visible);
+	void show() { setVisible(true); }
+	void hide() { setVisible(false); }
+	void showOrHide(float vy);
+	void translate(float dy);
+	auto buttonLayer() const { return Dali::Layer::DownCast(control.GetChildAt(1)); }
 	auto enableBluetoothButton() const { return PushButton::DownCast(buttonLayer().GetChildAt(0)); }
 	auto lockDisplayButton() const { return PushButton::DownCast(buttonLayer().GetChildAt(1)); }
 	auto muteAudioButton() const { return PushButton::DownCast(buttonLayer().GetChildAt(2)); }
-	auto informationButton() const { return PushButton::DownCast(buttonLayer().GetChildAt(3)); }
+	auto messageButton() const { return PushButton::DownCast(buttonLayer().GetChildAt(3)); }
 	auto quitButton() const { return PushButton::DownCast(buttonLayer().GetChildAt(4)); }
-	auto statusLayer() const { return Dali::Layer::DownCast(GetChildAt(2)); }
+	auto statusLayer() const { return Dali::Layer::DownCast(control.GetChildAt(2)); }
 	auto locationIcon() const { return Dali::Toolkit::ImageView::DownCast(statusLayer().GetChildAt(0)); }
 private:
-	Menu(const Dali::Toolkit::Control& other) : Dali::Toolkit::Control(other) {}
-	static void createButtonLayer(Dali::Actor parent, const Dali::Vector2& menuSize, float menuRadius);
-	static void createStatusLayer(Dali::Actor parent, const Dali::Vector2& menuSize);
+	void createButtonLayer(const Dali::Vector2& menuSize, float menuRadius);
+	void createStatusLayer(const Dali::Vector2& menuSize);
+	bool onAutoHide() { hide(); return false; }
+	void onStageEntered(Dali::Actor) { control.SetKeyInputFocus(); }
+	bool onTouch(Dali::Actor, const Dali::TouchData&) { autoHide.Start(); return true; }
+	bool onKeyEvent(Dali::Toolkit::Control control, const Dali::KeyEvent& event);
+	Dali::Toolkit::Control control;
+	Dali::Timer autoHide;
 };
 
 } // namespace ColorVario

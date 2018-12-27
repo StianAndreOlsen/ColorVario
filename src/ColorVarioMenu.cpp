@@ -4,11 +4,9 @@
 #include "TextLabel.h"
 #include <cmath>
 
-Kystsoft::ColorVario::Menu Kystsoft::ColorVario::Menu::New()
+void Kystsoft::ColorVario::Menu::create(const Dali::Vector2& size)
 {
-	auto size = Dali::Stage::GetCurrent().GetSize();
-	auto radius = size.height;
-	size.height /= 2;
+	auto radius = size.width;
 
 	// menu background
 	Dali::Property::Map background;
@@ -28,12 +26,17 @@ Kystsoft::ColorVario::Menu Kystsoft::ColorVario::Menu::New()
 	}
 
 	// empty menu
-	auto menu = Dali::Toolkit::Control::New();
-	menu.SetSize(size);
-	menu.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
-	menu.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
-	menu.SetPosition(0, 0);
-	menu.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
+	control = Dali::Toolkit::Control::New();
+	control.SetSize(size);
+	control.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
+	control.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
+	control.SetPosition(0, 0);
+	control.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
+
+	// connect menu signals
+	control.OnStageSignal().Connect(this, &Menu::onStageEntered);
+	control.TouchSignal().Connect(this, &Menu::onTouch);
+	control.KeyEventSignal().Connect(this, &Menu::onKeyEvent);
 
 	// application label
 	auto appLabel = TextLabel::New(appName());
@@ -44,16 +47,65 @@ Kystsoft::ColorVario::Menu Kystsoft::ColorVario::Menu::New()
 	appLabel.setHorizontalAlignment("CENTER");
 	appLabel.setTextColor(Color::subText());
 	appLabel.setPointSize(8);
-	menu.Add(appLabel);
+	control.Add(appLabel);
 
 	// buttons and status icons
-	createButtonLayer(menu, size, radius);
-	createStatusLayer(menu, size);
+	createButtonLayer(size, radius);
+	createStatusLayer(size);
 
-	return menu;
+	// hide automatically after 15 seconds
+	autoHide = Dali::Timer::New(15000);
+	autoHide.TickSignal().Connect(this, &Menu::onAutoHide);
+	autoHide.Start();
 }
 
-void Kystsoft::ColorVario::Menu::createButtonLayer(Dali::Actor parent, const Dali::Vector2& menuSize, float menuRadius)
+void Kystsoft::ColorVario::Menu::setVisible(bool visible)
+{
+	auto pos = control.GetCurrentPosition();
+	auto targetY = visible ? 0.0f : -control.GetTargetSize().height;
+	if (pos.y != targetY)
+	{
+		pos.y = targetY;
+		auto animation = Dali::Animation::New(0.25f);
+		animation.AnimateTo(Dali::Property(control, Dali::Actor::Property::POSITION), pos);
+		animation.Play();
+	}
+	if (visible)
+	{
+		control.SetKeyInputFocus();
+		autoHide.Start();
+	}
+	else
+	{
+		control.ClearKeyInputFocus();
+		autoHide.Stop();
+	}
+}
+
+void Kystsoft::ColorVario::Menu::showOrHide(float vy)
+{
+	if (vy == 0)
+	{
+		auto posY = control.GetCurrentPosition().y;
+		auto height = control.GetTargetSize().height;
+		auto visibleHeight = height + posY;
+		setVisible(visibleHeight >= height / 2);
+	}
+	else
+		setVisible(vy > 0);
+}
+
+void Kystsoft::ColorVario::Menu::translate(float dy)
+{
+	auto posY = control.GetCurrentPosition().y;
+	auto minY = -control.GetTargetSize().height;
+	auto maxY = 0.0f;
+	auto targetY = std::clamp(posY + dy, minY, maxY);
+	if (posY != targetY)
+		control.TranslateBy(Dali::Vector3(0, targetY - posY, 0));
+}
+
+void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize, float menuRadius)
 {
 	// button layer
 	auto layer = Dali::Layer::New();
@@ -62,7 +114,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(Dali::Actor parent, const Dal
 	layer.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 	layer.SetPosition(0, 0);
 	layer.RaiseToTop();
-	parent.Add(layer);
+	control.Add(layer);
 
 	// button size and position
 	auto width = menuSize.width / 6;
@@ -103,7 +155,6 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(Dali::Actor parent, const Dal
 	enableBluetoothButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
 	enableBluetoothButton.setUnselectedImage(resourceDir + "BluetoothDisabled.png");
 	enableBluetoothButton.setSelectedImage(resourceDir + "BluetoothEnabled.png");
-//	enableBluetoothButton.setSelectedImage(resourceDir + "BluetoothConnected.png");
 	enableBluetoothButton.setCheckable(true);
 	enableBluetoothButton.setChecked(false);
 	layer.Add(enableBluetoothButton);
@@ -138,22 +189,18 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(Dali::Actor parent, const Dal
 	muteAudioButton.setChecked(true);
 	layer.Add(muteAudioButton);
 
-	// information button
+	// message button
 	x = centerRadius * std::sin(angle);
 	y = centerRadius * std::cos(angle) - menuRadius;
-	auto informationButton = PushButton::New();
-	informationButton.SetSize(width, height);
-	informationButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
-	informationButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	informationButton.SetPosition(x, y);
-	informationButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
-	informationButton.setUnselectedImage(resourceDir + "Information.png");
-	informationButton.setSelectedImage(resourceDir + "InformationPressed.png");
-//	informationButton.setUnselectedImage(resourceDir + "Warning.png");
-//	informationButton.setSelectedImage(resourceDir + "WarningPressed.png");
-//	informationButton.setUnselectedImage(resourceDir + "Error.png");
-//	informationButton.setSelectedImage(resourceDir + "ErrorPressed.png");
-	layer.Add(informationButton);
+	auto messageButton = PushButton::New();
+	messageButton.SetSize(width, height);
+	messageButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
+	messageButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
+	messageButton.SetPosition(x, y);
+	messageButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
+	messageButton.setUnselectedImage(resourceDir + "Information.png");
+	messageButton.setSelectedImage(resourceDir + "InformationPressed.png");
+	layer.Add(messageButton);
 
 	// quit button background
 	{
@@ -177,7 +224,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(Dali::Actor parent, const Dal
 	layer.Add(quitButton);
 }
 
-void Kystsoft::ColorVario::Menu::createStatusLayer(Dali::Actor parent, const Dali::Vector2& menuSize)
+void Kystsoft::ColorVario::Menu::createStatusLayer(const Dali::Vector2& menuSize)
 {
 	// status layer
 	auto layer = Dali::Layer::New();
@@ -186,7 +233,7 @@ void Kystsoft::ColorVario::Menu::createStatusLayer(Dali::Actor parent, const Dal
 	layer.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 	layer.SetPosition(0, 0);
 	layer.RaiseToTop();
-	parent.Add(layer);
+	control.Add(layer);
 
 	// icon size and position
 	auto width = menuSize.width / 6 * 2 / 3;
@@ -203,4 +250,18 @@ void Kystsoft::ColorVario::Menu::createStatusLayer(Dali::Actor parent, const Dal
 	locationIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 	locationIcon.SetPosition(0, margin);
 	layer.Add(locationIcon);
+}
+
+bool Kystsoft::ColorVario::Menu::onKeyEvent(Dali::Toolkit::Control /*control*/, const Dali::KeyEvent& event)
+{
+	if (event.state == Dali::KeyEvent::Up)
+	{
+		if (Dali::IsKey(event, Dali::DALI_KEY_ESCAPE) ||
+		    Dali::IsKey(event, Dali::DALI_KEY_BACK))
+		{
+			hide();
+			return true;
+		}
+	}
+	return false;
 }

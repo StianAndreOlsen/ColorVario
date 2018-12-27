@@ -12,6 +12,7 @@ public:
 	SpeedLabel(const Dali::Toolkit::TextLabel& other) : ValueLabel(other) {}
 	SpeedLabel& operator=(const Dali::Toolkit::TextLabel& rhs) { ValueLabel::operator=(rhs); return *this; }
 	void load(const Settings& settings) override { ValueLabel::load(settings, "SpeedLabel"); }
+	std::string name() const override { return "Speed"; }
 	void setUnit(const std::string& unit) override;
 	void setSpeed(double speed) { setValue(speed); }
 };

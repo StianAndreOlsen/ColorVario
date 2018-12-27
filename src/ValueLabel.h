@@ -5,18 +5,19 @@
 #include "Callback.h"
 #include "Settings.h"
 #include "TextLabel.h"
-#include <sstream>
 
 namespace Kystsoft {
 
 class ValueLabel : public TextLabel
 {
 public:
-	ValueLabel() { os.precision(15); }
+	ValueLabel() {}
 	ValueLabel(const Dali::Toolkit::TextLabel& other) : TextLabel(other) {}
-	ValueLabel& operator=(const Dali::Toolkit::TextLabel& rhs) { TextLabel::operator=(rhs); return *this; }
+	ValueLabel& operator=(const Dali::Toolkit::TextLabel& rhs);
 	virtual ~ValueLabel() noexcept {}
 	virtual void load(const Settings& settings) = 0;
+	virtual std::string name() const = 0;
+	std::string label() const;
 	const std::string& unit() const { return unt; }
 	virtual void setUnit(const std::string& unit) { unt = unit; }
 	bool showUnit() const { return showUnt; }
@@ -35,7 +36,6 @@ private:
 	ConvertCallback convertCb;
 	Averager<double> averageValue;
 	double multipl = 0;
-	std::ostringstream os;
 };
 
 } // namespace Kystsoft
