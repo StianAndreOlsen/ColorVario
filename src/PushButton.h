@@ -1,6 +1,7 @@
 #ifndef KYSTSOFT_PUSHBUTTON_H
 #define KYSTSOFT_PUSHBUTTON_H
 
+#include "Color.h"
 #include <dali-toolkit/dali-toolkit.h>
 
 namespace Kystsoft {
@@ -25,6 +26,7 @@ public:
 	void setCheckable(bool checkable) { SetProperty(Button::Property::TOGGLABLE, checkable); }
 	auto isChecked() const { return GetProperty<bool>(Button::Property::SELECTED); }
 	void setChecked(bool checked) { SetProperty(Button::Property::SELECTED, checked); }
+	void setEllipticBackground(const Color& color);
 	void setUnselectedImage(const std::string& file) { SetProperty(Button::Property::UNSELECTED_STATE_IMAGE, file); }
 	void setSelectedImage(const std::string& file) { SetProperty(Button::Property::SELECTED_STATE_IMAGE, file); }
 	void setDisabledImage(const std::string& file) { SetProperty(Button::Property::DISABLED_STATE_IMAGE, file); }

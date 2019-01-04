@@ -1,6 +1,5 @@
 #include "ColorVarioMenu.h"
 #include "AppFunctions.h"
-#include "Color.h"
 #include "TextLabel.h"
 #include <cmath>
 
@@ -15,10 +14,12 @@ void Kystsoft::ColorVario::Menu::create(const Dali::Vector2& size)
 		background[Dali::Toolkit::GradientVisual::Property::UNITS] = Dali::Toolkit::GradientVisual::Units::USER_SPACE;
 		background[Dali::Toolkit::GradientVisual::Property::CENTER] = Dali::Vector2(0, -radius + size.height / 2);
 		background[Dali::Toolkit::GradientVisual::Property::RADIUS] = radius;
+
 		Dali::Property::Array stopOffsets;
 		stopOffsets.PushBack(0.99f);
 		stopOffsets.PushBack(0.99f);
 		background[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
+
 		Dali::Property::Array stopColors;
 		stopColors.PushBack(Color::button());
 		stopColors.PushBack(Dali::Color::TRANSPARENT);
@@ -40,6 +41,7 @@ void Kystsoft::ColorVario::Menu::create(const Dali::Vector2& size)
 
 	// application label
 	auto appLabel = TextLabel::New(appName());
+	appLabel.SetResizePolicy(Dali::ResizePolicy::USE_NATURAL_SIZE, Dali::Dimension::ALL_DIMENSIONS);
 	appLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
 	appLabel.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
 	appLabel.SetPosition(0, 0);
@@ -116,7 +118,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	layer.RaiseToTop();
 	control.Add(layer);
 
-	// button size and position
+	// button size, position and color
 	auto width = menuSize.width / 6;
 	auto height = width;
 	auto radius = height / 2; // button radius
@@ -124,22 +126,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	auto spacing = radius / 5; // spacing between buttons
 	auto centerRadius = menuRadius - margin - radius; // button center point radius
 	auto angle = 2 * std::asin((radius + spacing / 2) / centerRadius); // angle between buttons
-
-	// button background
-	Dali::Property::Map background;
-	{
-		background[Dali::Toolkit::Visual::Property::TYPE] = Dali::Toolkit::Visual::GRADIENT;
-		background[Dali::Toolkit::GradientVisual::Property::CENTER] = Dali::Vector2(0, 0);
-		background[Dali::Toolkit::GradientVisual::Property::RADIUS] = 0.5f;
-		Dali::Property::Array stopOffsets;
-		stopOffsets.PushBack(0.99f);
-		stopOffsets.PushBack(0.99f);
-		background[Dali::Toolkit::GradientVisual::Property::STOP_OFFSET] = stopOffsets;
-		Dali::Property::Array stopColors;
-		stopColors.PushBack(Color::button().shaded(0.5f));
-		stopColors.PushBack(Dali::Color::TRANSPARENT);
-		background[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
-	}
+	auto color = Color::button().shaded(0.5f);
 
 	// resource directory
 	auto resourceDir = appSharedResourcePath();
@@ -152,7 +139,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	enableBluetoothButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	enableBluetoothButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	enableBluetoothButton.SetPosition(x, y);
-	enableBluetoothButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
+	enableBluetoothButton.setEllipticBackground(color);
 	enableBluetoothButton.setUnselectedImage(resourceDir + "BluetoothDisabled.png");
 	enableBluetoothButton.setSelectedImage(resourceDir + "BluetoothEnabled.png");
 	enableBluetoothButton.setCheckable(true);
@@ -167,7 +154,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	lockDisplayButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	lockDisplayButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	lockDisplayButton.SetPosition(x, y);
-	lockDisplayButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
+	lockDisplayButton.setEllipticBackground(color);
 	lockDisplayButton.setUnselectedImage(resourceDir + "DisplayUnlocked.png");
 	lockDisplayButton.setSelectedImage(resourceDir + "DisplayLocked.png");
 	lockDisplayButton.setCheckable(true);
@@ -182,7 +169,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	muteAudioButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	muteAudioButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	muteAudioButton.SetPosition(x, y);
-	muteAudioButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
+	muteAudioButton.setEllipticBackground(color);
 	muteAudioButton.setUnselectedImage(resourceDir + "AudioUnmuted.png");
 	muteAudioButton.setSelectedImage(resourceDir + "AudioMuted.png");
 	muteAudioButton.setCheckable(true);
@@ -197,18 +184,10 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	messageButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	messageButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	messageButton.SetPosition(x, y);
-	messageButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
+	messageButton.setEllipticBackground(color);
 	messageButton.setUnselectedImage(resourceDir + "Information.png");
 	messageButton.setSelectedImage(resourceDir + "InformationPressed.png");
 	layer.Add(messageButton);
-
-	// quit button background
-	{
-		Dali::Property::Array stopColors;
-		stopColors.PushBack(Color::error().shaded(0.9f));
-		stopColors.PushBack(Dali::Color::TRANSPARENT);
-		background[Dali::Toolkit::GradientVisual::Property::STOP_COLOR] = stopColors;
-	}
 
 	// quit button
 	x = centerRadius * std::sin(2 * angle);
@@ -218,7 +197,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	quitButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	quitButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	quitButton.SetPosition(x, y);
-	quitButton.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, background);
+	quitButton.setEllipticBackground(Color::error().shaded(0.9f));
 	quitButton.setUnselectedImage(resourceDir + "Quit.png");
 	quitButton.setSelectedImage(resourceDir + "QuitPressed.png");
 	layer.Add(quitButton);

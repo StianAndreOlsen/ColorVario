@@ -21,13 +21,20 @@ public:
 	bool contains(const Message& message) const;
 	bool add(const Message& message);
 	bool remove(const Message& message);
-	auto messageCount() const { return messages.size(); }
-	void showMessage(size_t index);
+	int messageCount() const { return static_cast<int>(messages.size()); }
+	int currentMessageIndex() const { return currentMessage; }
+	void showMessage(int messageIndex);
 	void showLastMessage() { showMessage(messageCount() - 1); }
 	void onWheelEvent(const Dali::WheelEvent& event) { textView.onWheelEvent(event); }
 private:
+	void updateButtons();
+	bool onPreviousButtonClicked(Dali::Toolkit::Button button);
+	bool onNextButtonClicked(Dali::Toolkit::Button button);
 	std::vector<Message> messages;
+	int currentMessage = -1; // current message must be initialized using showMessage
 	TextView textView;
+	PushButton previousButton;
+	PushButton nextButton;
 };
 
 } // namespace Kystsoft

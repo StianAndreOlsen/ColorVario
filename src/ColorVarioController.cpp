@@ -59,12 +59,13 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		try
 		{
 			vario.start();
+			ui.addMessage(Message::error("Variometer", "No pressure signal!\n\nTap climb or altitude to restart the variometer."));
+			ui.addMessage(Message::error("Variometer", "No pressure signal!"));
 		}
 		catch (std::exception& e)
 		{
 			dlog(DLOG_ERROR) << e.what();
-			// TODO: Improve error message! Look at error message in message dialog.
-			ui.addMessage(Message::error("Pressure Sensor Error", "No pressure signal! Touch screen to restart pressure sensor."));
+			ui.addMessage(Message::error("Pressure sensor", "No pressure signal!\n\nTouch screen to restart."));
 		}
 
 		// TODO: Create a function/class for this

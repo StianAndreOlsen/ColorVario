@@ -327,7 +327,6 @@ bool Kystsoft::ColorVario::UserInterface::onMuteAudioButtonClicked(Dali::Toolkit
 bool Kystsoft::ColorVario::UserInterface::onMessageButtonClicked(Dali::Toolkit::Button /*button*/)
 {
 	messageDialog.show();
-	messageDialog.showLastMessage();
 	return true;
 }
 

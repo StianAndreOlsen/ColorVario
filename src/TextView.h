@@ -19,6 +19,9 @@ public:
 	void onWheelEvent(const Dali::WheelEvent& event);
 private:
 	void updateRuler();
+	void scrollToTop();
+	void scrollToTarget();
+	void onTextLabelRelayout(Dali::Actor /*actor*/) { updateRuler(); }
 	float height = 0;
 	Dali::Toolkit::ScrollView scrollView;
 	Dali::Toolkit::RulerPtr rulerY;
