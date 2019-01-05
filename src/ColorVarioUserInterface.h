@@ -45,6 +45,7 @@ public:
 	const Signal<bool>& enableBluetoothSignal() const { return enableBluetoothSignl; }
 	const Signal<bool>& lockDisplaySignal() const { return lockDisplaySignl; }
 	const Signal<>& quitSignal() const { return quitSignl; }
+	const Signal<>& pageTappedSignal() const { return pageTappedSignl; }
 private:
 	void createPageLayer();
 	void createMenuLayer();
@@ -79,6 +80,7 @@ private:
 	Signal<bool> enableBluetoothSignl;
 	Signal<bool> lockDisplaySignl;
 	Signal<> quitSignl;
+	Signal<> pageTappedSignl;
 };
 
 } // namespace ColorVario

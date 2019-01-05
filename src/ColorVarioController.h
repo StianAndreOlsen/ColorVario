@@ -29,10 +29,11 @@ private:
 	void onResume(Dali::Application& application);
 	void onContextLost(); // TODO: Remove after testing
 	void onContextRegained(); // TODO: Remove after testing
-	void onTouch(const Dali::TouchData& touch);
+	void onPageTapped();
 	void onLocationUpdated(const Location& location);
 	void onDisplayStateChanged(display_state_e state);
-	void setAltitude(double altitude);
+	void onAltitudeSignal(double altitude);
+	static Message variometerStartError();
 	Dali::Application& app;
 	UserInterface ui;
 	SoundManager soundManager;

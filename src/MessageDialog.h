@@ -13,6 +13,7 @@ class MessageDialog : public Dialog
 public:
 	MessageDialog() {}
 	void create(const Dali::Vector2& size);
+	void setVisible(bool visible) override;
 	bool hasMessagesOfType(Message::Type type) const;
 	bool hasInformationMessages() const { return hasMessagesOfType(Message::Type::Information); }
 	bool hasSuccessMessages() const { return hasMessagesOfType(Message::Type::Success); }

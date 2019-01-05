@@ -59,6 +59,15 @@ void Kystsoft::MessageDialog::create(const Dali::Vector2& size)
 	updateButtons();
 }
 
+void Kystsoft::MessageDialog::setVisible(bool visible)
+{
+	Dialog::setVisible(visible);
+
+	// for some reason, TextView is not scrolling when invisible
+	if (visible)
+		textView.scrollToTop();
+}
+
 bool Kystsoft::MessageDialog::hasMessagesOfType(Message::Type type) const
 {
 	for (const auto& message : messages)
@@ -84,7 +93,8 @@ bool Kystsoft::MessageDialog::add(const Message& message)
 bool Kystsoft::MessageDialog::remove(const Message& message)
 {
 	auto count = messages.size();
-	std::remove(messages.begin(), messages.end(), message);
+	// https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
+	messages.erase(std::remove(messages.begin(), messages.end(), message), messages.end());
 	if (messages.size() < count)
 	{
 		showMessage(currentMessage);

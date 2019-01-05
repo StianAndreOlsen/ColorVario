@@ -83,17 +83,6 @@ void Kystsoft::TextView::onWheelEvent(const Dali::WheelEvent& event)
 	scrollToTarget();
 }
 
-void Kystsoft::TextView::updateRuler()
-{
-	auto textWidth = textLabel.GetRelayoutSize(Dali::Dimension::WIDTH);
-	auto textHeight = textLabel.GetHeightForWidth(textWidth);
-	auto scrollHeight = topMargin + textHeight + bottomMargin;
-	scrollHeight = std::max(scrollHeight, height);
-	rulerY->SetDomain(Dali::Toolkit::RulerDomain(0, scrollHeight));
-
-	scrollToTop();
-}
-
 void Kystsoft::TextView::scrollToTop()
 {
 	targetY = 0;
@@ -105,4 +94,15 @@ void Kystsoft::TextView::scrollToTarget()
 	auto position = scrollView.GetCurrentScrollPosition();
 	position.y = targetY;
 	scrollView.ScrollTo(position);
+}
+
+void Kystsoft::TextView::updateRuler()
+{
+	auto textWidth = textLabel.GetRelayoutSize(Dali::Dimension::WIDTH);
+	auto textHeight = textLabel.GetHeightForWidth(textWidth);
+	auto scrollHeight = topMargin + textHeight + bottomMargin;
+	scrollHeight = std::max(scrollHeight, height);
+	rulerY->SetDomain(Dali::Toolkit::RulerDomain(0, scrollHeight));
+
+	scrollToTop();
 }

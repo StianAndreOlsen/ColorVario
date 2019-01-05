@@ -1,5 +1,4 @@
 #include "Dialog.h"
-#include "Color.h"
 
 void Kystsoft::Dialog::create(const Dali::Vector2& size)
 {
@@ -24,9 +23,8 @@ void Kystsoft::Dialog::create(const Dali::Vector2& size)
 
 void Kystsoft::Dialog::setVisible(bool visible)
 {
-	// TODO: Decide if we want this animation. It's not perfect since the dialog is rendered as a square and not as a circle, and the text is not clipped.
-//	auto fromScale = Dali::Vector3(0.5f, 0.5f, 0.5f);
-	auto fromScale = Dali::Vector3(2.0f, 2.0f, 2.0f); // this is an alternative to avoid the problems with stuff outside the circle
+//	auto fromScale = Dali::Vector3(0.5f, 0.5f, 0.5f); // logically best, but since the dialog is rendered as a square, we
+	auto fromScale = Dali::Vector3(2.0f, 2.0f, 2.0f); // zoom the other way to avoid showing the stuff outside the circle
 	auto toScale = fromScale;
 	auto fromAlpha = 0.0f;
 	auto toAlpha = fromAlpha;
@@ -43,13 +41,15 @@ void Kystsoft::Dialog::setVisible(bool visible)
 	control.SetScale(fromScale);
 	control.SetOpacity(fromAlpha);
 	control.SetVisible(true);
+	auto layer = control.GetLayer();
+	layer.SetVisible(true);
 	auto animation = Dali::Animation::New(0.25f);
 	animation.AnimateTo(Dali::Property(control, Dali::Actor::Property::SCALE), toScale);
 	animation.AnimateTo(Dali::Property(control, Dali::Actor::Property::COLOR_ALPHA), toAlpha);
 	animation.AnimateTo(Dali::Property(control, Dali::Actor::Property::VISIBLE), visible);
+	animation.AnimateTo(Dali::Property(layer, Dali::Actor::Property::VISIBLE), visible);
 	animation.Play();
 
-//	control.SetVisible(visible);
 	if (visible)
 		control.SetKeyInputFocus();
 	else
@@ -68,22 +68,4 @@ bool Kystsoft::Dialog::onKeyEvent(Dali::Toolkit::Control /*control*/, const Dali
 		}
 	}
 	return false;
-}
-
-bool Kystsoft::Dialog::onAcceptButtonClicked(Dali::Toolkit::Button)
-{
-	accept();
-	return true;
-}
-
-bool Kystsoft::Dialog::onRejectButtonClicked(Dali::Toolkit::Button)
-{
-	reject();
-	return true;
-}
-
-bool Kystsoft::Dialog::onCloseButtonClicked(Dali::Toolkit::Button)
-{
-	close();
-	return true;
 }

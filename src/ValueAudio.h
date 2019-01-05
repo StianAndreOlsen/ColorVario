@@ -40,7 +40,7 @@ private:
 	void onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested);
 	static bool muted;
 	static Signal<> mutedSignal;
-	Signal<>::ConnectionId mutedId;
+	Signal<>::ConnectionId mutedId = 0;
 	SoundStream soundStream;
 	AudioOutput audioOutput;
 	double lastCyclePhase = 0;

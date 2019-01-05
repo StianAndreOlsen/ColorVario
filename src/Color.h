@@ -66,7 +66,7 @@ struct Color : public Dali::Vector4
 	static Color systemBackground() { return Color(0, 0, 0); }
 	static Color systemPoint() { return fromRGBA(0x4CCFFF, 1.0f); }
 	static Color systemButton() { return fromRGBA(0x00354A, 0.9f); }
-	static Color systemButtonPressed() { return fromRGBA(0x0092CC, 0.3f); }
+	static Color systemButtonPressEffect() { return fromRGBA(0x0092CC, 0.3f); }
 	static Color systemMainText() { return Color(1, 1, 1); }
 	static Color systemSubText() { return fromRGBA(0xC7C7C7, 1.0f); }
 	static Color systemDefaultText() { return fromRGBA(0xD1D1D1, 1.0f); }
@@ -78,7 +78,7 @@ struct Color : public Dali::Vector4
 	static Color subText() { return systemSubText(); }
 	static Color defaultText() { return systemDefaultText(); }
 	static Color button() { return systemButton().alphaBlended(window(), 1); } // Dali don't use gamma correction
-	static Color buttonPressed() { return systemButtonPressed().alphaBlended(button(), 1); } // Dali don't use gamma correction
+	static Color buttonPressed() { return systemButtonPressEffect().alphaBlended(button(), 1); } // Dali don't use gamma correction
 	static Color buttonText() { return systemMainText(); }
 	static Color information() { return headingText(); }
 	static Color success() { return fromRGBA(0x38E000, 1.0f); } // same as calendar heading

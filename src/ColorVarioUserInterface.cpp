@@ -205,6 +205,9 @@ void Kystsoft::ColorVario::UserInterface::createDialogLayer()
 	layer.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	layer.SetPosition(0, 0);
 	layer.RaiseToTop();
+	layer.SetTouchConsumed(true);
+	layer.SetHoverConsumed(true);
+	layer.SetVisible(false);
 	stage.Add(layer);
 
 	messageDialog.create(size);
@@ -229,6 +232,8 @@ void Kystsoft::ColorVario::UserInterface::onTapGesture(Dali::Actor /*actor*/, co
 		menu.show();
 	else if (y > height * 9 / 16)
 		menu.hide();
+
+	pageTappedSignl.emit();
 }
 
 void Kystsoft::ColorVario::UserInterface::onPanGesture(Dali::Actor /*actor*/, const Dali::PanGesture& gesture)

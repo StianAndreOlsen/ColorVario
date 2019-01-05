@@ -18,7 +18,7 @@ Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	app.ResumeSignal().Connect(this, &Controller::onResume);
 
 	// connect variometer signals
-	vario.altitudeSignal().connect(this, &Controller::setAltitude);
+	vario.altitudeSignal().connect(this, &Controller::onAltitudeSignal);
 	vario.altitudeSignal().connect(&ui, &UserInterface::setAltitude);
 	vario.climbSignal().connect(&ui, &UserInterface::setClimb);
 
@@ -29,6 +29,7 @@ Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	ui.goBackSignal().connect(this, &Controller::goBack);
 	ui.lockDisplaySignal().connect(&display, &Display::setLocked);
 	ui.quitSignal().connect(this, &Controller::quit);
+	ui.pageTappedSignal().connect(this, &Controller::onPageTapped);
 }
 
 // The init signal is received only once during the application lifetime
@@ -41,6 +42,7 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		load(settingsFromFile());
 
 		// create, connect and start gps
+		// TODO: Consider encapsulating this into a LocationModule/GpsModule class where I also check if location/GPS services are available
 		try
 		{
 			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS);
@@ -59,13 +61,13 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		try
 		{
 			vario.start();
-			ui.addMessage(Message::error("Variometer", "No pressure signal!\n\nTap climb or altitude to restart the variometer."));
-			ui.addMessage(Message::error("Variometer", "No pressure signal!"));
+			// TODO: Remove when finished testing!
+//			throw std::runtime_error("Just testing!");
 		}
 		catch (std::exception& e)
 		{
 			dlog(DLOG_ERROR) << e.what();
-			ui.addMessage(Message::error("Pressure sensor", "No pressure signal!\n\nTouch screen to restart."));
+			ui.addMessage(variometerStartError());
 		}
 
 		// TODO: Create a function/class for this
@@ -104,7 +106,6 @@ void Kystsoft::ColorVario::Controller::createUi()
 
 	// connect stage signals
 	Dali::Stage stage = Dali::Stage::GetCurrent();
-	stage.TouchSignal().Connect(this, &Controller::onTouch);
 	stage.ContextLostSignal().Connect(this, &Controller::onContextLost);
 	stage.ContextRegainedSignal().Connect(this, &Controller::onContextRegained);
 }
@@ -198,20 +199,20 @@ void Kystsoft::ColorVario::Controller::onContextRegained()
 	dlog(DLOG_INFO) << "Context regained!";
 }
 
-void Kystsoft::ColorVario::Controller::onTouch(const Dali::TouchData& touch)
+void Kystsoft::ColorVario::Controller::onPageTapped()
 {
 	if (vario.isStarted())
 		return;
 	try
 	{
-		// TODO: Consider using a tap gesture instead
-		if (touch.GetPointCount() > 0 && touch.GetState(0) == Dali::PointState::FINISHED)
-			vario.start();
+		vario.start();
 	}
 	catch (std::exception& e)
 	{
 		dlog(DLOG_ERROR) << e.what();
+		return; // error message already added
 	}
+	ui.removeMessage(variometerStartError());
 }
 
 void Kystsoft::ColorVario::Controller::onLocationUpdated(const Location& location)
@@ -251,8 +252,20 @@ void Kystsoft::ColorVario::Controller::onDisplayStateChanged(display_state_e sta
 		app.GetWindow().Activate();
 }
 
-void Kystsoft::ColorVario::Controller::setAltitude(double altitude)
+void Kystsoft::ColorVario::Controller::onAltitudeSignal(double /*altitude*/)
 {
+	// destroy the gps if it's not running
 	if (gps && !gps->isStarted())
 		gps.reset(); // destroy gps
+}
+
+Kystsoft::Message Kystsoft::ColorVario::Controller::variometerStartError()
+{
+	std::string text
+	(
+		"The variometer won't start. No signal from pressure sensor.\n"
+		"\n"
+		"Tap main page to attempt a restart."
+	);
+	return Message::error("Variometer Error", text);
 }
