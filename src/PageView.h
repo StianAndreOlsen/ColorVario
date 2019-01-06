@@ -20,8 +20,8 @@ public:
 	int targetPageIndex() const { return targetPage; }
 	void showPage(int pageIndex) { scrollTo(pageIndex); }
 	void onWheelEvent(const Dali::WheelEvent& event);
-	const Signal<>& goBackSignal() const { return goBackSignl; }
-	const Signal<int>& currentPageChangedSignal() const { return currentPageChangedSignl; }
+	const auto& goBackSignal() const { return goBackSignl; }
+	const auto& currentPageChangedSignal() const { return currentPageChangedSignl; }
 private:
 	void scrollTo(int pageIndex);
 	void onStageEntered(Dali::Actor) { scrollView.SetKeyInputFocus(); }

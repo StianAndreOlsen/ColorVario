@@ -23,8 +23,7 @@ public:
 	void toggleStartStop();
 	void setInterval(uint32_t interval_ms);
 	void setAttribute(sensor_attribute_e attribute, int value);
-	using EventSignal = Signal<Sensor, sensor_event_s*>;
-	const EventSignal& eventSignal() const { return eventSignl; }
+	const auto& eventSignal() const { return eventSignl; }
 private:
 	void createAndSetSensorEventCallback(Sensor sensor);
 	void create(Sensor sensor);
@@ -35,7 +34,7 @@ private:
 	void onSensorEvent(sensor_h sensor, sensor_event_s* event) { eventSignl.emit(sensor, event); }
 	sensor_listener_h listener = nullptr;
 	bool started = false;
-	EventSignal eventSignl;
+	Signal<Sensor, sensor_event_s*> eventSignl;
 };
 
 } // namespace Kystsoft

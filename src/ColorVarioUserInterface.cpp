@@ -9,14 +9,21 @@ void Kystsoft::ColorVario::UserInterface::create()
 	createDialogLayer();
 
 	// gestures for showing and hiding the menu
-	tapDetector = Dali::TapGestureDetector::New();
-	tapDetector.Attach(pageView);
-	tapDetector.DetectedSignal().Connect(this, &UserInterface::onTapGesture);
-	panDetector = Dali::PanGestureDetector::New();
-	panDetector.AddDirection(Dali::PanGestureDetector::DIRECTION_VERTICAL);
-	panDetector.Attach(pageView);
-	panDetector.Attach(menu);
-	panDetector.DetectedSignal().Connect(this, &UserInterface::onPanGesture);
+	pageTapDetector = Dali::TapGestureDetector::New();
+	pageTapDetector.Attach(pageView);
+	pageTapDetector.DetectedSignal().Connect(this, &UserInterface::onPageTapDetected);
+	pageVerticalPanDetector = Dali::PanGestureDetector::New();
+	pageVerticalPanDetector.AddDirection(Dali::PanGestureDetector::DIRECTION_VERTICAL);
+	pageVerticalPanDetector.Attach(pageView);
+	pageVerticalPanDetector.Attach(menu);
+	pageVerticalPanDetector.DetectedSignal().Connect(this, &UserInterface::onPageVerticalPanDetected);
+
+	// gesture for showing the altitude offset dialog
+	altitudeLongPressDetector = Dali::LongPressGestureDetector::New();
+	altitudeLongPressDetector.Attach(altitudePage.altitudeLabel());
+	altitudeLongPressDetector.Attach(climbPage.altitudeLabel());
+	altitudeLongPressDetector.Attach(speedPage.altitudeLabel());
+	altitudeLongPressDetector.DetectedSignal().Connect(this, &UserInterface::onAltitudeLongPressDetected);
 
 	// connect signals
 	auto stage = Dali::Stage::GetCurrent();
@@ -30,32 +37,32 @@ void Kystsoft::ColorVario::UserInterface::load(const Settings& settings)
 	climbAudio.load(settings);
 
 	// color settings
-	altitudeRing.load(settings);
-	climbRing.load(settings);
+	altitudePainter.load(settings);
+	climbPainter.load(settings);
 
 	// label settings
-	altitudeLabel.load(settings);
-	climbLabel.load(settings);
-	speedLabel.load(settings);
+	altitudeWriter.load(settings);
+	climbWriter.load(settings);
+	speedWriter.load(settings);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitudeSamplingInterval(double interval)
 {
 	altitudeAudio.setSamplingInterval(interval);
-	altitudeRing.setSamplingInterval(interval);
-	altitudeLabel.setSamplingInterval(interval);
+	altitudePainter.setSamplingInterval(interval);
+	altitudeWriter.setSamplingInterval(interval);
 }
 
 void Kystsoft::ColorVario::UserInterface::setClimbSamplingInterval(double interval)
 {
 	climbAudio.setSamplingInterval(interval);
-	climbRing.setSamplingInterval(interval);
-	climbLabel.setSamplingInterval(interval);
+	climbPainter.setSamplingInterval(interval);
+	climbWriter.setSamplingInterval(interval);
 }
 
 void Kystsoft::ColorVario::UserInterface::setSpeedSamplingInterval(double interval)
 {
-	speedLabel.setSamplingInterval(interval);
+	speedWriter.setSamplingInterval(interval);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitudeAccuracy(double accuracy)
@@ -65,9 +72,18 @@ void Kystsoft::ColorVario::UserInterface::setAltitudeAccuracy(double accuracy)
 		color = Color::subText();
 	else if (accuracy < 100)
 		color = Color::warning();
-	altitudePage.altitudeLabel().setTextColor(color);
+	if (accuracy < 10)
+		altitudePage.altitudeLabel().setTextColor(Color::mainText());
+	else
+		altitudePage.altitudeLabel().setTextColor(color);
 	climbPage.altitudeLabel().setTextColor(color);
 	speedPage.altitudeLabel().setTextColor(color);
+	altitudeOffsetDialog.altitudeLabel().setTextColor(color);
+}
+
+void Kystsoft::ColorVario::UserInterface::setAltitudeOffset(double offset)
+{
+	altitudeOffsetDialog.setOffset(offset);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
@@ -79,20 +95,21 @@ void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
 		menu.muteAudioButton().setChecked(!climbAudio.isStarted());
 
 	altitudeAudio.setAltitude(altitude);
-	altitudeRing.setAltitude(altitude);
-	altitudeLabel.setAltitude(altitude);
+	altitudePainter.setAltitude(altitude);
+	altitudeWriter.setAltitude(altitude);
+	altitudeOffsetDialog.setAltitude(altitude);
 }
 
 void Kystsoft::ColorVario::UserInterface::setClimb(double climb)
 {
 	climbAudio.setClimb(climb);
-	climbRing.setClimb(climb);
-	climbLabel.setClimb(climb);
+	climbPainter.setClimb(climb);
+	climbWriter.setClimb(climb);
 }
 
 void Kystsoft::ColorVario::UserInterface::setSpeed(double speed)
 {
-	speedLabel.setSpeed(speed);
+	speedWriter.setSpeed(speed);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAudioMuted(bool muted)
@@ -149,8 +166,8 @@ void Kystsoft::ColorVario::UserInterface::createPageLayer()
 	layer.SetParentOrigin(Dali::ParentOrigin::CENTER);
 	layer.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	layer.SetPosition(0, 0);
-	layer.RaiseToTop();
 	stage.Add(layer);
+	layer.RaiseToTop();
 
 	pageView.create(size);
 	pageView.goBackSignal().connect(this, &UserInterface::onGoBack);
@@ -181,8 +198,8 @@ void Kystsoft::ColorVario::UserInterface::createMenuLayer()
 	layer.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
 	layer.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 	layer.SetPosition(0, 0);
-	layer.RaiseToTop();
 	stage.Add(layer);
+	layer.RaiseToTop();
 
 	menu.create(size);
 	layer.Add(menu);
@@ -204,52 +221,36 @@ void Kystsoft::ColorVario::UserInterface::createDialogLayer()
 	layer.SetParentOrigin(Dali::ParentOrigin::CENTER);
 	layer.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	layer.SetPosition(0, 0);
-	layer.RaiseToTop();
 	layer.SetTouchConsumed(true);
 	layer.SetHoverConsumed(true);
 	layer.SetVisible(false);
 	stage.Add(layer);
+	layer.RaiseToTop();
 
 	messageDialog.create(size);
 	layer.Add(messageDialog);
 
-	std::string about
-	(
-		"Developed by\n"      // hard line breaks are required
-		"Kyrre Holm and\n"    // since TextLabel breaks lines
-		"Stian Andre Olsen\n" // even at no-break spaces
-		"\n"
-		"Please visit facebook.com/ColorVariometer"
-	);
-	addMessage(Message::information("ColorVario 2.0.0", about));
+	altitudeOffsetDialog.create(size);
+	layer.Add(altitudeOffsetDialog);
 }
 
-void Kystsoft::ColorVario::UserInterface::onTapGesture(Dali::Actor /*actor*/, const Dali::TapGesture& gesture)
+void Kystsoft::ColorVario::UserInterface::updateMessageButton()
 {
-	auto y = gesture.screenPoint.y;
-	auto height = Dali::Stage::GetCurrent().GetSize().height;
-	if (y < height / 4)
-		menu.show();
-	else if (y > height * 9 / 16)
-		menu.hide();
-
-	pageTappedSignl.emit();
-}
-
-void Kystsoft::ColorVario::UserInterface::onPanGesture(Dali::Actor /*actor*/, const Dali::PanGesture& gesture)
-{
-	switch (gesture.state)
+	auto resourceDir = appSharedResourcePath();
+	if (messageDialog.hasErrorMessages())
 	{
-	case Dali::Gesture::Started:
-	case Dali::Gesture::Continuing:
-		menu.translate(gesture.displacement.y);
-		break;
-	case Dali::Gesture::Finished:
-		menu.showOrHide(gesture.velocity.y);
-		break;
-	default:
-		menu.hide();
-		break;
+		menu.messageButton().setUnselectedImage(resourceDir + "Error.png");
+		menu.messageButton().setSelectedImage(resourceDir + "ErrorPressed.png");
+	}
+	else if (messageDialog.hasWarningMessages())
+	{
+		menu.messageButton().setUnselectedImage(resourceDir + "Warning.png");
+		menu.messageButton().setSelectedImage(resourceDir + "WarningPressed.png");
+	}
+	else
+	{
+		menu.messageButton().setUnselectedImage(resourceDir + "Information.png");
+		menu.messageButton().setSelectedImage(resourceDir + "InformationPressed.png");
 	}
 }
 
@@ -257,6 +258,8 @@ void Kystsoft::ColorVario::UserInterface::onWheelEvent(const Dali::WheelEvent& e
 {
 	if (messageDialog.isVisible())
 		messageDialog.onWheelEvent(event);
+	else if (altitudeOffsetDialog.isVisible())
+		altitudeOffsetDialog.onWheelEvent(event);
 	else
 		pageView.onWheelEvent(event);
 }
@@ -275,29 +278,29 @@ void Kystsoft::ColorVario::UserInterface::onCurrentPageChanged(int newPageIndex)
 		climbAudio.start();
 	}
 
-	// color and labels
+	// colors and labels
 	switch (newPageIndex)
 	{
 	case 0: // altitude
-		altitudeRing = altitudePage;
-		climbRing = Dali::Toolkit::Control();
-		altitudeLabel = altitudePage.altitudeLabel();
-		climbLabel = TextLabel();
-		speedLabel = TextLabel();
+		altitudePainter.setCanvas(altitudePage);
+		climbPainter.setCanvas();
+		altitudeWriter.setPaper(altitudePage.altitudeLabel());
+		climbWriter.setPaper();
+		speedWriter.setPaper();
 		break;
 	case 1: // climb
-		altitudeRing = Dali::Toolkit::Control();
-		climbRing = climbPage;
-		altitudeLabel = climbPage.altitudeLabel();
-		climbLabel = climbPage.climbLabel();
-		speedLabel = TextLabel();
+		altitudePainter.setCanvas();
+		climbPainter.setCanvas(climbPage);
+		altitudeWriter.setPaper(climbPage.altitudeLabel());
+		climbWriter.setPaper(climbPage.climbLabel());
+		speedWriter.setPaper();
 		break;
 	case 2: // speed
-		altitudeRing = Dali::Toolkit::Control();
-		climbRing = speedPage;
-		altitudeLabel = speedPage.altitudeLabel();
-		climbLabel = speedPage.climbLabel();
-		speedLabel = speedPage.speedLabel();
+		altitudePainter.setCanvas();
+		climbPainter.setCanvas(speedPage);
+		altitudeWriter.setPaper(speedPage.altitudeLabel());
+		climbWriter.setPaper(speedPage.climbLabel());
+		speedWriter.setPaper(speedPage.speedLabel());
 		break;
 	}
 }
@@ -341,22 +344,37 @@ bool Kystsoft::ColorVario::UserInterface::onQuitButtonClicked(Dali::Toolkit::But
 	return true;
 }
 
-void Kystsoft::ColorVario::UserInterface::updateMessageButton()
+void Kystsoft::ColorVario::UserInterface::onPageTapDetected(Dali::Actor /*actor*/, const Dali::TapGesture& gesture)
 {
-	auto resourceDir = appSharedResourcePath();
-	if (messageDialog.hasErrorMessages())
+	auto y = gesture.screenPoint.y;
+	auto height = Dali::Stage::GetCurrent().GetSize().height;
+	if (y < height / 4)
+		menu.show();
+	else if (y > height * 9 / 16)
+		menu.hide();
+
+	pageTapDetectedSignl.emit();
+}
+
+void Kystsoft::ColorVario::UserInterface::onPageVerticalPanDetected(Dali::Actor /*actor*/, const Dali::PanGesture& gesture)
+{
+	switch (gesture.state)
 	{
-		menu.messageButton().setUnselectedImage(resourceDir + "Error.png");
-		menu.messageButton().setSelectedImage(resourceDir + "ErrorPressed.png");
+	case Dali::Gesture::Started:
+	case Dali::Gesture::Continuing:
+		menu.translate(gesture.displacement.y);
+		break;
+	case Dali::Gesture::Finished:
+		menu.showOrHide(gesture.velocity.y);
+		break;
+	default:
+		menu.hide();
+		break;
 	}
-	else if (messageDialog.hasWarningMessages())
-	{
-		menu.messageButton().setUnselectedImage(resourceDir + "Warning.png");
-		menu.messageButton().setSelectedImage(resourceDir + "WarningPressed.png");
-	}
-	else
-	{
-		menu.messageButton().setUnselectedImage(resourceDir + "Information.png");
-		menu.messageButton().setSelectedImage(resourceDir + "InformationPressed.png");
-	}
+}
+
+void Kystsoft::ColorVario::UserInterface::onAltitudeLongPressDetected(Dali::Actor /*actor*/, const Dali::LongPressGesture& gesture)
+{
+	if (gesture.state == Dali::Gesture::Started)
+		altitudeOffsetDialog.show();
 }

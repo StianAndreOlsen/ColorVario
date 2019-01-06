@@ -6,10 +6,13 @@
 // The Callback class is modeled directly from the Signal
 // class. The difference is that a callback can only be
 // connected to one function while a signal can be connected
-// to multiple slots/functions. The connected function is
-// called when the execute() method on the callback object
-// is invoked. Any arguments passed to execute() will be
-// passed to the connected function.
+// to multiple slots/functions. Furthermore, even the execute
+// function is declared const and can be accessed through a
+// const reference.
+//
+// The connected function is called when the execute() method
+// on the callback object is invoked. Any arguments passed to
+// execute() will be passed to the connected function.
 
 namespace Kystsoft {
 
@@ -54,7 +57,7 @@ public:
 	}
 
 	// call connected function
-	void execute(Args... p)
+	void execute(Args... p) const
 	{
 		if (func)
 			func(p...);

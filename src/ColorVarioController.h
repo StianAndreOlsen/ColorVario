@@ -22,17 +22,20 @@ private:
 	void create(Dali::Application& application);
 	void createUi();
 	void load(const Settings& settings);
-	Settings settingsFromFile();
+	Settings settingsFromFiles();
+	void saveAltitudeOffset();
 	void goBack() { app.Lower(); }
-	void quit() { app.Quit(); }
+	void quit() { saveAltitudeOffset(); app.Quit(); }
 	void onPause(Dali::Application& application);
 	void onResume(Dali::Application& application);
 	void onContextLost(); // TODO: Remove after testing
 	void onContextRegained(); // TODO: Remove after testing
-	void onPageTapped();
+	void onPageTapDetected();
 	void onLocationUpdated(const Location& location);
 	void onDisplayStateChanged(display_state_e state);
 	void onAltitudeSignal(double altitude);
+	void onAltitudeOffsetChanged(double offset);
+	static Message aboutMessage();
 	static Message variometerStartError();
 	Dali::Application& app;
 	UserInterface ui;

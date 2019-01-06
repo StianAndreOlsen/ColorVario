@@ -115,8 +115,8 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	layer.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
 	layer.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 	layer.SetPosition(0, 0);
-	layer.RaiseToTop();
 	control.Add(layer);
+	layer.RaiseToTop();
 
 	// button size, position and color
 	auto width = menuSize.width / 6;
@@ -211,8 +211,8 @@ void Kystsoft::ColorVario::Menu::createStatusLayer(const Dali::Vector2& menuSize
 	layer.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
 	layer.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 	layer.SetPosition(0, 0);
-	layer.RaiseToTop();
 	control.Add(layer);
+	layer.RaiseToTop();
 
 	// icon size and position
 	auto width = menuSize.width / 6 * 2 / 3;

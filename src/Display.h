@@ -15,7 +15,7 @@ public:
 	Display& operator=(const Display& rhs) = delete;
 	~Display() noexcept;
 	display_state_e state() const;
-	const Signal<display_state_e>& stateChangedSignal() const { return stateChangedSignl; }
+	const auto& stateChangedSignal() const { return stateChangedSignl; }
 	double brightness() const;
 	void setBrightness(double brightness);
 	bool isLocked() const { return locked; }

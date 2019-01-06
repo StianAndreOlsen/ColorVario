@@ -7,6 +7,7 @@
 #include <cmath>
 #include <ctime>
 #include <exception>
+#include <fstream>
 
 Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	: app(application)
@@ -29,7 +30,8 @@ Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	ui.goBackSignal().connect(this, &Controller::goBack);
 	ui.lockDisplaySignal().connect(&display, &Display::setLocked);
 	ui.quitSignal().connect(this, &Controller::quit);
-	ui.pageTappedSignal().connect(this, &Controller::onPageTapped);
+	ui.pageTapDetectedSignal().connect(this, &Controller::onPageTapDetected);
+	ui.altitudeOffsetChangedSignal().connect(this, &Controller::onAltitudeOffsetChanged);
 }
 
 // The init signal is received only once during the application lifetime
@@ -39,7 +41,8 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 	try
 	{
 		createUi();
-		load(settingsFromFile());
+		ui.addMessage(aboutMessage());
+		load(settingsFromFiles());
 
 		// create, connect and start gps
 		// TODO: Consider encapsulating this into a LocationModule/GpsModule class where I also check if location/GPS services are available
@@ -129,6 +132,9 @@ void Kystsoft::ColorVario::Controller::load(const Settings& settings)
 	// variometer
 	vario.load(settings);
 
+	// altitude offset
+	ui.setAltitudeOffset(vario.altitudeOffset());
+
 	// sampling intervals
 	ui.setAltitudeSamplingInterval(vario.samplingInterval());
 	ui.setClimbSamplingInterval(vario.samplingInterval());
@@ -138,25 +144,37 @@ void Kystsoft::ColorVario::Controller::load(const Settings& settings)
 	ui.load(settings);
 }
 
-Kystsoft::Settings Kystsoft::ColorVario::Controller::settingsFromFile()
+Kystsoft::Settings Kystsoft::ColorVario::Controller::settingsFromFiles()
 {
-	std::string resourceDir = appSharedResourcePath();
-	std::string storageDir = internalStorageRoot() + '/' + appName() + '/';
-	std::string fileName = appName() + ".ini";
-	std::string resourceFile = resourceDir + fileName;
-	std::string storageFile = storageDir + fileName;
+	auto resourceDir = appSharedResourcePath();
+	auto storageDir = internalStorageRoot() + '/' + appName() + '/';
+	auto fileName = appName() + ".ini";
+	auto resourceFile = resourceDir + fileName;
+	auto storageFile = storageDir + fileName;
+	auto offsetFile = storageDir + "AltitudeOffset.ini";
 	FileFunctionsInitializer init;
+
+	// first, load altitude offset
+	Settings settings;
+	if (fileExists(offsetFile))
+		settings.load(offsetFile);
 
 	// make sure storage directory exists
 	if (!isDirectory(storageDir) && !makeDirectory(storageDir))
-		return Settings(resourceFile);
+	{
+		settings.load(resourceFile);
+		return settings;
+	}
 
 	// make sure storage file exists
 	if (!fileExists(storageFile) && !copyFile(resourceFile, storageFile))
-		return Settings(resourceFile);
+	{
+		settings.load(resourceFile);
+		return settings;
+	}
 
 	// load settings and check if storage file is up to date
-	Settings settings(storageFile);
+	settings.load(storageFile);
 	if (settings.hasValue("SpeedLabel.unit")) // TODO: Update when ini file changes
 		return settings;
 
@@ -167,6 +185,18 @@ Kystsoft::Settings Kystsoft::ColorVario::Controller::settingsFromFile()
 	if (!copyFile(resourceFile, storageFile))
 		return Settings(resourceFile);
 	return Settings(storageFile);
+}
+
+void Kystsoft::ColorVario::Controller::saveAltitudeOffset()
+{
+	auto storageDir = internalStorageRoot() + '/' + appName() + '/';
+	auto offsetFile = storageDir + "AltitudeOffset.ini";
+	std::ofstream os(offsetFile);
+	os.precision(15);
+	os << "[Variometer]\n";
+	os << "altitudeOffset=" << vario.altitudeOffset() << ";\n";
+	if (os.fail())
+		dlog(DLOG_ERROR) << "Unable to save altitude offset to \"" << offsetFile << "\"";
 }
 
 void Kystsoft::ColorVario::Controller::onPause(Dali::Application& /*application*/)
@@ -199,7 +229,7 @@ void Kystsoft::ColorVario::Controller::onContextRegained()
 	dlog(DLOG_INFO) << "Context regained!";
 }
 
-void Kystsoft::ColorVario::Controller::onPageTapped()
+void Kystsoft::ColorVario::Controller::onPageTapDetected()
 {
 	if (vario.isStarted())
 		return;
@@ -257,6 +287,24 @@ void Kystsoft::ColorVario::Controller::onAltitudeSignal(double /*altitude*/)
 	// destroy the gps if it's not running
 	if (gps && !gps->isStarted())
 		gps.reset(); // destroy gps
+}
+
+void Kystsoft::ColorVario::Controller::onAltitudeOffsetChanged(double offset)
+{
+	vario.setAltitudeOffset(offset);
+}
+
+Kystsoft::Message Kystsoft::ColorVario::Controller::aboutMessage()
+{
+	std::string about
+	(
+		"Developed by\n"      // hard line breaks are required
+		"Kyrre Holm and\n"    // since TextLabel breaks lines
+		"Stian Andre Olsen\n" // even at no-break spaces
+		"\n"
+		"Please visit facebook.com/ColorVariometer"
+	);
+	return Message::information("ColorVario 2.0.0", about);
 }
 
 Kystsoft::Message Kystsoft::ColorVario::Controller::variometerStartError()

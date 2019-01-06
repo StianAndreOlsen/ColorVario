@@ -25,9 +25,8 @@ public:
 	void start();
 	void stop();
 	void toggleStartStop();
-	const Signal<bool>& startedSignal() const { return startedSignl; }
-	using LocationSignal = Signal<const Location&>; // const location --> all slots get the same location
-	const LocationSignal& locationSignal() const { return locationSignl; }
+	const auto& startedSignal() const { return startedSignl; }
+	const auto& locationSignal() const { return locationSignl; }
 private:
 	void create(location_method_e method);
 	void destroy();
@@ -40,7 +39,7 @@ private:
 	location_manager_h manager = nullptr;
 	bool started = false;
 	Signal<bool> startedSignl;
-	LocationSignal locationSignl;
+	Signal<const Location&> locationSignl; // const location --> all slots get the same location
 };
 
 } // namespace Kystsoft

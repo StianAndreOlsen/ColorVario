@@ -12,6 +12,23 @@ Kystsoft::Variometer::Variometer()
 void Kystsoft::Variometer::load(const Settings& settings)
 {
 	setSamplingInterval(settings.value("Variometer.samplingInterval", samplingInterval()));
+	setAltitudeOffset(settings.value("Variometer.altitudeOffset", altitudeOffset()));
+}
+
+// https://en.wikipedia.org/wiki/Pressure_altitude
+double Kystsoft::Variometer::pressureAltitude(double pressure, double referencePressure)
+{
+	double pressureAltitude = (1 - std::pow(pressure / referencePressure, 0.190284)) * 145366.45;
+	pressureAltitude *= 0.3048; // convert from feet to meters
+	return pressureAltitude;
+}
+
+// https://en.wikipedia.org/wiki/Pressure_altitude
+double Kystsoft::Variometer::referencePressure(double pressureAltitude, double pressure)
+{
+	pressureAltitude /= 0.3048; // convert from meters to feet
+	double referencePressure = pressure / std::pow(1 - pressureAltitude / 145366.45, 1 / 0.190284);
+	return referencePressure;
 }
 
 void Kystsoft::Variometer::setSamplingInterval(double interval)
@@ -53,9 +70,8 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	uint64_t timestamp = event->timestamp;
 	double pressure = event->values[0];
 
-	// calculate altitude, https://en.wikipedia.org/wiki/Pressure_altitude
-	double altitude = (1 - std::pow(pressure / referencePressure, 0.190284)) * 145366.45;
-	altitude *= 0.3048; // convert from feet to meters
+	// calculate altitude
+	double altitude = pressureAltitude(pressure, refPressure);
 
 	// check if this is the first sensor event
 	if (lastTimestamp == 0)
@@ -74,12 +90,10 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 	if (currentAltitude > -std::numeric_limits<double>::max())
 	{
 		// calculate reference pressure
-		currentAltitude /= 0.3048; // convert from meters to feet
-		referencePressure = pressure / std::pow(1 - currentAltitude / 145366.45, 1 / 0.190284);
+		refPressure = referencePressure(currentAltitude, pressure);
 
-		// recalculate altitude, https://en.wikipedia.org/wiki/Pressure_altitude
-		altitude = (1 - std::pow(pressure / referencePressure, 0.190284)) * 145366.45;
-		altitude *= 0.3048; // convert from feet to meters
+		// recalculate altitude
+		altitude = pressureAltitude(pressure, refPressure);
 
 		// flag calibration as finished
 		currentAltitude = -std::numeric_limits<double>::max();
@@ -91,5 +105,5 @@ void Kystsoft::Variometer::onPressureSensorEvent(Sensor /*sensor*/, sensor_event
 
 	// emit values
 	climbSignl.emit(climb);
-	altitudeSignl.emit(altitude);
+	altitudeSignl.emit(altitude + altitudeOffst);
 }

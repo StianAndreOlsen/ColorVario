@@ -29,7 +29,7 @@ public:
 	bool hasPlaybackFocus() const { return hasFocus(SOUND_STREAM_FOCUS_FOR_PLAYBACK); }
 	bool hasRecordingFocus() const { return hasFocus(SOUND_STREAM_FOCUS_FOR_RECORDING); }
 	bool hasPlaybackAndRecordingFocus() const { return hasFocus(SOUND_STREAM_FOCUS_FOR_BOTH); }
-	const Signal<int>& focusChangedSignal() const { return focusChangedSignl; }
+	const auto& focusChangedSignal() const { return focusChangedSignl; }
 private:
 	void create(sound_stream_type_e type);
 	void destroy();

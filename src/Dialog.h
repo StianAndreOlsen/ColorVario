@@ -19,14 +19,17 @@ public:
 	virtual void setVisible(bool visible);
 	void show() { setVisible(true); }
 	void hide() { setVisible(false); }
-	void accept() { acceptedSignl.emit(); close(); }
-	void reject() { rejectedSignl.emit(); close(); }
-	void close() { hide(); closedSignl.emit(); }
-	const Signal<>& acceptedSignal() const { return acceptedSignl; }
-	const Signal<>& rejectedSignal() const { return rejectedSignl; }
-	const Signal<>& closedSignal() const { return closedSignl; }
+	virtual void accept() { hide(); acceptedSignl.emit(); }
+	virtual void reject() { hide(); rejectedSignl.emit(); }
+	virtual void close() { hide(); closedSignl.emit(); }
+	const auto& visibleSignal() const { return visibleSignl; }
+	const auto& acceptedSignal() const { return acceptedSignl; }
+	const auto& rejectedSignal() const { return rejectedSignl; }
+	const auto& closedSignal() const { return closedSignl; }
 protected:
+	auto buttonLayer() { return closeButton.GetLayer(); }
 	bool onKeyEvent(Dali::Toolkit::Control control, const Dali::KeyEvent& event);
+	void onAnimationFinished(Dali::Animation&) { visibleSignl.emit(isVisible()); }
 	bool onAcceptButtonClicked(Dali::Toolkit::Button) { accept(); return true; }
 	bool onRejectButtonClicked(Dali::Toolkit::Button) { reject(); return true; }
 	bool onCloseButtonClicked(Dali::Toolkit::Button) { close(); return true; }
@@ -34,6 +37,7 @@ protected:
 	PushButton acceptButton;
 	PushButton rejectButton;
 	PushButton closeButton;
+	Signal<bool> visibleSignl;
 	Signal<> acceptedSignl;
 	Signal<> rejectedSignl;
 	Signal<> closedSignl;

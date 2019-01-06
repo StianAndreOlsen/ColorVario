@@ -5,35 +5,17 @@
 void Kystsoft::MessageDialog::create(const Dali::Vector2& size)
 {
 	Dialog::create(size);
+	closeButton.SetVisible(true);
 
 	auto textViewSize = Dali::Vector2(size.width * 4 / 6, size.height);
 	textView.create(textViewSize);
 	textView.setBottomMargin(size.height / 6);
 	control.Add(textView);
 
-	auto layer = Dali::Layer::New();
-	layer.SetSize(size);
-	layer.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	layer.SetAnchorPoint(Dali::AnchorPoint::CENTER);
-	layer.SetPosition(0, 0);
-	layer.RaiseToTop();
-	control.Add(layer);
-
-	// resource directory
-	auto resourceDir = appSharedResourcePath();
-
+	auto layer = buttonLayer();
 	auto width = size.width / 6;
 	auto height = width;
-	previousButton = PushButton::New();
-	previousButton.SetSize(width, height);
-	previousButton.SetParentOrigin(Dali::ParentOrigin::CENTER_LEFT);
-	previousButton.SetAnchorPoint(Dali::AnchorPoint::CENTER_LEFT);
-	previousButton.SetPosition(0, 0);
-	previousButton.setUnselectedImage(resourceDir + "Previous.png");
-	previousButton.setSelectedImage(resourceDir + "PreviousPressed.png");
-	previousButton.SetVisible(false);
-	previousButton.ClickedSignal().Connect(this, &MessageDialog::onPreviousButtonClicked);
-	layer.Add(previousButton);
+	auto resourceDir = appSharedResourcePath();
 
 	nextButton = PushButton::New();
 	nextButton.SetSize(width, height);
@@ -46,15 +28,16 @@ void Kystsoft::MessageDialog::create(const Dali::Vector2& size)
 	nextButton.ClickedSignal().Connect(this, &MessageDialog::onNextButtonClicked);
 	layer.Add(nextButton);
 
-	width = size.width;
-	height = size.height / 6;
-	closeButton.SetSize(width, height);
-	closeButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
-	closeButton.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
-	closeButton.SetPosition(0, 0);
-	closeButton.setUnselectedImage(resourceDir + "Close.png");
-	closeButton.setSelectedImage(resourceDir + "ClosePressed.png");
-	layer.Add(closeButton);
+	previousButton = PushButton::New();
+	previousButton.SetSize(width, height);
+	previousButton.SetParentOrigin(Dali::ParentOrigin::CENTER_LEFT);
+	previousButton.SetAnchorPoint(Dali::AnchorPoint::CENTER_LEFT);
+	previousButton.SetPosition(0, 0);
+	previousButton.setUnselectedImage(resourceDir + "Previous.png");
+	previousButton.setSelectedImage(resourceDir + "PreviousPressed.png");
+	previousButton.SetVisible(false);
+	previousButton.ClickedSignal().Connect(this, &MessageDialog::onPreviousButtonClicked);
+	layer.Add(previousButton);
 
 	updateButtons();
 }
@@ -93,8 +76,7 @@ bool Kystsoft::MessageDialog::add(const Message& message)
 bool Kystsoft::MessageDialog::remove(const Message& message)
 {
 	auto count = messages.size();
-	// https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
-	messages.erase(std::remove(messages.begin(), messages.end(), message), messages.end());
+	messages.erase(std::remove(messages.begin(), messages.end(), message), messages.end()); // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
 	if (messages.size() < count)
 	{
 		showMessage(currentMessage);
@@ -114,18 +96,18 @@ void Kystsoft::MessageDialog::showMessage(int messageIndex)
 
 void Kystsoft::MessageDialog::updateButtons()
 {
-	previousButton.SetVisible(currentMessage > 0);
 	nextButton.SetVisible(currentMessage < messageCount() - 1);
-}
-
-bool Kystsoft::MessageDialog::onPreviousButtonClicked(Dali::Toolkit::Button)
-{
-	showMessage(currentMessage - 1);
-	return true;
+	previousButton.SetVisible(currentMessage > 0);
 }
 
 bool Kystsoft::MessageDialog::onNextButtonClicked(Dali::Toolkit::Button)
 {
 	showMessage(currentMessage + 1);
+	return true;
+}
+
+bool Kystsoft::MessageDialog::onPreviousButtonClicked(Dali::Toolkit::Button)
+{
+	showMessage(currentMessage - 1);
 	return true;
 }

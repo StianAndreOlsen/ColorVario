@@ -1,4 +1,5 @@
 #include "Dialog.h"
+#include "AppFunctions.h"
 
 void Kystsoft::Dialog::create(const Dali::Vector2& size)
 {
@@ -11,14 +12,53 @@ void Kystsoft::Dialog::create(const Dali::Vector2& size)
 	control.SetVisible(false);
 	control.KeyEventSignal().Connect(this, &Dialog::onKeyEvent);
 
+	auto layer = Dali::Layer::New();
+	layer.SetSize(size);
+	layer.SetParentOrigin(Dali::ParentOrigin::CENTER);
+	layer.SetAnchorPoint(Dali::AnchorPoint::CENTER);
+	layer.SetPosition(0, 0);
+	control.Add(layer);
+	layer.RaiseToTop();
+
+	auto width = size.width / 6;
+	auto height = size.height;
+	auto resourceDir = appSharedResourcePath();
+
 	acceptButton = PushButton::New();
+	acceptButton.SetSize(width, height);
+	acceptButton.SetParentOrigin(Dali::ParentOrigin::CENTER_RIGHT);
+	acceptButton.SetAnchorPoint(Dali::AnchorPoint::CENTER_RIGHT);
+	acceptButton.SetPosition(0, 0);
+	acceptButton.setUnselectedImage(resourceDir + "Accept.png");
+	acceptButton.setSelectedImage(resourceDir + "AcceptPressed.png");
+	acceptButton.SetVisible(false);
 	acceptButton.ClickedSignal().Connect(this, &Dialog::onAcceptButtonClicked);
+	layer.Add(acceptButton);
 
 	rejectButton = PushButton::New();
+	rejectButton.SetSize(width, height);
+	rejectButton.SetParentOrigin(Dali::ParentOrigin::CENTER_LEFT);
+	rejectButton.SetAnchorPoint(Dali::AnchorPoint::CENTER_LEFT);
+	rejectButton.SetPosition(0, 0);
+	rejectButton.setUnselectedImage(resourceDir + "Reject.png");
+	rejectButton.setSelectedImage(resourceDir + "RejectPressed.png");
+	rejectButton.SetVisible(false);
 	rejectButton.ClickedSignal().Connect(this, &Dialog::onRejectButtonClicked);
+	layer.Add(rejectButton);
+
+	width = size.width;
+	height = size.height / 6;
 
 	closeButton = PushButton::New();
+	closeButton.SetSize(width, height);
+	closeButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
+	closeButton.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
+	closeButton.SetPosition(0, 0);
+	closeButton.setUnselectedImage(resourceDir + "Close.png");
+	closeButton.setSelectedImage(resourceDir + "ClosePressed.png");
+	closeButton.SetVisible(false);
 	closeButton.ClickedSignal().Connect(this, &Dialog::onCloseButtonClicked);
+	layer.Add(closeButton);
 }
 
 void Kystsoft::Dialog::setVisible(bool visible)
@@ -48,6 +88,7 @@ void Kystsoft::Dialog::setVisible(bool visible)
 	animation.AnimateTo(Dali::Property(control, Dali::Actor::Property::COLOR_ALPHA), toAlpha);
 	animation.AnimateTo(Dali::Property(control, Dali::Actor::Property::VISIBLE), visible);
 	animation.AnimateTo(Dali::Property(layer, Dali::Actor::Property::VISIBLE), visible);
+	animation.FinishedSignal().Connect(this, &Dialog::onAnimationFinished);
 	animation.Play();
 
 	if (visible)

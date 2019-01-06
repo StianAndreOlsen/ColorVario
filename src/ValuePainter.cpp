@@ -1,26 +1,41 @@
-#include "ValueRing.h"
+#include "ValuePainter.h"
 #include <cmath>
 
-Kystsoft::ValueRing& Kystsoft::ValueRing::operator=(const Dali::Toolkit::Control& rhs)
+void Kystsoft::ValuePainter::setCanvas(Dali::Toolkit::Control canvas)
 {
-	if (*this != rhs)
+	if (control != canvas)
 	{
-		if (*this)
+		if (control)
 		{
 			auto gradient = colorGradient(Dali::Color::TRANSPARENT);
-			SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
+			control.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
 		}
-		Dali::Toolkit::Control::operator=(rhs);
-		if (*this)
+		control = canvas;
+		if (control)
 		{
 			auto gradient = colorGradient();
-			SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
+			control.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
 		}
 	}
-	return *this;
 }
 
-Dali::Property::Map Kystsoft::ValueRing::colorGradient(Color color)
+void Kystsoft::ValuePainter::setValue(double value)
+{
+	averageValue += value;
+	Color newColor = color(averageValue);
+	// TODO: Decide if we want this alpha blending or not!
+//	newColor.alphaBlend(Color::window()); // alpha blend the new color on top of the background color since Dali don't use gamma correction
+	if (newColor == currentColor)
+		return;
+	currentColor = newColor;
+	if (control)
+	{
+		auto gradient = colorGradient();
+		control.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
+	}
+}
+
+Dali::Property::Map Kystsoft::ValuePainter::colorGradient(Color color)
 {
 	// radial gradient
 	Dali::Property::Map map;
@@ -46,22 +61,7 @@ Dali::Property::Map Kystsoft::ValueRing::colorGradient(Color color)
 	return map;
 }
 
-void Kystsoft::ValueRing::setValue(double value)
-{
-	averageValue += value;
-	Color newColor = color(averageValue);
-	newColor.alphaBlend(Color::window()); // alpha blend the new color on top of the background color since Dali don't use gamma correction
-	if (newColor == currentColor)
-		return;
-	currentColor = newColor;
-	if (*this)
-	{
-		auto gradient = colorGradient();
-		SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
-	}
-}
-
-void Kystsoft::ValueRing::load(const Settings& settings, const std::string& section)
+void Kystsoft::ValuePainter::load(const Settings& settings, const std::string& section)
 {
 	color.load(settings, section);
 	setAveragingInterval(settings.value(section + ".averagingInterval", 1.0));

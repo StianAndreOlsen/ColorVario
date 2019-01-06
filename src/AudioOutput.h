@@ -33,8 +33,7 @@ public:
 	audio_channel_e channel() const;
 	audio_sample_type_e sampleType() const;
 	sound_type_e soundType() const;
-	using WriteCallback = Callback<AudioOutput&, size_t>;
-	const WriteCallback& writeCallback() const { return writeCb; }
+	const auto& writeCallback() const { return writeCb; }
 private:
 	void create(int sampleRate, audio_channel_e channel, audio_sample_type_e type);
 	void destroy();
@@ -45,7 +44,7 @@ private:
 	audio_out_h output = nullptr;
 	bool prepared = false;
 	bool paused = false;
-	WriteCallback writeCb;
+	Callback<AudioOutput&, size_t> writeCb;
 };
 
 } // namespace Kystsoft

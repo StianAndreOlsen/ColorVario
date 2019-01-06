@@ -29,13 +29,13 @@ public:
 	void onWheelEvent(const Dali::WheelEvent& event) { textView.onWheelEvent(event); }
 private:
 	void updateButtons();
-	bool onPreviousButtonClicked(Dali::Toolkit::Button button);
 	bool onNextButtonClicked(Dali::Toolkit::Button button);
+	bool onPreviousButtonClicked(Dali::Toolkit::Button button);
 	std::vector<Message> messages;
 	int currentMessage = -1; // current message must be initialized using showMessage
 	TextView textView;
-	PushButton previousButton;
 	PushButton nextButton;
+	PushButton previousButton;
 };
 
 } // namespace Kystsoft

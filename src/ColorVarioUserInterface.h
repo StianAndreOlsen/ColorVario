@@ -2,19 +2,20 @@
 #define KYSTSOFT_COLORVARIO_USERINTERFACE_H
 
 #include "AltitudeAudio.h"
-#include "AltitudeLabel.h"
+#include "AltitudeOffsetDialog.h"
 #include "AltitudePage.h"
-#include "AltitudeRing.h"
+#include "AltitudePainter.h"
+#include "AltitudeWriter.h"
 #include "ClimbAudio.h"
-#include "ClimbLabel.h"
 #include "ClimbPage.h"
-#include "ClimbRing.h"
+#include "ClimbPainter.h"
+#include "ClimbWriter.h"
 #include "ColorVarioMenu.h"
 #include "MessageDialog.h"
 #include "PageView.h"
 #include "Signal.h"
-#include "SpeedLabel.h"
 #include "SpeedPage.h"
+#include "SpeedWriter.h"
 
 namespace Kystsoft {
 namespace ColorVario {
@@ -31,6 +32,7 @@ public:
 	void setClimbSamplingInterval(double interval);
 	void setSpeedSamplingInterval(double interval);
 	void setAltitudeAccuracy(double accuracy);
+	void setAltitudeOffset(double offset);
 	void setAltitude(double altitude);
 	void setClimb(double climb);
 	void setSpeed(double speed);
@@ -41,17 +43,17 @@ public:
 	void setLocationEnabled(bool enabled) { menu.locationIcon().SetVisible(enabled); }
 	bool addMessage(const Message& message);
 	bool removeMessage(const Message& message);
-	const Signal<>& goBackSignal() const { return goBackSignl; }
-	const Signal<bool>& enableBluetoothSignal() const { return enableBluetoothSignl; }
-	const Signal<bool>& lockDisplaySignal() const { return lockDisplaySignl; }
-	const Signal<>& quitSignal() const { return quitSignl; }
-	const Signal<>& pageTappedSignal() const { return pageTappedSignl; }
+	const auto& goBackSignal() const { return goBackSignl; }
+	const auto& enableBluetoothSignal() const { return enableBluetoothSignl; }
+	const auto& lockDisplaySignal() const { return lockDisplaySignl; }
+	const auto& quitSignal() const { return quitSignl; }
+	const auto& pageTapDetectedSignal() const { return pageTapDetectedSignl; }
+	const auto& altitudeOffsetChangedSignal() const { return altitudeOffsetDialog.offsetChangedSignal(); }
 private:
 	void createPageLayer();
 	void createMenuLayer();
 	void createDialogLayer();
-	void onTapGesture(Dali::Actor actor, const Dali::TapGesture& gesture);
-	void onPanGesture(Dali::Actor actor, const Dali::PanGesture& gesture);
+	void updateMessageButton();
 	void onWheelEvent(const Dali::WheelEvent& event);
 	void onGoBack() { goBackSignl.emit(); }
 	void onCurrentPageChanged(int newPageIndex);
@@ -60,27 +62,31 @@ private:
 	bool onMuteAudioButtonClicked(Dali::Toolkit::Button button);
 	bool onMessageButtonClicked(Dali::Toolkit::Button button);
 	bool onQuitButtonClicked(Dali::Toolkit::Button button);
-	void updateMessageButton();
+	void onPageTapDetected(Dali::Actor actor, const Dali::TapGesture& gesture);
+	void onPageVerticalPanDetected(Dali::Actor actor, const Dali::PanGesture& gesture);
+	void onAltitudeLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture);
 	AltitudeAudio altitudeAudio;
 	ClimbAudio climbAudio;
-	AltitudeRing altitudeRing;
-	ClimbRing climbRing;
-	AltitudeLabel altitudeLabel;
-	ClimbLabel climbLabel;
-	SpeedLabel speedLabel;
+	AltitudePainter altitudePainter;
+	ClimbPainter climbPainter;
+	AltitudeWriter altitudeWriter;
+	ClimbWriter climbWriter;
+	SpeedWriter speedWriter;
 	PageView pageView;
 	AltitudePage altitudePage;
 	ClimbPage climbPage;
 	SpeedPage speedPage;
 	Menu menu;
-	Dali::TapGestureDetector tapDetector;
-	Dali::PanGestureDetector panDetector;
 	MessageDialog messageDialog;
+	AltitudeOffsetDialog altitudeOffsetDialog;
+	Dali::TapGestureDetector pageTapDetector;
+	Dali::PanGestureDetector pageVerticalPanDetector;
+	Dali::LongPressGestureDetector altitudeLongPressDetector;
 	Signal<> goBackSignl;
 	Signal<bool> enableBluetoothSignl;
 	Signal<bool> lockDisplaySignl;
 	Signal<> quitSignl;
-	Signal<> pageTappedSignl;
+	Signal<> pageTapDetectedSignl;
 };
 
 } // namespace ColorVario
