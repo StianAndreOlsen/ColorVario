@@ -9,21 +9,23 @@ void Kystsoft::ColorVario::UserInterface::create()
 	createDialogLayer();
 
 	// gestures for showing and hiding the menu
-	pageTapDetector = Dali::TapGestureDetector::New();
-	pageTapDetector.Attach(pageView);
-	pageTapDetector.DetectedSignal().Connect(this, &UserInterface::onPageTapDetected);
-	pageVerticalPanDetector = Dali::PanGestureDetector::New();
-	pageVerticalPanDetector.AddDirection(Dali::PanGestureDetector::DIRECTION_VERTICAL);
-	pageVerticalPanDetector.Attach(pageView);
-	pageVerticalPanDetector.Attach(menu);
-	pageVerticalPanDetector.DetectedSignal().Connect(this, &UserInterface::onPageVerticalPanDetected);
+	tapDetector = Dali::TapGestureDetector::New();
+	tapDetector.Attach(menu);
+	tapDetector.Attach(pageView);
+	tapDetector.DetectedSignal().Connect(this, &UserInterface::onTapDetected);
+	verticalPanDetector = Dali::PanGestureDetector::New();
+	verticalPanDetector.AddDirection(Dali::PanGestureDetector::DIRECTION_VERTICAL);
+	verticalPanDetector.Attach(menu);
+	verticalPanDetector.Attach(pageView);
+	verticalPanDetector.DetectedSignal().Connect(this, &UserInterface::onVerticalPanDetected);
 
 	// gesture for showing the altitude offset dialog
-	altitudeLongPressDetector = Dali::LongPressGestureDetector::New();
-	altitudeLongPressDetector.Attach(altitudePage.altitudeLabel());
-	altitudeLongPressDetector.Attach(climbPage.altitudeLabel());
-	altitudeLongPressDetector.Attach(speedPage.altitudeLabel());
-	altitudeLongPressDetector.DetectedSignal().Connect(this, &UserInterface::onAltitudeLongPressDetected);
+	longPressDetector = Dali::LongPressGestureDetector::New();
+	longPressDetector.Attach(menu);
+	longPressDetector.Attach(altitudePage.altitudeLabel());
+	longPressDetector.Attach(climbPage.altitudeLabel());
+	longPressDetector.Attach(speedPage.altitudeLabel());
+	longPressDetector.DetectedSignal().Connect(this, &UserInterface::onLongPressDetected);
 
 	// connect signals
 	auto stage = Dali::Stage::GetCurrent();
@@ -94,6 +96,11 @@ void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
 	else if (pageView.currentPageIndex() > 0)
 		menu.muteAudioButton().setChecked(!climbAudio.isStarted());
 
+	// TODO: Enable when creating new icon
+//	setAltitudeAccuracy(5);
+//	altitude = 1298;
+//	setSpeed(37 / 3.6);
+
 	altitudeAudio.setAltitude(altitude);
 	altitudePainter.setAltitude(altitude);
 	altitudeWriter.setAltitude(altitude);
@@ -102,6 +109,9 @@ void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
 
 void Kystsoft::ColorVario::UserInterface::setClimb(double climb)
 {
+	// TODO: Enable when creating new icon
+//	climb = 1.9;
+
 	climbAudio.setClimb(climb);
 	climbPainter.setClimb(climb);
 	climbWriter.setClimb(climb);
@@ -344,19 +354,22 @@ bool Kystsoft::ColorVario::UserInterface::onQuitButtonClicked(Dali::Toolkit::But
 	return true;
 }
 
-void Kystsoft::ColorVario::UserInterface::onPageTapDetected(Dali::Actor /*actor*/, const Dali::TapGesture& gesture)
+void Kystsoft::ColorVario::UserInterface::onTapDetected(Dali::Actor actor, const Dali::TapGesture& gesture)
 {
-	auto y = gesture.screenPoint.y;
-	auto height = Dali::Stage::GetCurrent().GetSize().height;
-	if (y < height / 4)
-		menu.show();
-	else if (y > height * 9 / 16)
-		menu.hide();
+	if (actor == pageView)
+	{
+		auto y = gesture.screenPoint.y;
+		auto height = Dali::Stage::GetCurrent().GetSize().height;
+		if (y < height / 4)
+			menu.show();
+		else if (y > height * 9 / 16)
+			menu.hide();
 
-	pageTapDetectedSignl.emit();
+		pageTapDetectedSignl.emit();
+	}
 }
 
-void Kystsoft::ColorVario::UserInterface::onPageVerticalPanDetected(Dali::Actor /*actor*/, const Dali::PanGesture& gesture)
+void Kystsoft::ColorVario::UserInterface::onVerticalPanDetected(Dali::Actor /*actor*/, const Dali::PanGesture& gesture)
 {
 	switch (gesture.state)
 	{
@@ -373,8 +386,8 @@ void Kystsoft::ColorVario::UserInterface::onPageVerticalPanDetected(Dali::Actor 
 	}
 }
 
-void Kystsoft::ColorVario::UserInterface::onAltitudeLongPressDetected(Dali::Actor /*actor*/, const Dali::LongPressGesture& gesture)
+void Kystsoft::ColorVario::UserInterface::onLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture)
 {
-	if (gesture.state == Dali::Gesture::Started)
+	if (gesture.state == Dali::Gesture::Started && actor != menu)
 		altitudeOffsetDialog.show();
 }

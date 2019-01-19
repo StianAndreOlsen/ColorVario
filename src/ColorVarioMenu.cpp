@@ -118,7 +118,7 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	control.Add(layer);
 	layer.RaiseToTop();
 
-	// button size, position and color
+	// button size and position
 	auto width = menuSize.width / 6;
 	auto height = width;
 	auto radius = height / 2; // button radius
@@ -126,7 +126,6 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	auto spacing = radius / 5; // spacing between buttons
 	auto centerRadius = menuRadius - margin - radius; // button center point radius
 	auto angle = 2 * std::asin((radius + spacing / 2) / centerRadius); // angle between buttons
-	auto color = Color::button().shaded(0.5f);
 
 	// resource directory
 	auto resourceDir = appSharedResourcePath();
@@ -139,7 +138,6 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	enableBluetoothButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	enableBluetoothButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	enableBluetoothButton.SetPosition(x, y);
-	enableBluetoothButton.setEllipticBackground(color);
 	enableBluetoothButton.setUnselectedImage(resourceDir + "BluetoothDisabled.png");
 	enableBluetoothButton.setSelectedImage(resourceDir + "BluetoothEnabled.png");
 	enableBluetoothButton.setCheckable(true);
@@ -154,7 +152,6 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	lockDisplayButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	lockDisplayButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	lockDisplayButton.SetPosition(x, y);
-	lockDisplayButton.setEllipticBackground(color);
 	lockDisplayButton.setUnselectedImage(resourceDir + "DisplayUnlocked.png");
 	lockDisplayButton.setSelectedImage(resourceDir + "DisplayLocked.png");
 	lockDisplayButton.setCheckable(true);
@@ -169,7 +166,6 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	muteAudioButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	muteAudioButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	muteAudioButton.SetPosition(x, y);
-	muteAudioButton.setEllipticBackground(color);
 	muteAudioButton.setUnselectedImage(resourceDir + "AudioUnmuted.png");
 	muteAudioButton.setSelectedImage(resourceDir + "AudioMuted.png");
 	muteAudioButton.setCheckable(true);
@@ -184,7 +180,6 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	messageButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	messageButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	messageButton.SetPosition(x, y);
-	messageButton.setEllipticBackground(color);
 	messageButton.setUnselectedImage(resourceDir + "Information.png");
 	messageButton.setSelectedImage(resourceDir + "InformationPressed.png");
 	layer.Add(messageButton);
@@ -197,7 +192,6 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	quitButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	quitButton.SetAnchorPoint(Dali::AnchorPoint::CENTER);
 	quitButton.SetPosition(x, y);
-	quitButton.setEllipticBackground(Color::error().shaded(0.9f));
 	quitButton.setUnselectedImage(resourceDir + "Quit.png");
 	quitButton.setSelectedImage(resourceDir + "QuitPressed.png");
 	layer.Add(quitButton);

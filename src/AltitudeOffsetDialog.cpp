@@ -17,36 +17,63 @@ void Kystsoft::AltitudeOffsetDialog::create(const Dali::Vector2& size)
 	altitudeWriter.setRoundToNearest(1);
 
 	auto width = size.width;
-	auto height = size.height / 4;
+	auto height = size.height / 6;
+	auto resourceDir = appSharedResourcePath();
 
-	auto offsetLabel = TextLabel::New("Offset");
-	offsetLabel.SetSize(width, height);
-	offsetLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	offsetLabel.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
-	offsetLabel.SetPosition(0, 0);
-	offsetLabel.setVerticalAlignment("CENTER");
-	offsetLabel.setHorizontalAlignment("CENTER");
-	offsetLabel.setTextColor(Color::mainText());
-	offsetLabel.setPointSize(15);
-	control.Add(offsetLabel);
+	auto arrows = Dali::Toolkit::ImageView::New(resourceDir + "Arrows.png");
+	arrows.SetSize(width, height);
+	arrows.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
+	arrows.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
+	arrows.SetPosition(0, 0);
+	control.Add(arrows);
 
-	auto altitudeLabel = TextLabel::New("Altitude");
-	altitudeLabel.SetSize(width, height);
-	altitudeLabel.SetParentOrigin(Dali::ParentOrigin::CENTER);
-	altitudeLabel.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
-	altitudeLabel.SetPosition(0, 0);
-	altitudeLabel.setVerticalAlignment("CENTER");
-	altitudeLabel.setHorizontalAlignment("CENTER");
-	altitudeLabel.setTextColor(Color::error());
-//	altitudeLabel.setPointSize(15);
-	control.Add(altitudeLabel);
+	width = size.width;
+	height = size.height / 4;
+
+	offsetLabl = TextLabel::New("Offset");
+	offsetLabl.SetSize(width, height);
+	offsetLabl.SetParentOrigin(Dali::ParentOrigin::CENTER);
+	offsetLabl.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
+	offsetLabl.SetPosition(0, 0);
+	offsetLabl.setVerticalAlignment("CENTER");
+	offsetLabl.setHorizontalAlignment("CENTER");
+	offsetLabl.setTextColor(Color::mainText());
+	offsetLabl.setPointSize(15);
+	control.Add(offsetLabl);
+
+	altitudeLabl = TextLabel::New("Altitude");
+	altitudeLabl.SetSize(width, height);
+	altitudeLabl.SetParentOrigin(Dali::ParentOrigin::CENTER);
+	altitudeLabl.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
+	altitudeLabl.SetPosition(0, 0);
+	altitudeLabl.setVerticalAlignment("CENTER");
+	altitudeLabl.setHorizontalAlignment("CENTER");
+	altitudeLabl.setTextColor(Color::error());
+//	altitudeLabl.setPointSize(15);
+	control.Add(altitudeLabl);
+
+	width = size.width * 4 / 6;
+	height = size.height / 4;
+
+	// TODO: Choose the best term!
+	auto tipLabel = TextLabel::New("Press and hold\nto reset");
+//	auto tipLabel = TextLabel::New("Long press\nto reset");
+	tipLabel.SetSize(width, height);
+	tipLabel.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
+	tipLabel.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
+	tipLabel.SetPosition(0, 0);
+	tipLabel.setVerticalAlignment("CENTER");
+	tipLabel.setHorizontalAlignment("CENTER");
+	tipLabel.setTextColor(Color::disabled());
+	tipLabel.setPointSize(7);
+	tipLabel.setMultiLine(true);
+	control.Add(tipLabel);
 
 	auto layer = buttonLayer();
 	width = size.width / 6;
 	height = width;
 	auto y = -size.height / 4;
-	auto spacing = width;
-	auto resourceDir = appSharedResourcePath();
+	auto spacing = width / 2;
 
 	incrementButton = PushButton::New();
 	incrementButton.SetSize(width, height);
@@ -68,10 +95,12 @@ void Kystsoft::AltitudeOffsetDialog::create(const Dali::Vector2& size)
 	decrementButton.ClickedSignal().Connect(this, &AltitudeOffsetDialog::onDecrementButtonClicked);
 	control.Add(decrementButton);
 
-	tapDetector = Dali::TapGestureDetector::New();
-	tapDetector.Attach(offsetLabel);
-	tapDetector.Attach(altitudeLabel);
-	tapDetector.DetectedSignal().Connect(this, &AltitudeOffsetDialog::onTapDetected);
+	longPressDetector = Dali::LongPressGestureDetector::New();
+	longPressDetector.Attach(acceptButton);
+	longPressDetector.Attach(rejectButton);
+	longPressDetector.Attach(offsetLabl);
+	longPressDetector.Attach(altitudeLabl);
+	longPressDetector.DetectedSignal().Connect(this, &AltitudeOffsetDialog::onLongPressDetected);
 }
 
 void Kystsoft::AltitudeOffsetDialog::reject()
@@ -112,20 +141,42 @@ void Kystsoft::AltitudeOffsetDialog::onWheelEvent(const Dali::WheelEvent& event)
 
 void Kystsoft::AltitudeOffsetDialog::increment()
 {
-	setOffset(currentOffset + delta);
+	updateDelta();
+	setOffset(currentOffset + currentDelta);
 }
 
 void Kystsoft::AltitudeOffsetDialog::decrement()
 {
-	setOffset(currentOffset - delta);
+	updateDelta();
+	setOffset(currentOffset - currentDelta);
 }
 
-void Kystsoft::AltitudeOffsetDialog::onTapDetected(Dali::Actor actor, const Dali::TapGesture& /*gesture*/)
+void Kystsoft::AltitudeOffsetDialog::updateDelta()
 {
-	if (actor == offsetLabel())
-		setOffset(0);
-	else if (actor == altitudeLabel())
-		setOffset(-(altitudeWriter.value() - currentOffset));
+	auto timeElapsed = deltaTimer.seconds();
+	if (timeElapsed > 2.5)
+		currentDelta = initialDelta;
+	else if (timeElapsed > 1.5 && currentDelta > 5 * initialDelta)
+		currentDelta /= 10;
+	else if (timeElapsed < 0.5 && currentDelta < 500 * initialDelta)
+	{
+		auto x = currentOffset;
+		auto m = currentDelta;
+		if (std::fabs(mround(x, 10 * m) - mround(x, m)) < m / 2)
+			currentDelta *= 10;
+	}
+	deltaTimer.start();
+}
+
+void Kystsoft::AltitudeOffsetDialog::onLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture)
+{
+	if (gesture.state == Dali::Gesture::Started)
+	{
+		if (actor == offsetLabl)
+			setOffset(0);
+		else if (actor == altitudeLabl)
+			setOffset(-(altitudeWriter.value() - currentOffset));
+	}
 }
 
 void Kystsoft::AltitudeOffsetDialog::onVisible(bool visible)
@@ -145,7 +196,7 @@ void Kystsoft::AltitudeOffsetDialog::onVisible(bool visible)
 
 bool Kystsoft::AltitudeOffsetDialog::onVisibleTimer()
 {
-	offsetWriter.setPaper(offsetLabel());
-	altitudeWriter.setPaper(altitudeLabel());
+	offsetWriter.setPaper(offsetLabl);
+	altitudeWriter.setPaper(altitudeLabl);
 	return false;
 }

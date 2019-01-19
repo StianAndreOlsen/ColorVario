@@ -62,9 +62,9 @@ private:
 	bool onMuteAudioButtonClicked(Dali::Toolkit::Button button);
 	bool onMessageButtonClicked(Dali::Toolkit::Button button);
 	bool onQuitButtonClicked(Dali::Toolkit::Button button);
-	void onPageTapDetected(Dali::Actor actor, const Dali::TapGesture& gesture);
-	void onPageVerticalPanDetected(Dali::Actor actor, const Dali::PanGesture& gesture);
-	void onAltitudeLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture);
+	void onTapDetected(Dali::Actor actor, const Dali::TapGesture& gesture);
+	void onVerticalPanDetected(Dali::Actor actor, const Dali::PanGesture& gesture);
+	void onLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture);
 	AltitudeAudio altitudeAudio;
 	ClimbAudio climbAudio;
 	AltitudePainter altitudePainter;
@@ -79,9 +79,9 @@ private:
 	Menu menu;
 	MessageDialog messageDialog;
 	AltitudeOffsetDialog altitudeOffsetDialog;
-	Dali::TapGestureDetector pageTapDetector;
-	Dali::PanGestureDetector pageVerticalPanDetector;
-	Dali::LongPressGestureDetector altitudeLongPressDetector;
+	Dali::TapGestureDetector tapDetector;
+	Dali::PanGestureDetector verticalPanDetector;
+	Dali::LongPressGestureDetector longPressDetector;
 	Signal<> goBackSignl;
 	Signal<bool> enableBluetoothSignl;
 	Signal<bool> lockDisplaySignl;

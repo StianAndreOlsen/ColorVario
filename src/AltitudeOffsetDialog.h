@@ -16,28 +16,32 @@ public:
 	void close() override;
 	void setOffset(double offset);
 	void setAltitude(double altitude);
-	auto offsetLabel() const { return TextLabel::DownCast(control.GetChildAt(1)); }
-	auto altitudeLabel() const { return TextLabel::DownCast(control.GetChildAt(2)); }
+	auto offsetLabel() const { return offsetLabl; }
+	auto altitudeLabel() const { return altitudeLabl; }
 	void onWheelEvent(const Dali::WheelEvent& event);
 	const auto& offsetChangedSignal() const { return offsetChangedSignl; }
 private:
 	void increment();
 	void decrement();
+	void updateDelta();
 	bool onIncrementButtonClicked(Dali::Toolkit::Button) { increment(); return true; }
 	bool onDecrementButtonClicked(Dali::Toolkit::Button) { decrement(); return true; }
-	void onTapDetected(Dali::Actor actor, const Dali::TapGesture& gesture);
+	void onLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture);
 	void onVisible(bool visible);
 	bool onVisibleTimer();
 	double initialOffset = 0;
 	double currentOffset = 0;
-	double delta = 1;
+	double initialDelta = 1;
+	double currentDelta = 1;
+	Stopwatch deltaTimer;
 	Dali::Timer visibleTimer;
-	Stopwatch changeTimer;
 	AltitudeWriter offsetWriter;
 	AltitudeWriter altitudeWriter;
+	TextLabel offsetLabl;
+	TextLabel altitudeLabl;
 	PushButton incrementButton;
 	PushButton decrementButton;
-	Dali::TapGestureDetector tapDetector;
+	Dali::LongPressGestureDetector longPressDetector;
 	Signal<double> offsetChangedSignl;
 };
 

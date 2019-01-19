@@ -80,6 +80,7 @@ struct Color : public Dali::Vector4
 	static Color button() { return systemButton().alphaBlended(window(), 1); } // Dali don't use gamma correction
 	static Color buttonPressed() { return systemButtonPressEffect().alphaBlended(button(), 1); } // Dali don't use gamma correction
 	static Color buttonText() { return systemMainText(); }
+	static Color disabled() { return fromRGBA(0x808080, 1.0f); }
 	static Color information() { return headingText(); }
 	static Color success() { return fromRGBA(0x38E000, 1.0f); } // same as calendar heading
 	static Color warning() { return fromRGBA(0xEECC00, 1.0f); } // nicer than messages heading

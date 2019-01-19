@@ -23,7 +23,7 @@ void Kystsoft::ValuePainter::setValue(double value)
 {
 	averageValue += value;
 	Color newColor = color(averageValue);
-	// TODO: Decide if we want this alpha blending or not!
+	// TODO: Decide if we want alpha blending or not!
 //	newColor.alphaBlend(Color::window()); // alpha blend the new color on top of the background color since Dali don't use gamma correction
 	if (newColor == currentColor)
 		return;

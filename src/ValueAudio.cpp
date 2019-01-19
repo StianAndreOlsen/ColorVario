@@ -93,11 +93,11 @@ void Kystsoft::ValueAudio::setValue(double value)
 
 	// TODO: Remove if this never happens (check log file after a long period of testing)
 	// restart audio if it has stopped (for some mysterious reason)
-	if (audioOutput.isPrepared() && lastWriteTime > 0 && std::difftime(std::time(nullptr), lastWriteTime) > 2)
+	if (isStarted() && lastWriteTime > 0 && std::difftime(std::time(nullptr), lastWriteTime) > 2)
 	{
 		lastWriteTime = 0;
-		audioOutput.unprepare();
-		audioOutput.prepare();
+		stop();
+		start();
 		dlog(DLOG_INFO) << "Audio is restarted!";
 	}
 }

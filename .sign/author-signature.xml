@@ -4,7 +4,7 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fcolorvario">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>gHjZkYlh5Ax1fYkk9btr+4cCcs9wn4ivIgHW4CeTgyw=</DigestValue>
+<DigestValue>AytGibty/qvaMx0o+rdBqos8XtIKdKq/XgI+Y4xmh9c=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FAccept.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -14,25 +14,29 @@
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>nJD1dU5u1iCzyTiaFWs0UJe3CggZxZSUAJsrOFChpYo=</DigestValue>
 </Reference>
+<Reference URI="shared%2Fres%2FArrows.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>C4gfubWtEg3KTIP9XS4GIxCq+1tVRUySFrALnKxb4FE=</DigestValue>
+</Reference>
 <Reference URI="shared%2Fres%2FAudioMuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>yKTwYcTNw2yYnBykRgsOzc/cbuOtaFZcNlku9FxO2yA=</DigestValue>
+<DigestValue>x4MsUzUPSCRSLdZ8649cIFNRuM8E59EicRyjvlzYAis=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FAudioUnmuted.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>DmgUcuxkdMImLt0oLLz3K+Nv1LOXBPxk28219Y57WOQ=</DigestValue>
+<DigestValue>pCwVkfb3w3IX0KiQCVh3sDfSMUW01N9a+L5dC/zl9WQ=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FBluetoothConnected.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>O8TRV0tKFgozM/NoILD6ZxoyFQciuc9YkiQlhjkz7Ak=</DigestValue>
+<DigestValue>Q6nRk7q8p4XEKTgvjfMkOZamUgJMskeg7CdX2MjyLTs=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FBluetoothDisabled.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>pHE07CfWJS4GsCjCdH0CYCUhZeAORPpDPSL8CTiz8TE=</DigestValue>
+<DigestValue>rUCbn6726V05iNDyoervelO50X46hIfQk89flW+2i1s=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FBluetoothEnabled.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>T/J7K8avx1N1GWwHWYuL2l8edJvperW8weukQdltdPg=</DigestValue>
+<DigestValue>OvnlCpTDoWARbtEXulvih5ztLWELTog02GEFQTZGdTQ=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FClose.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -48,31 +52,31 @@
 </Reference>
 <Reference URI="shared%2Fres%2FColorVario.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>hObDzOD/8ZUgKrN+9XOyHhLR7aSfFEoeC+n6fLJmgTk=</DigestValue>
+<DigestValue>frk43QqDELJzrWriM9A+LMge01rAI0Yu00CIQkvuWZg=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FDecrement.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>MfFDrb7fRjA4Qw4WvJIx2fINqozhprGtZs+bQLOS/T0=</DigestValue>
+<DigestValue>V0gajoyZDsrsStJt2GCJrt7RvjvdfnlNqbXEF4sJvvY=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FDecrementPressed.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>hqaZ+7ypWlmNu3g1A3Scl3mxGXh0AwnYaAi+2mojnmc=</DigestValue>
+<DigestValue>dbvuhZ8Lc3rx/R32JR6AgBarA1HTuvvcV4w5jxGHNyE=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FDisplayLocked.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>163cvKxGz5Ab+I0sESPEnIo9CDNzEwV9lMvV/LHV/Xg=</DigestValue>
+<DigestValue>gRDywCDPdT91DpuDwMLZDxuR1ev4OiorNID4nT2iWHQ=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FDisplayUnlocked.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>B9G1gdqUgCwsA/LKguCTffNwzhO3pqSb8vPYDP/8+Ig=</DigestValue>
+<DigestValue>Gpwf1BZZ7X30atqfRlMkwpZ9zlca94d6wT/xWAbuQe8=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FError.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ZR2LE2+PDnytUnQ2UcGwCn2CL1ZtaHUx/MpYmsdjLBQ=</DigestValue>
+<DigestValue>cFawnOxfob0Ztuo/2Mp0kgP8AaMU/bh/LQFr+taqWzQ=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FErrorPressed.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ikHwIztPyqIoOszj6al5XC7RSQxESLIXagXa0LiStjk=</DigestValue>
+<DigestValue>GaZ6wUhxzgPCLEkvw621zeqr1tzbIXSVBXQiCqlto/Q=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FGeoid.dat">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -80,19 +84,19 @@
 </Reference>
 <Reference URI="shared%2Fres%2FIncrement.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>zN24e8pnzxXM9aGCo4+NzEweG12RsOsQ9qzu4jDRciw=</DigestValue>
+<DigestValue>w5y6OeYo5nnYhtGMTjUrXIHLOKYlM3/jrv3nMK84LUo=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FIncrementPressed.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ZM4PBAfjM3WMMe5At3nWTeQbVrNCA775o5/iRMlmRM4=</DigestValue>
+<DigestValue>fB6+Sd+sGj77aWS0cVKkw9v5pF4RpTddEH9i+d9Wy1g=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FInformation.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>up3kB0bVOuqiAlEHdKDQZDkE92W2O+E7Srgc+Fk55wE=</DigestValue>
+<DigestValue>tz0W0mwzTpURINL7a5wCrafdFqKz/5dXpkwdVxJ3Mfo=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FInformationPressed.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>aF3qXmqqqFzWE/YhCP8di8WZvZZ9PlTBApk6wLIkX+c=</DigestValue>
+<DigestValue>NjXeuSdjnTpKB/7bvj/5sgWgv8yX8nU+T5lINt8GeE4=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FLocation.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -100,27 +104,27 @@
 </Reference>
 <Reference URI="shared%2Fres%2FNext.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>rBs/pfd5psWzjHUcgwfvGpEHfCNsfX3kQrWxjyBBv5U=</DigestValue>
+<DigestValue>l7L/oswI/sjSQ08E1Q/ECPPS2uw1zu4jxF9HQTl1XeQ=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FNextPressed.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>7xgzBFq5FpvNUD/YaQmkbc+PWKq3ewLrKo8hTrRVlKI=</DigestValue>
+<DigestValue>Kk8BPTWusiWgxobiQfaMvnJxdF2AsFVwfyDbqvkL1t8=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FPrevious.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>+b4EhsDDCoIW5xyzCOeRinzl6pvRmgxRDvBF8gObmXo=</DigestValue>
+<DigestValue>fdL62MWzeW+rMCqsCySE1FCEFLSuPM2l2A1+7w+aO7E=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FPreviousPressed.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>oMgjuwhTm2GQK7zSLmAjSBxlIYxo8AWeqMLQDKjIZqE=</DigestValue>
+<DigestValue>ZEHkBoUV1zEjoIhJeOviL6oyspL8sbqNrhe/kNpTrHE=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FQuit.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>e99v8YcbnsxPl6ecTM1EV/Z7MH9ZYf2iYb7/wyioN0g=</DigestValue>
+<DigestValue>h3BirQy70+YakGTZkF2JNafd0BfG1ClLFblzhs1q9zY=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FQuitPressed.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>1EVJnbS6mPrR0whLY4I9CXKkF2/UJI8Rsw/7rcMqXW0=</DigestValue>
+<DigestValue>KRO0fUVJDE5uiYIid/KJ6l2pJP/ekea31isgQTyxENY=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FReject.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -132,11 +136,11 @@
 </Reference>
 <Reference URI="shared%2Fres%2FWarning.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>CZ0ZlQov1LQM/vdGfcW15sfMnhgCt4gY+/dHJsD1CwQ=</DigestValue>
+<DigestValue>MKLxi4eVw9Y7RY+oNpn8g9S0XFb3ac6hc/0D5VeL7k0=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2FWarningPressed.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ikHwIztPyqIoOszj6al5XC7RSQxESLIXagXa0LiStjk=</DigestValue>
+<DigestValue>Lu3qaT2WNdeY8BXabm953FDW5jZm29J100AsK1/YEIw=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -151,11 +155,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-bubepqlHOUTGsi1VKetAprpL/bxXL+tZMJq9Tq1xVapbQSNQH9yCCv9cydzmWDB1SWt8PeoYyFcK
-2+RlImmHPeMY+UO5KzIyB9QQlT+YtJ7yEd4lOm/dLDJ7x40ASf8QjO5Apo/B2xTq50O+76IulTAm
-FcoIDUr7kNTucKsq2sjq1qoaWM72Q58RH4NfWKBWT/Rw2tLqNuJp7mvxpNVk3ZQ8fcTa3RnyXfFJ
-cxVy54AkdHm2/D4Kt+qISOlOYQd9yDBysCwTBIyVvtiezdDypjeDTRpKGj4tp6eUzLHUqIlEDv6u
-OQOHPeVLKEsdNb3ocmJxt09yWBEp17yE0nkkKw==
+FmHiLSXd4X7gCY8Ze3AGs3rGZaY5Uj1Ry321+GGK+XjDLDAAityW943umJsgGcKyPQxedn565aiZ
+8u2MY43ZwuOgmndYCBgI9jtiey4EZZsxEEXq9g0x91WKnYrckcCO5VS3CS0Fgeu7/AJvBciZLuXK
+evqsfFmEh9dZzYJ44MixVVwOi1gUzxQNGJjMx7C4H9LAf47Dr9h4rFWeIZ06TAFEuF54goAqU46E
+1OUF+e5QXPoEa6I+CmaL9/PUF3KsQZLuAvTuZ1mRp2L1Gi/Kf8jgEtWVtD5cDDxpt12fi6uxFpD3
+d6utshmpwmpmgE2E0GcinHY/7ESuD9jT4kdpdA==
 </SignatureValue>
 <KeyInfo>
 <X509Data>
