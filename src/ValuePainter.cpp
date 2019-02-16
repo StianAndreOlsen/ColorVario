@@ -1,21 +1,30 @@
 #include "ValuePainter.h"
 #include <cmath>
 
+Kystsoft::ValuePainter::ValuePainter()
+{
+	valueLateTimer = Dali::Timer::New(2000); // default period
+	valueLateTimer.TickSignal().Connect(this, &ValuePainter::onValueLate);
+}
+
+void Kystsoft::ValuePainter::setSamplingInterval(double interval)
+{
+	averageValue.setSamplingInterval(interval);
+	auto milliSec = static_cast<unsigned int>(2 * interval * 1000 + 0.5);
+	milliSec = std::max(1000u, milliSec); // at least one second
+	auto running = valueLateTimer.IsRunning();
+	valueLateTimer.SetInterval(milliSec);
+	if (!running)
+		valueLateTimer.Stop();
+}
+
 void Kystsoft::ValuePainter::setCanvas(Dali::Toolkit::Control canvas)
 {
 	if (control != canvas)
 	{
-		if (control)
-		{
-			auto gradient = colorGradient(Dali::Color::TRANSPARENT);
-			control.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
-		}
+		paint(Dali::Color::TRANSPARENT);
 		control = canvas;
-		if (control)
-		{
-			auto gradient = colorGradient();
-			control.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
-		}
+		paint(currentColor);
 	}
 }
 
@@ -23,16 +32,15 @@ void Kystsoft::ValuePainter::setValue(double value)
 {
 	averageValue += value;
 	Color newColor = color(averageValue);
-	// TODO: Decide if we want alpha blending or not!
-//	newColor.alphaBlend(Color::window()); // alpha blend the new color on top of the background color since Dali don't use gamma correction
-	if (newColor == currentColor)
-		return;
-	currentColor = newColor;
-	if (control)
-	{
-		auto gradient = colorGradient();
-		control.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
-	}
+	if (currentColor != newColor)
+		paint(currentColor = newColor);
+	valueLateTimer.Start();
+}
+
+void Kystsoft::ValuePainter::load(const Settings& settings, const std::string& section)
+{
+	color.load(settings, section);
+	setAveragingInterval(settings.value(section + ".averagingInterval", 1.0));
 }
 
 Dali::Property::Map Kystsoft::ValuePainter::colorGradient(Color color)
@@ -61,8 +69,17 @@ Dali::Property::Map Kystsoft::ValuePainter::colorGradient(Color color)
 	return map;
 }
 
-void Kystsoft::ValuePainter::load(const Settings& settings, const std::string& section)
+void Kystsoft::ValuePainter::paint(Color color)
 {
-	color.load(settings, section);
-	setAveragingInterval(settings.value(section + ".averagingInterval", 1.0));
+	if (control)
+	{
+		auto gradient = colorGradient(color);
+		control.SetProperty(Dali::Toolkit::Control::Property::BACKGROUND, gradient);
+	}
+}
+
+bool Kystsoft::ValuePainter::onValueLate()
+{
+	paint(currentColor = Dali::Color::TRANSPARENT);
+	return false;
 }

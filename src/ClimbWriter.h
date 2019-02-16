@@ -11,6 +11,7 @@ public:
 	ClimbWriter() { setTitle("Climb"); setUnit("m/s"); }
 	void load(const Settings& settings) override { ValueWriter::load(settings, "ClimbLabel"); }
 	void setUnit(const std::string& unit) override;
+	double climb() const { return value(); }
 	void setClimb(double climb) { setValue(climb); }
 };
 

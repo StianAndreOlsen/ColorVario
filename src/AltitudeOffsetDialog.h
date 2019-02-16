@@ -1,9 +1,9 @@
 #ifndef KYSTSOFT_ALTITUDEOFFSETDIALOG_H
 #define KYSTSOFT_ALTITUDEOFFSETDIALOG_H
 
+#include "AltitudeOffsetWriter.h"
 #include "AltitudeWriter.h"
 #include "Dialog.h"
-#include "Stopwatch.h"
 
 namespace Kystsoft {
 
@@ -12,6 +12,7 @@ class AltitudeOffsetDialog : public Dialog
 public:
 	AltitudeOffsetDialog() {}
 	void create(const Dali::Vector2& size);
+	void load(const Settings& settings);
 	void reject() override;
 	void close() override;
 	void setOffset(double offset);
@@ -23,19 +24,14 @@ public:
 private:
 	void increment();
 	void decrement();
-	void updateDelta();
 	bool onIncrementButtonClicked(Dali::Toolkit::Button) { increment(); return true; }
 	bool onDecrementButtonClicked(Dali::Toolkit::Button) { decrement(); return true; }
 	void onLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture);
 	void onVisible(bool visible);
 	bool onVisibleTimer();
 	double initialOffset = 0;
-	double currentOffset = 0;
-	double initialDelta = 1;
-	double currentDelta = 1;
-	Stopwatch deltaTimer;
 	Dali::Timer visibleTimer;
-	AltitudeWriter offsetWriter;
+	AltitudeOffsetWriter offsetWriter;
 	AltitudeWriter altitudeWriter;
 	TextLabel offsetLabl;
 	TextLabel altitudeLabl;

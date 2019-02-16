@@ -9,10 +9,10 @@
 
 namespace Kystsoft {
 
-class ValueWriter
+class ValueWriter : public Dali::ConnectionTracker
 {
 public:
-	ValueWriter() {}
+	ValueWriter();
 	ValueWriter(const ValueWriter& other) = delete;
 	ValueWriter& operator=(const ValueWriter& rhs) = delete;
 	virtual ~ValueWriter() noexcept {}
@@ -26,7 +26,7 @@ public:
 	bool isShowingUnit() const { return showUnit; }
 	void setShowUnit(bool show) { showUnit = show; }
 	void setRoundToNearest(double multiple) { multipl = multiple; }
-	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
+	void setSamplingInterval(double interval);
 	void setAveragingInterval(double interval) { averageValue.setAveragingInterval(interval); }
 	auto paper() const { return label; }
 	void setPaper(TextLabel paper = TextLabel());
@@ -38,14 +38,18 @@ public:
 protected:
 	void load(const Settings& settings, const std::string& section);
 	const auto& convertCallback() const { return convertCb; }
+	void write(const std::string& text);
 private:
+	bool onValueLate();
+	TextLabel label;
 	std::string titl;
 	std::string unt;
 	bool showSign = false;
 	bool showUnit = true;
 	double multipl = 0;
-	TextLabel label;
 	Averager<double> averageValue;
+	bool valueValid = false;
+	Dali::Timer valueLateTimer;
 	Callback<double, double*> convertCb;
 };
 

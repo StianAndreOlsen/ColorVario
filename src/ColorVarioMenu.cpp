@@ -56,9 +56,9 @@ void Kystsoft::ColorVario::Menu::create(const Dali::Vector2& size)
 	createStatusLayer(size);
 
 	// hide automatically after 15 seconds
-	autoHide = Dali::Timer::New(15000);
-	autoHide.TickSignal().Connect(this, &Menu::onAutoHide);
-	autoHide.Start();
+	autoHideTimer = Dali::Timer::New(15000);
+	autoHideTimer.TickSignal().Connect(this, &Menu::onAutoHide);
+	autoHideTimer.Start();
 }
 
 void Kystsoft::ColorVario::Menu::setVisible(bool visible)
@@ -75,12 +75,12 @@ void Kystsoft::ColorVario::Menu::setVisible(bool visible)
 	if (visible)
 	{
 		control.SetKeyInputFocus();
-		autoHide.Start();
+		autoHideTimer.Start();
 	}
 	else
 	{
 		control.ClearKeyInputFocus();
-		autoHide.Stop();
+		autoHideTimer.Stop();
 	}
 }
 
@@ -144,9 +144,17 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	enableBluetoothButton.setChecked(false);
 	layer.Add(enableBluetoothButton);
 
+	// TODO: Remove this code when bluetooth is implemented, and adjust the button positions
+	enableBluetoothButton.disable();
+	enableBluetoothButton.SetVisible(false);
+	spacing = radius / 1.5;
+	angle = 2 * std::asin((radius + spacing / 2) / centerRadius); // angle between buttons
+
 	// lock display button
-	x = -centerRadius * std::sin(angle);
-	y =  centerRadius * std::cos(angle) - menuRadius;
+//	x = -centerRadius * std::sin(angle);
+//	y =  centerRadius * std::cos(angle) - menuRadius;
+	x = -centerRadius * std::sin(1.5 * angle);
+	y =  centerRadius * std::cos(1.5 * angle) - menuRadius;
 	auto lockDisplayButton = PushButton::New();
 	lockDisplayButton.SetSize(width, height);
 	lockDisplayButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
@@ -159,8 +167,10 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	layer.Add(lockDisplayButton);
 
 	// mute audio button
-	x = 0;
-	y = centerRadius - menuRadius;
+//	x = 0;
+//	y = centerRadius - menuRadius;
+	x = -centerRadius * std::sin(0.5 * angle);
+	y =  centerRadius * std::cos(0.5 * angle) - menuRadius;
 	auto muteAudioButton = PushButton::New();
 	muteAudioButton.SetSize(width, height);
 	muteAudioButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
@@ -173,8 +183,10 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	layer.Add(muteAudioButton);
 
 	// message button
-	x = centerRadius * std::sin(angle);
-	y = centerRadius * std::cos(angle) - menuRadius;
+//	x = centerRadius * std::sin(angle);
+//	y = centerRadius * std::cos(angle) - menuRadius;
+	x = centerRadius * std::sin(0.5 * angle);
+	y = centerRadius * std::cos(0.5 * angle) - menuRadius;
 	auto messageButton = PushButton::New();
 	messageButton.SetSize(width, height);
 	messageButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
@@ -185,8 +197,10 @@ void Kystsoft::ColorVario::Menu::createButtonLayer(const Dali::Vector2& menuSize
 	layer.Add(messageButton);
 
 	// quit button
-	x = centerRadius * std::sin(2 * angle);
-	y = centerRadius * std::cos(2 * angle) - menuRadius;
+//	x = centerRadius * std::sin(2 * angle);
+//	y = centerRadius * std::cos(2 * angle) - menuRadius;
+	x = centerRadius * std::sin(1.5 * angle);
+	y = centerRadius * std::cos(1.5 * angle) - menuRadius;
 	auto quitButton = PushButton::New();
 	quitButton.SetSize(width, height);
 	quitButton.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
@@ -222,6 +236,7 @@ void Kystsoft::ColorVario::Menu::createStatusLayer(const Dali::Vector2& menuSize
 	locationIcon.SetParentOrigin(Dali::ParentOrigin::TOP_CENTER);
 	locationIcon.SetAnchorPoint(Dali::AnchorPoint::TOP_CENTER);
 	locationIcon.SetPosition(0, margin);
+	locationIcon.SetVisible(false);
 	layer.Add(locationIcon);
 }
 

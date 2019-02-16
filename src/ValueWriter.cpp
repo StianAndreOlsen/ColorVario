@@ -1,23 +1,40 @@
 #include "ValueWriter.h"
+#include <algorithm>
 #include <sstream>
+
+Kystsoft::ValueWriter::ValueWriter()
+{
+	valueLateTimer = Dali::Timer::New(2000); // default period
+	valueLateTimer.TickSignal().Connect(this, &ValueWriter::onValueLate);
+}
+
+void Kystsoft::ValueWriter::setSamplingInterval(double interval)
+{
+	averageValue.setSamplingInterval(interval);
+	auto milliSec = static_cast<unsigned int>(2 * interval * 1000 + 0.5);
+	milliSec = std::max(1000u, milliSec); // at least one second
+	auto running = valueLateTimer.IsRunning();
+	valueLateTimer.SetInterval(milliSec);
+	if (!running)
+		valueLateTimer.Stop();
+}
 
 void Kystsoft::ValueWriter::setPaper(TextLabel paper)
 {
 	if (label != paper)
 	{
-		if (label)
-			label.setText(title());
+		write(title());
 		label = paper;
-		if (label)
-			label.setText(writtenText());
+		write(writtenText());
 	}
 }
 
 void Kystsoft::ValueWriter::setValue(double value)
 {
 	averageValue += value;
-	if (label)
-		label.setText(writtenText());
+	valueValid = true;
+	write(writtenText());
+	valueLateTimer.Start();
 }
 
 double Kystsoft::ValueWriter::convertedValue() const
@@ -29,6 +46,8 @@ double Kystsoft::ValueWriter::convertedValue() const
 
 std::string Kystsoft::ValueWriter::writtenText() const
 {
+	if (!valueValid)
+		return title();
 	std::ostringstream os;
 	os.precision(15);
 	if (showSign)
@@ -45,4 +64,17 @@ void Kystsoft::ValueWriter::load(const Settings& settings, const std::string& se
 	setShowUnit(settings.value(section + ".showUnit", true));
 	setAveragingInterval(settings.value(section + ".averagingInterval", 1.0));
 //	setRoundToNearest(settings.value(section + ".roundToNearest", 1.0));
+}
+
+void Kystsoft::ValueWriter::write(const std::string& text)
+{
+	if (label)
+		label.setText(text);
+}
+
+bool Kystsoft::ValueWriter::onValueLate()
+{
+	valueValid = false;
+	write(title());
+	return false;
 }

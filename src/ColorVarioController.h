@@ -6,10 +6,9 @@
 #include "ColorVarioUserInterface.h"
 #include "Cpu.h"
 #include "Display.h"
-#include "LocationManager.h"
+#include "LocationModule.h"
 #include "SoundManager.h"
 #include "Variometer.h"
-#include <memory>
 
 namespace Kystsoft {
 namespace ColorVario {
@@ -26,27 +25,35 @@ private:
 	void saveAltitudeOffset();
 	void goBack() { app.Lower(); }
 	void quit() { saveAltitudeOffset(); app.Quit(); }
+	bool startVariometer();
+	bool startGps();
+	bool startBluetooth();
+	bool startOrStopGps();
+	static Message aboutMessage();
+	static Message variometerStartError();
+	static Message gpsNotSupportedWarning();
+	static Message gpsNotAvailableWarning();
 	void onPause(Dali::Application& application);
 	void onResume(Dali::Application& application);
 	void onContextLost(); // TODO: Remove after testing
 	void onContextRegained(); // TODO: Remove after testing
-	void onPageTapDetected();
-	void onLocationUpdated(const Location& location);
+	void onPageTapDetected() { startVariometer(); }
 	void onDisplayStateChanged(display_state_e state);
-	void onAltitudeSignal(double altitude);
-	void onAltitudeOffsetChanged(double offset);
-	static Message aboutMessage();
-	static Message variometerStartError();
+	void onAltitudeOffsetChanged(double offset) { vario.setAltitudeOffset(offset); }
+	void onLocationEnabled(bool enabled);
+	void onLocationUpdated(Location location);
 	Dali::Application& app;
 	UserInterface ui;
 	SoundManager soundManager;
 	Cpu cpu;
 	Display display;
 	bool displayLockPaused = false;
-	std::unique_ptr<LocationManager> gps;
-	time_t gpsStartTime = 0;
-	double gpsBestAccuracy = 1e+6;
 	Variometer vario;
+	LocationModule gps;
+	time_t gpsStartTime = 0;
+	bool gpsStopped = false;
+	double gpsBestAccuracy = 1e+6;
+	Dali::Timer gpsStartOrStopTimer;
 //	BluetoothAdapter btAdapter;
 //	std::unique_ptr<BluetoothAdvertiser> bleAdvertiser;
 };

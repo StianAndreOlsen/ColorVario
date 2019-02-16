@@ -12,19 +12,12 @@
 Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	: app(application)
 	, soundManager(SOUND_TYPE_MEDIA)
+	, gps(LOCATIONS_METHOD_GPS)
 {
 	// connect application signals
 	app.InitSignal().Connect(this, &Controller::create);
 	app.PauseSignal().Connect(this, &Controller::onPause);
 	app.ResumeSignal().Connect(this, &Controller::onResume);
-
-	// connect variometer signals
-	vario.altitudeSignal().connect(this, &Controller::onAltitudeSignal);
-	vario.altitudeSignal().connect(&ui, &UserInterface::setAltitude);
-	vario.climbSignal().connect(&ui, &UserInterface::setClimb);
-
-	// connect display signals
-	display.stateChangedSignal().connect(this, &Controller::onDisplayStateChanged);
 
 	// connect user interface signals
 	ui.goBackSignal().connect(this, &Controller::goBack);
@@ -32,9 +25,23 @@ Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	ui.quitSignal().connect(this, &Controller::quit);
 	ui.pageTapDetectedSignal().connect(this, &Controller::onPageTapDetected);
 	ui.altitudeOffsetChangedSignal().connect(this, &Controller::onAltitudeOffsetChanged);
+
+	// connect display signals
+	display.stateChangedSignal().connect(this, &Controller::onDisplayStateChanged);
+
+	// connect variometer signals
+	vario.altitudeSignal().connect(&ui, &UserInterface::setAltitude);
+	vario.climbSignal().connect(&ui, &UserInterface::setClimb);
+
+	// connect gps signals
+	gps.enabledSignal().connect(this, &Controller::onLocationEnabled);
+	gps.locationSignal().connect(this, &Controller::onLocationUpdated);
+
+	// create timers
+	gpsStartOrStopTimer = Dali::Timer::New(5000);
+	gpsStartOrStopTimer.TickSignal().Connect(this, &Controller::startOrStopGps);
 }
 
-// The init signal is received only once during the application lifetime
 void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/)
 {
 	// exceptions does not propagate to main, probably because we are in a different thread
@@ -42,54 +49,19 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 	{
 		createUi();
 		ui.addMessage(aboutMessage());
+
 		load(settingsFromFiles());
+		gps.loadGeoid(appSharedResourcePath() + "Geoid.dat");
 
-		// create, connect and start gps
-		// TODO: Consider encapsulating this into a LocationModule/GpsModule class where I also check if location/GPS services are available
-		try
+		startVariometer();
+		if (gps.isLocationMethodSupported())
 		{
-			gps = std::make_unique<LocationManager>(LOCATIONS_METHOD_GPS);
-			gps->loadGeoid(appSharedResourcePath() + "Geoid.dat");
-			gps->startedSignal().connect(&ui, &UserInterface::setLocationEnabled);
-			gps->locationSignal().connect(this, &Controller::onLocationUpdated);
-			gps->start();
+			startGps();
+			gpsStartOrStopTimer.Start();
 		}
-		catch (std::exception& e)
-		{
-			dlog(DLOG_ERROR) << e.what();
-			gps.reset(); // destroy gps
-		}
-
-		// start variometer
-		try
-		{
-			vario.start();
-			// TODO: Remove when finished testing!
-//			throw std::runtime_error("Just testing!");
-		}
-		catch (std::exception& e)
-		{
-			dlog(DLOG_ERROR) << e.what();
-			ui.addMessage(variometerStartError());
-		}
-
-		// TODO: Create a function/class for this
-		// start Bluetooth
-		/*
-		if (btAdapter.isEnabled())
-		{
-			try
-			{
-				bleAdvertiser = std::make_unique<BluetoothAdvertiser>();
-//				bleAdvertiser->addServiceUuid("FFE0"); // TODO: First, I thought this was required but it's not. Consider removing!
-				bleAdvertiser->start();
-			}
-			catch (std::exception& e)
-			{
-				dlog(DLOG_ERROR) << e.what();
-			}
-		}
-		*/
+		else
+			ui.addMessage(gpsNotSupportedWarning());
+		startBluetooth();
 	}
 	catch (std::exception& e)
 	{
@@ -108,7 +80,7 @@ void Kystsoft::ColorVario::Controller::createUi()
 	ui.create();
 
 	// connect stage signals
-	Dali::Stage stage = Dali::Stage::GetCurrent();
+	auto stage = Dali::Stage::GetCurrent();
 	stage.ContextLostSignal().Connect(this, &Controller::onContextLost);
 	stage.ContextRegainedSignal().Connect(this, &Controller::onContextRegained);
 }
@@ -138,7 +110,7 @@ void Kystsoft::ColorVario::Controller::load(const Settings& settings)
 	// sampling intervals
 	ui.setAltitudeSamplingInterval(vario.samplingInterval());
 	ui.setClimbSamplingInterval(vario.samplingInterval());
-	ui.setSpeedSamplingInterval(1); // TODO: Update with data from GPS
+	ui.setSpeedSamplingInterval(gps.samplingInterval());
 
 	// sounds, colors and labels
 	ui.load(settings);
@@ -199,6 +171,144 @@ void Kystsoft::ColorVario::Controller::saveAltitudeOffset()
 		dlog(DLOG_ERROR) << "Unable to save altitude offset to \"" << offsetFile << "\"";
 }
 
+bool Kystsoft::ColorVario::Controller::startVariometer()
+{
+	if (vario.isStarted())
+		return true;
+	try
+	{
+		vario.start();
+		// TODO: Remove when finished testing!
+//		throw std::runtime_error("Just testing!");
+	}
+	catch (std::exception& e)
+	{
+		dlog(DLOG_ERROR) << e.what();
+		ui.addMessage(variometerStartError());
+		return false;
+	}
+	ui.removeMessage(variometerStartError());
+	return true;
+}
+
+bool Kystsoft::ColorVario::Controller::startGps()
+{
+	if (gps.isStarted())
+		return true;
+	if (!gps.isLocationMethodSupported())
+		return false;
+	gpsStartTime = 0;
+	gpsStopped = false;
+	try
+	{
+		gps.start();
+		// TODO: Remove when finished testing!
+//		throw std::runtime_error("Just testing!");
+	}
+	catch (std::exception& e)
+	{
+		// TODO: Consider logging everything except "GPS not enabled"
+		// for now; skip logging to avoid filling up the log when GPS is disabled
+//		dlog(DLOG_ERROR) << e.what();
+		ui.setLocationEnabled(false);
+		ui.addMessage(gpsNotAvailableWarning());
+		return false;
+	}
+	ui.setLocationEnabled(true);
+	ui.removeMessage(gpsNotAvailableWarning());
+	return true;
+}
+
+bool Kystsoft::ColorVario::Controller::startBluetooth()
+{
+	return false;
+	// TODO: Create a BluetoothModule class a la LocationModule
+/*
+	if (btAdapter.isEnabled())
+	{
+		try
+		{
+			bleAdvertiser = std::make_unique<BluetoothAdvertiser>();
+//			bleAdvertiser->addServiceUuid("FFE0"); // TODO: First, I thought this was required but it's not. Consider removing!
+			bleAdvertiser->start();
+		}
+		catch (std::exception& e)
+		{
+			dlog(DLOG_ERROR) << e.what();
+		}
+	}
+*/
+}
+
+bool Kystsoft::ColorVario::Controller::startOrStopGps()
+{
+	if (gps.isStarted())
+	{
+		if (ui.isGpsRequired())
+			gpsStartTime = std::time(nullptr); // fake start time to avoid stopping it immediately when not required
+		else if (gpsStartTime > 0)
+		{
+			auto seconds = std::difftime(std::time(nullptr), gpsStartTime);
+			if ((seconds > 60 && gpsBestAccuracy < 10) || seconds > 10 * 60)
+			{
+				gpsStopped = true;
+				gps.stop();
+			}
+		}
+	}
+	else if (ui.isGpsRequired() || !gpsStopped)
+		startGps();
+	return true;
+}
+
+Kystsoft::Message Kystsoft::ColorVario::Controller::aboutMessage()
+{
+	std::string about
+	(
+		"Developed by\n"      // hard line breaks are required
+		"Kyrre Holm and\n"    // since TextLabel breaks lines
+		"Stian Andre Olsen\n" // even at no-break spaces
+		"\n"
+		"Please visit facebook.com/ColorVariometer"
+	);
+	return Message::information("ColorVario 2.0.0", about);
+}
+
+Kystsoft::Message Kystsoft::ColorVario::Controller::variometerStartError()
+{
+	std::string text
+	(
+		"The variometer won't start. No signal from pressure sensor.\n"
+		"\n"
+		"Tap main page to attempt a restart."
+	);
+	return Message::error("Variometer Error", text);
+}
+
+Kystsoft::Message Kystsoft::ColorVario::Controller::gpsNotSupportedWarning()
+{
+	std::string text
+	(
+		"GPS location is not supported by your device.\n"
+		"\n"
+		"Ground speed will never be displayed and altitude will not get calibrated. "
+		"However, climb values are valid and you can manually calibrate the altitude."
+	);
+	return Message::warning("GPS Not Supported", text);
+}
+
+Kystsoft::Message Kystsoft::ColorVario::Controller::gpsNotAvailableWarning()
+{
+	std::string text
+	(
+		"Please check that GPS location is enabled.\n"
+		"\n"
+		"If connected to a phone, enable the GPS on the phone. "
+		"If operating standalone, enable the GPS on the watch."
+	);
+	return Message::warning("GPS Not Available", text);
+}
+
 void Kystsoft::ColorVario::Controller::onPause(Dali::Application& /*application*/)
 {
 	if (display.isLocked())
@@ -229,26 +339,32 @@ void Kystsoft::ColorVario::Controller::onContextRegained()
 	dlog(DLOG_INFO) << "Context regained!";
 }
 
-void Kystsoft::ColorVario::Controller::onPageTapDetected()
+void Kystsoft::ColorVario::Controller::onDisplayStateChanged(display_state_e state)
 {
-	if (vario.isStarted())
-		return;
-	try
-	{
-		vario.start();
-	}
-	catch (std::exception& e)
-	{
-		dlog(DLOG_ERROR) << e.what();
-		return; // error message already added
-	}
-	ui.removeMessage(variometerStartError());
+	if (state == DISPLAY_STATE_NORMAL)
+		app.GetWindow().Activate();
 }
 
-void Kystsoft::ColorVario::Controller::onLocationUpdated(const Location& location)
+void Kystsoft::ColorVario::Controller::onLocationEnabled(bool enabled)
+{
+	ui.setLocationEnabled(enabled);
+	if (enabled)
+	{
+		ui.removeMessage(gpsNotAvailableWarning());
+		gpsStartTime = std::time(nullptr);
+		gpsStopped = false;
+	}
+	else if (!gpsStopped)
+	{
+		ui.addMessage(gpsNotAvailableWarning());
+		gpsStartTime = 0;
+	}
+}
+
+void Kystsoft::ColorVario::Controller::onLocationUpdated(Location location)
 {
 	// calibrate altimeter and set appropriate altitude label colors
-	double accuracy = location.vertical;
+	auto accuracy = location.vertical;
 	if (accuracy <= 0)
 		accuracy = location.horizontal;
 	if (accuracy <= gpsBestAccuracy)
@@ -258,62 +374,11 @@ void Kystsoft::ColorVario::Controller::onLocationUpdated(const Location& locatio
 		ui.setAltitudeAccuracy(accuracy);
 	}
 
-	// update user interface
+	// update speed label
 	ui.setSpeed(location.speed);
-
-	// consider stopping the gps
-	double seconds = 0;
-	if (gpsStartTime == 0)
-		gpsStartTime = location.timestamp;
-	else
-		seconds = std::difftime(location.timestamp, gpsStartTime);
-	if ((seconds > 60 && gpsBestAccuracy < 10) || seconds > 10 * 60)
-		gps->stop(); // Note: Cannot destroy the GPS here, since this function is called from the GPS signal
 
 	// TODO: Remove when Bluetooth implementation is finished
 	// consider stopping the Bluetooth advertiser
 //	if (seconds > 20)
 //		bleAdvertiser->stop();
-}
-
-void Kystsoft::ColorVario::Controller::onDisplayStateChanged(display_state_e state)
-{
-	if (state == DISPLAY_STATE_NORMAL)
-		app.GetWindow().Activate();
-}
-
-void Kystsoft::ColorVario::Controller::onAltitudeSignal(double /*altitude*/)
-{
-	// destroy the gps if it's not running
-	if (gps && !gps->isStarted())
-		gps.reset(); // destroy gps
-}
-
-void Kystsoft::ColorVario::Controller::onAltitudeOffsetChanged(double offset)
-{
-	vario.setAltitudeOffset(offset);
-}
-
-Kystsoft::Message Kystsoft::ColorVario::Controller::aboutMessage()
-{
-	std::string about
-	(
-		"Developed by\n"      // hard line breaks are required
-		"Kyrre Holm and\n"    // since TextLabel breaks lines
-		"Stian Andre Olsen\n" // even at no-break spaces
-		"\n"
-		"Please visit facebook.com/ColorVariometer"
-	);
-	return Message::information("ColorVario 2.0.0", about);
-}
-
-Kystsoft::Message Kystsoft::ColorVario::Controller::variometerStartError()
-{
-	std::string text
-	(
-		"The variometer won't start. No signal from pressure sensor.\n"
-		"\n"
-		"Tap main page to attempt a restart."
-	);
-	return Message::error("Variometer Error", text);
 }
