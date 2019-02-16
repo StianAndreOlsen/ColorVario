@@ -10,6 +10,7 @@ class AltitudePainter : public ValuePainter
 public:
 	AltitudePainter() {}
 	void load(const Settings& settings) override { ValuePainter::load(settings, "AltitudeColor"); }
+	double altitude() const { return value(); }
 	void setAltitude(double altitude) { setValue(altitude); }
 };
 

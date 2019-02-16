@@ -28,6 +28,7 @@ public:
 	UserInterface& operator=(const UserInterface& rhs) = delete;
 	void create();
 	void load(const Settings& settings);
+	bool isGpsRequired() const { return pageView.currentPageIndex() == 2; }
 	void setAltitudeSamplingInterval(double interval);
 	void setClimbSamplingInterval(double interval);
 	void setSpeedSamplingInterval(double interval);

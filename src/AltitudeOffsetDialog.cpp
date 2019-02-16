@@ -11,11 +11,6 @@ void Kystsoft::AltitudeOffsetDialog::create(const Dali::Vector2& size)
 	visibleTimer = Dali::Timer::New(250);
 	visibleTimer.TickSignal().Connect(this, &AltitudeOffsetDialog::onVisibleTimer);
 
-	offsetWriter.setTitle("Offset");
-	offsetWriter.setAlwaysShowSign(true);
-	offsetWriter.setRoundToNearest(1);
-	altitudeWriter.setRoundToNearest(1);
-
 	auto width = size.width;
 	auto height = size.height / 6;
 	auto resourceDir = appSharedResourcePath();
@@ -49,15 +44,12 @@ void Kystsoft::AltitudeOffsetDialog::create(const Dali::Vector2& size)
 	altitudeLabl.setVerticalAlignment("CENTER");
 	altitudeLabl.setHorizontalAlignment("CENTER");
 	altitudeLabl.setTextColor(Color::error());
-//	altitudeLabl.setPointSize(15);
 	control.Add(altitudeLabl);
 
 	width = size.width * 4 / 6;
 	height = size.height / 4;
 
-	// TODO: Choose the best term!
 	auto tipLabel = TextLabel::New("Press and hold\nto reset");
-//	auto tipLabel = TextLabel::New("Long press\nto reset");
 	tipLabel.SetSize(width, height);
 	tipLabel.SetParentOrigin(Dali::ParentOrigin::BOTTOM_CENTER);
 	tipLabel.SetAnchorPoint(Dali::AnchorPoint::BOTTOM_CENTER);
@@ -103,6 +95,12 @@ void Kystsoft::AltitudeOffsetDialog::create(const Dali::Vector2& size)
 	longPressDetector.DetectedSignal().Connect(this, &AltitudeOffsetDialog::onLongPressDetected);
 }
 
+void Kystsoft::AltitudeOffsetDialog::load(const Settings& settings)
+{
+	offsetWriter.load(settings);
+	altitudeWriter.load(settings);
+}
+
 void Kystsoft::AltitudeOffsetDialog::reject()
 {
 	setOffset(initialOffset);
@@ -111,17 +109,15 @@ void Kystsoft::AltitudeOffsetDialog::reject()
 
 void Kystsoft::AltitudeOffsetDialog::close()
 {
-	// TODO: Discuss with Kyrre if close should keep the value
 	setOffset(initialOffset);
 	Dialog::close();
 }
 
 void Kystsoft::AltitudeOffsetDialog::setOffset(double offset)
 {
-	if (currentOffset != offset)
+	if (offsetWriter.offset() != offset)
 	{
-		currentOffset = offset;
-		offsetWriter.setValue(offset);
+		offsetWriter.setOffset(offset);
 		offsetChangedSignl.emit(offset);
 	}
 }
@@ -141,31 +137,14 @@ void Kystsoft::AltitudeOffsetDialog::onWheelEvent(const Dali::WheelEvent& event)
 
 void Kystsoft::AltitudeOffsetDialog::increment()
 {
-	updateDelta();
-	setOffset(currentOffset + currentDelta);
+	offsetWriter.incrementOffset();
+	offsetChangedSignl.emit(offsetWriter.offset());
 }
 
 void Kystsoft::AltitudeOffsetDialog::decrement()
 {
-	updateDelta();
-	setOffset(currentOffset - currentDelta);
-}
-
-void Kystsoft::AltitudeOffsetDialog::updateDelta()
-{
-	auto timeElapsed = deltaTimer.seconds();
-	if (timeElapsed > 2.5)
-		currentDelta = initialDelta;
-	else if (timeElapsed > 1.5 && currentDelta > 5 * initialDelta)
-		currentDelta /= 10;
-	else if (timeElapsed < 0.5 && currentDelta < 500 * initialDelta)
-	{
-		auto x = currentOffset;
-		auto m = currentDelta;
-		if (std::fabs(mround(x, 10 * m) - mround(x, m)) < m / 2)
-			currentDelta *= 10;
-	}
-	deltaTimer.start();
+	offsetWriter.decrementOffset();
+	offsetChangedSignl.emit(offsetWriter.offset());
 }
 
 void Kystsoft::AltitudeOffsetDialog::onLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture)
@@ -175,7 +154,7 @@ void Kystsoft::AltitudeOffsetDialog::onLongPressDetected(Dali::Actor actor, cons
 		if (actor == offsetLabl)
 			setOffset(0);
 		else if (actor == altitudeLabl)
-			setOffset(-(altitudeWriter.value() - currentOffset));
+			setOffset(-(altitudeWriter.altitude() - offsetWriter.offset()));
 	}
 }
 
@@ -184,7 +163,7 @@ void Kystsoft::AltitudeOffsetDialog::onVisible(bool visible)
 	if (visible)
 	{
 		visibleTimer.Start();
-		initialOffset = currentOffset;
+		initialOffset = offsetWriter.offset();
 	}
 	else
 	{

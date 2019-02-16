@@ -65,7 +65,7 @@ struct Color : public Dali::Vector4
 	// system palette, https://developer.tizen.org/design/wearable/visual-design/colors
 	static Color systemBackground() { return Color(0, 0, 0); }
 	static Color systemPoint() { return fromRGBA(0x4CCFFF, 1.0f); }
-	static Color systemButton() { return fromRGBA(0x00354A, 0.9f); }
+	static Color systemButtonBackground() { return fromRGBA(0x00354A, 0.9f); }
 	static Color systemButtonPressEffect() { return fromRGBA(0x0092CC, 0.3f); }
 	static Color systemMainText() { return Color(1, 1, 1); }
 	static Color systemSubText() { return fromRGBA(0xC7C7C7, 1.0f); }
@@ -77,8 +77,8 @@ struct Color : public Dali::Vector4
 	static Color mainText() { return fromRGBA(0xF9F9F9, 1.0f); } // most standard watch apps use this
 	static Color subText() { return systemSubText(); }
 	static Color defaultText() { return systemDefaultText(); }
-	static Color button() { return systemButton().alphaBlended(window(), 1); } // Dali don't use gamma correction
-	static Color buttonPressed() { return systemButtonPressEffect().alphaBlended(button(), 1); } // Dali don't use gamma correction
+	static Color button() { return systemButtonBackground().alphaBlended(window(), 1); } // Dali doesn't use gamma correction
+	static Color buttonPressed() { return systemButtonPressEffect().alphaBlended(button(), 1); } // Dali doesn't use gamma correction
 	static Color buttonText() { return systemMainText(); }
 	static Color disabled() { return fromRGBA(0x808080, 1.0f); }
 	static Color information() { return headingText(); }

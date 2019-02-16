@@ -46,6 +46,7 @@ void Kystsoft::ColorVario::UserInterface::load(const Settings& settings)
 	altitudeWriter.load(settings);
 	climbWriter.load(settings);
 	speedWriter.load(settings);
+	altitudeOffsetDialog.load(settings);
 }
 
 void Kystsoft::ColorVario::UserInterface::setAltitudeSamplingInterval(double interval)

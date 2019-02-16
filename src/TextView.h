@@ -22,6 +22,7 @@ public:
 private:
 	void updateRuler();
 	void onTextLabelRelayout(Dali::Actor) { updateRuler(); }
+	void onScrollCompleted(const Dali::Vector2& currentScrollPosition);
 	float height = 0;
 	Dali::Toolkit::ScrollView scrollView;
 	Dali::Toolkit::RulerPtr rulerY;

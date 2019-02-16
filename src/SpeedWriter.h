@@ -11,6 +11,7 @@ public:
 	SpeedWriter() { setTitle("Speed"); setUnit("km/h"); }
 	void load(const Settings& settings) override { ValueWriter::load(settings, "SpeedLabel"); }
 	void setUnit(const std::string& unit) override;
+	double speed() const { return value(); }
 	void setSpeed(double speed) { setValue(speed); }
 };
 

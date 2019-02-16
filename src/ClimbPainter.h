@@ -10,6 +10,7 @@ class ClimbPainter : public ValuePainter
 public:
 	ClimbPainter() {}
 	void load(const Settings& settings) override { ValuePainter::load(settings, "ClimbColor"); }
+	double climb() const { return value(); }
 	void setClimb(double climb) { setValue(climb); }
 };
 

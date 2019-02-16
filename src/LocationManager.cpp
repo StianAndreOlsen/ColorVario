@@ -8,6 +8,7 @@ Kystsoft::LocationManager::LocationManager(location_method_e method, int interva
 	create(method);
 	try
 	{
+		setServiceStateChangedCallback();
 		setPositionUpdatedCallback(interval);
 	}
 	catch (...)
@@ -22,6 +23,8 @@ Kystsoft::LocationManager::~LocationManager() noexcept
 	try { stop(); }
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 	try { unsetPositionUpdatedCallback(); }
+		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
+	try { unsetServiceStateChangedCallback(); }
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
 	try { destroy(); }
 		catch (std::exception& e) { dlog(DLOG_ERROR) << e.what(); }
@@ -42,7 +45,7 @@ void Kystsoft::LocationManager::start()
 	int error = location_manager_start(manager);
 	if (error != LOCATIONS_ERROR_NONE)
 		throw TizenError("location_manager_start", error);
-	startedSignl.emit(started = true);
+	started = true;
 }
 
 void Kystsoft::LocationManager::stop()
@@ -52,7 +55,7 @@ void Kystsoft::LocationManager::stop()
 	int error = location_manager_stop(manager);
 	if (error != LOCATIONS_ERROR_NONE)
 		throw TizenError("location_manager_stop", error);
-	startedSignl.emit(started = false);
+	started = false;
 }
 
 void Kystsoft::LocationManager::toggleStartStop()
@@ -78,6 +81,20 @@ void Kystsoft::LocationManager::destroy()
 	manager = nullptr;
 }
 
+void Kystsoft::LocationManager::setServiceStateChangedCallback()
+{
+	int error = location_manager_set_service_state_changed_cb(manager, serviceStateChanged, this);
+	if (error != LOCATIONS_ERROR_NONE)
+		throw TizenError("location_manager_set_service_state_changed_cb", error);
+}
+
+void Kystsoft::LocationManager::unsetServiceStateChangedCallback()
+{
+	int error = location_manager_unset_service_state_changed_cb(manager);
+	if (error != LOCATIONS_ERROR_NONE)
+		throw TizenError("location_manager_unset_service_state_changed_cb", error);
+}
+
 void Kystsoft::LocationManager::setPositionUpdatedCallback(int interval)
 {
 	int error = location_manager_set_position_updated_cb(manager, positionUpdated, interval, this);
@@ -92,11 +109,23 @@ void Kystsoft::LocationManager::unsetPositionUpdatedCallback()
 		throw TizenError("location_manager_unset_position_updated_cb", error);
 }
 
+void Kystsoft::LocationManager::serviceStateChanged(location_service_state_e state, void* user_data)
+{
+	LocationManager* manager = static_cast<LocationManager*>(user_data);
+	if (manager)
+		manager->onServiceStateChanged(state);
+}
+
 void Kystsoft::LocationManager::positionUpdated(double /*latitude*/, double /*longitude*/, double /*altitude*/, time_t /*timestamp*/, void* user_data)
 {
 	LocationManager* manager = static_cast<LocationManager*>(user_data);
 	if (manager)
 		manager->onPositionUpdated();
+}
+
+void Kystsoft::LocationManager::onServiceStateChanged(location_service_state_e state)
+{
+	enabledSignl.emit(state == LOCATIONS_SERVICE_ENABLED);
 }
 
 void Kystsoft::LocationManager::onPositionUpdated()
@@ -116,8 +145,6 @@ void Kystsoft::LocationManager::onPositionUpdated()
 	);
 	if (error != LOCATIONS_ERROR_NONE)
 		throw TizenError("location_manager_get_last_location", error);
-	if (datum == GeodeticDatum::Geoid)
-		location.altitude -= geoid.height(location.latitude, location.longitude);
 	location.speed /= 3.6; // convert from km/h to m/s
 	location.climb /= 3.6; // convert from km/h to m/s
 	location.direction = std::fmod(location.direction, 360.0); // make sure it's within [0, 360)

@@ -11,6 +11,7 @@ public:
 	AltitudeWriter() { setTitle("Altitude"); setUnit("m"); }
 	void load(const Settings& settings) override { ValueWriter::load(settings, "AltitudeLabel"); }
 	void setUnit(const std::string& unit) override;
+	double altitude() const { return value(); }
 	void setAltitude(double altitude) { setValue(altitude); }
 };
 

@@ -23,6 +23,8 @@ void Kystsoft::TextView::create(const Dali::Vector2& size)
 	// TODO: Search for functions that enables scrolling to continue after a flick
 //	scrollView.SetScrollFlickAlphaFunction(Dali::AlphaFunction::EASE_OUT);
 
+	scrollView.ScrollCompletedSignal().Connect(this, &TextView::onScrollCompleted);
+
 	// default margins
 	auto r = Dali::Stage::GetCurrent().GetSize().height / 2;
 	auto x = size.width / 2;
@@ -105,4 +107,9 @@ void Kystsoft::TextView::updateRuler()
 	rulerY->SetDomain(Dali::Toolkit::RulerDomain(0, scrollHeight));
 
 	scrollToTop();
+}
+
+void Kystsoft::TextView::onScrollCompleted(const Dali::Vector2& currentScrollPosition)
+{
+	targetY = currentScrollPosition.y;
 }

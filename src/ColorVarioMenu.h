@@ -33,10 +33,10 @@ private:
 	void createStatusLayer(const Dali::Vector2& menuSize);
 	bool onAutoHide() { hide(); return false; }
 	void onStageEntered(Dali::Actor) { control.SetKeyInputFocus(); }
-	bool onTouch(Dali::Actor, const Dali::TouchData&) { autoHide.Start(); return true; }
+	bool onTouch(Dali::Actor, const Dali::TouchData&) { autoHideTimer.Start(); return true; }
 	bool onKeyEvent(Dali::Toolkit::Control control, const Dali::KeyEvent& event);
 	Dali::Toolkit::Control control;
-	Dali::Timer autoHide;
+	Dali::Timer autoHideTimer;
 };
 
 } // namespace ColorVario
