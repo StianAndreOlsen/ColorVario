@@ -14,7 +14,7 @@ public:
 	PushButton() {}
 	PushButton(const Dali::Toolkit::PushButton& other) : Dali::Toolkit::PushButton(other) {}
 	PushButton& operator=(const Dali::Toolkit::PushButton& rhs) { Dali::Toolkit::PushButton::operator=(rhs); return *this; }
-	static PushButton New() { return Dali::Toolkit::PushButton::New(); }
+	static PushButton New();
 	static PushButton DownCast(BaseHandle handle) { return Dali::Toolkit::PushButton::DownCast(handle); }
 	auto isDisabled() const { return GetProperty<bool>(Button::Property::DISABLED); }
 	void setDisabled(bool disable) { SetProperty(Button::Property::DISABLED, disable); }
@@ -30,6 +30,8 @@ public:
 	void setUnselectedImage(const std::string& file) { SetProperty(Button::Property::UNSELECTED_STATE_IMAGE, file); }
 	void setSelectedImage(const std::string& file) { SetProperty(Button::Property::SELECTED_STATE_IMAGE, file); }
 	void setDisabledImage(const std::string& file) { SetProperty(Button::Property::DISABLED_STATE_IMAGE, file); }
+	auto label() const { return GetProperty<std::string>(Button::Property::LABEL); }
+	void setLabel(const std::string& label) { SetProperty(Button::Property::LABEL, label); }
 };
 
 } // namespace Kystsoft

@@ -28,6 +28,7 @@ void Kystsoft::ColorVario::UserInterface::create()
 	longPressDetector.DetectedSignal().Connect(this, &UserInterface::onLongPressDetected);
 
 	// connect signals
+	menu.visibleSignal().connect(this, &UserInterface::onMenuVisible);
 	auto stage = Dali::Stage::GetCurrent();
 	stage.WheelEventSignal().Connect(this, &UserInterface::onWheelEvent);
 }
@@ -92,9 +93,10 @@ void Kystsoft::ColorVario::UserInterface::setAltitudeOffset(double offset)
 void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
 {
 	// synchronize mute audio button
-	if (pageView.currentPageIndex() == 0)
+	// TODO: Consider a separate timer and callback for this
+	if (pageView.currentPageIndex() == 0 && altitudeAudio.isStartedOrStopped())
 		menu.muteAudioButton().setChecked(!altitudeAudio.isStarted());
-	else if (pageView.currentPageIndex() > 0)
+	else if (pageView.currentPageIndex() > 0 && climbAudio.isStartedOrStopped())
 		menu.muteAudioButton().setChecked(!climbAudio.isStarted());
 
 	// TODO: Enable when creating new icon
@@ -273,6 +275,14 @@ void Kystsoft::ColorVario::UserInterface::onWheelEvent(const Dali::WheelEvent& e
 		altitudeOffsetDialog.onWheelEvent(event);
 	else
 		pageView.onWheelEvent(event);
+}
+
+void Kystsoft::ColorVario::UserInterface::onMenuVisible(bool visible)
+{
+	if (visible)
+		pageView.clearKeyInputFocus();
+	else
+		pageView.setKeyInputFocus();
 }
 
 void Kystsoft::ColorVario::UserInterface::onCurrentPageChanged(int newPageIndex)

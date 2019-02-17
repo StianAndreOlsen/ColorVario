@@ -19,6 +19,8 @@ public:
 	int currentPageIndex() const { return currentPage; }
 	int targetPageIndex() const { return targetPage; }
 	void showPage(int pageIndex) { scrollTo(pageIndex); }
+	void setKeyInputFocus() { scrollView.SetKeyInputFocus(); }
+	void clearKeyInputFocus() { scrollView.ClearKeyInputFocus(); }
 	void onWheelEvent(const Dali::WheelEvent& event);
 	const auto& goBackSignal() const { return goBackSignl; }
 	const auto& currentPageChangedSignal() const { return currentPageChangedSignl; }

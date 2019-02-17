@@ -10,11 +10,9 @@ bool Kystsoft::LocationModule::isLocationMethodSupported(location_method_e metho
 	case LOCATIONS_METHOD_WPS: return isWpsSupported();
 	case LOCATIONS_METHOD_HYBRID:
 		return isGpsSupported() || isWpsSupported(); // TODO: Figure out if the hybrid mode requires both
-	case LOCATIONS_METHOD_NONE:
-	case LOCATIONS_METHOD_PASSIVE:
+	default:
 		return false;
 	}
-	return false;
 }
 
 void Kystsoft::LocationModule::setStarted(bool started)

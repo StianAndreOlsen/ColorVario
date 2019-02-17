@@ -44,6 +44,7 @@ void Kystsoft::AltitudeOffsetDialog::create(const Dali::Vector2& size)
 	altitudeLabl.setVerticalAlignment("CENTER");
 	altitudeLabl.setHorizontalAlignment("CENTER");
 	altitudeLabl.setTextColor(Color::error());
+	altitudeLabl.setPointSize(13);
 	control.Add(altitudeLabl);
 
 	width = size.width * 4 / 6;

@@ -77,6 +77,16 @@ void Kystsoft::ValueAudio::toggleStartStop()
 		start();
 }
 
+bool Kystsoft::ValueAudio::isStartedOrStopped() const
+{
+	if (startedOrStopped)
+	{
+		startedOrStopped = false;
+		return true;
+	}
+	return false;
+}
+
 void Kystsoft::ValueAudio::setValue(double value)
 {
 	averageValue += value;
@@ -110,6 +120,7 @@ void Kystsoft::ValueAudio::load(const Settings& settings, const std::string& sec
 
 void Kystsoft::ValueAudio::onSoundStreamFocusChanged(int focus)
 {
+	startedOrStopped = true;
 	lastWriteTime = 0;
 	if (focus & SOUND_STREAM_FOCUS_FOR_PLAYBACK)
 	{
@@ -117,6 +128,9 @@ void Kystsoft::ValueAudio::onSoundStreamFocusChanged(int focus)
 		if (!muted)
 			audioOutput.prepare();
 		// Note: It's not allowed to release the focus in this callback
+		// TODO: Starting with Tizen 4.0 it is allowed to release the focus --> Consider doing so if muted!
+//		else
+//			stop();
 	}
 	else
 	{

@@ -27,6 +27,7 @@ Kystsoft::ClimbPage Kystsoft::ClimbPage::New(const Dali::Vector2& size)
 	altitudeLabel.setVerticalAlignment("CENTER");
 	altitudeLabel.setHorizontalAlignment("CENTER");
 	altitudeLabel.setTextColor(Color::error());
+	altitudeLabel.setPointSize(13);
 	page.Add(altitudeLabel);
 
 	return page;

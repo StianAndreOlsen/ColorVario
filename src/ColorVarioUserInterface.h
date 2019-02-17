@@ -58,6 +58,7 @@ private:
 	void onWheelEvent(const Dali::WheelEvent& event);
 	void onGoBack() { goBackSignl.emit(); }
 	void onCurrentPageChanged(int newPageIndex);
+	void onMenuVisible(bool visible);
 	bool onEnableBluetoothButtonClicked(Dali::Toolkit::Button button);
 	bool onLockDisplayButtonClicked(Dali::Toolkit::Button button);
 	bool onMuteAudioButtonClicked(Dali::Toolkit::Button button);
