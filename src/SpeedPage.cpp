@@ -16,6 +16,7 @@ Kystsoft::SpeedPage Kystsoft::SpeedPage::New(const Dali::Vector2& size)
 	altitudeLabel.setVerticalAlignment("CENTER");
 	altitudeLabel.setHorizontalAlignment("CENTER");
 	altitudeLabel.setTextColor(Color::error());
+	altitudeLabel.setPointSize(13);
 	page.Add(altitudeLabel);
 
 	auto climbLabel = TextLabel::New("Climb");
@@ -37,6 +38,7 @@ Kystsoft::SpeedPage Kystsoft::SpeedPage::New(const Dali::Vector2& size)
 	speedLabel.setVerticalAlignment("CENTER");
 	speedLabel.setHorizontalAlignment("CENTER");
 	speedLabel.setTextColor(Color::subText());
+	speedLabel.setPointSize(13);
 	page.Add(speedLabel);
 
 	return page;

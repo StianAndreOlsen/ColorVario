@@ -48,7 +48,7 @@ void Kystsoft::ColorVario::Menu::create(const Dali::Vector2& size)
 	appLabel.setVerticalAlignment("CENTER");
 	appLabel.setHorizontalAlignment("CENTER");
 	appLabel.setTextColor(Color::subText());
-	appLabel.setPointSize(8);
+	appLabel.setPointSize(9);
 	control.Add(appLabel);
 
 	// buttons and status icons
@@ -82,6 +82,7 @@ void Kystsoft::ColorVario::Menu::setVisible(bool visible)
 		control.ClearKeyInputFocus();
 		autoHideTimer.Stop();
 	}
+	visibleSignl.emit(visible);
 }
 
 void Kystsoft::ColorVario::Menu::showOrHide(float vy)
@@ -223,7 +224,7 @@ void Kystsoft::ColorVario::Menu::createStatusLayer(const Dali::Vector2& menuSize
 	layer.RaiseToTop();
 
 	// icon size and position
-	auto width = menuSize.width / 6 * 2 / 3;
+	auto width = menuSize.width / 6 / 2;
 	auto height = width;
 	auto margin = height / 8;
 

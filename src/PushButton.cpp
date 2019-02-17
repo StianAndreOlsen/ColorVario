@@ -1,5 +1,18 @@
 #include "PushButton.h"
 
+Kystsoft::PushButton Kystsoft::PushButton::New()
+{
+	PushButton button = Dali::Toolkit::PushButton::New();
+
+	// remove default label (equal to BOTTOM_BTN since Tizen 4.0)
+	button.setLabel("");
+
+	// remove default background (also introduced in Tizen 4.0)
+	button.SetBackgroundColor(Dali::Color::TRANSPARENT);
+
+	return button;
+}
+
 void Kystsoft::PushButton::setEllipticBackground(const Color& color)
 {
 	Dali::Property::Map background;

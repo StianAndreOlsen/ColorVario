@@ -44,7 +44,7 @@ void Kystsoft::TextView::create(const Dali::Vector2& size)
 	textLabel.setVerticalAlignment("TOP");
 	textLabel.setHorizontalAlignment("CENTER");
 	textLabel.setTextColor(Color::defaultText());
-	textLabel.setPointSize(8);
+	textLabel.setPointSize(7);
 	textLabel.setMultiLine(true);
 	textLabel.enableMarkup();
 	textLabel.OnRelayoutSignal().Connect(this, &TextView::onTextLabelRelayout);

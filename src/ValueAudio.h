@@ -28,6 +28,7 @@ public:
 	void start();
 	void stop() { soundStream.releasePlaybackFocus(); }
 	void toggleStartStop();
+	bool isStartedOrStopped() const; // returns true if audio is started or stopped since the last call to this function
 	const ValueSound& valueSound() const { return sound; }
 	void setValueSound(const ValueSound& valueSound) { sound = valueSound; }
 	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
@@ -40,6 +41,7 @@ private:
 	void onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested);
 	static bool muted;
 	static Signal<> mutedSignal;
+	mutable bool startedOrStopped = false;
 	Signal<>::ConnectionId mutedId = 0;
 	SoundStream soundStream;
 	AudioOutput audioOutput;
