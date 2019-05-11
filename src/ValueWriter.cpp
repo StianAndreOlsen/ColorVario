@@ -4,14 +4,14 @@
 
 Kystsoft::ValueWriter::ValueWriter()
 {
-	valueLateTimer = Dali::Timer::New(2000); // default period
+	valueLateTimer = Dali::Timer::New(5000); // default period
 	valueLateTimer.TickSignal().Connect(this, &ValueWriter::onValueLate);
 }
 
 void Kystsoft::ValueWriter::setSamplingInterval(double interval)
 {
 	averageValue.setSamplingInterval(interval);
-	auto milliSec = static_cast<unsigned int>(2 * interval * 1000 + 0.5);
+	auto milliSec = static_cast<unsigned int>(5 * interval * 1000 + 0.5);
 	milliSec = std::max(1000u, milliSec); // at least one second
 	auto running = valueLateTimer.IsRunning();
 	valueLateTimer.SetInterval(milliSec);

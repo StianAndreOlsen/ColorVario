@@ -26,6 +26,10 @@ Kystsoft::ColorVario::Controller::Controller(Dali::Application& application)
 	ui.pageTapDetectedSignal().connect(this, &Controller::onPageTapDetected);
 	ui.altitudeOffsetChangedSignal().connect(this, &Controller::onAltitudeOffsetChanged);
 
+	// connect privilege signals
+	privilegeManager.permissionGrantedSignal().connect(this, &Controller::onPermissionGranted);
+	privilegeManager.permissionDeniedSignal().connect(this, &Controller::onPermissionDenied);
+
 	// connect display signals
 	display.stateChangedSignal().connect(this, &Controller::onDisplayStateChanged);
 
@@ -47,12 +51,21 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 	// exceptions does not propagate to main, probably because we are in a different thread
 	try
 	{
+		// create user interface
 		createUi();
 		ui.addMessage(aboutMessage());
 
+		// get required permissions
+		if (!privilegeManager.getPermission("privilege/mediastorage"))
+			ui.addMessage(storageNotPermittedWarning());
+		if (gps.isLocationMethodSupported())
+			privilegeManager.getPermission("privilege/location");
+
+		// load settings and data
 		load(settingsFromFiles());
 		gps.loadGeoid(appSharedResourcePath() + "Geoid.dat");
 
+		// start variometer, gps and bluetooth
 		startVariometer();
 		if (gps.isLocationMethodSupported())
 		{
@@ -197,6 +210,12 @@ bool Kystsoft::ColorVario::Controller::startGps()
 		return true;
 	if (!gps.isLocationMethodSupported())
 		return false;
+	if (!gps.hasPermission())
+	{
+		ui.addMessage(gpsNotPermittedWarning());
+		return false;
+	}
+	ui.removeMessage(gpsNotPermittedWarning());
 	gpsStartTime = 0;
 	gpsStopped = false;
 	try
@@ -274,6 +293,23 @@ Kystsoft::Message Kystsoft::ColorVario::Controller::aboutMessage()
 	return Message::information("ColorVario 2.0.0", about);
 }
 
+Kystsoft::Message Kystsoft::ColorVario::Controller::storageNotPermittedWarning()
+{
+	std::string text
+	(
+		"ColorVario is not allowed to read from and write to the local media storage.\n"
+		"\n"
+		"If you deny access to the local media storage, ColorVario will not be able to:\n"
+		"\n"
+		"1. Read your custom settings from ColorVario.ini.\n"
+		"\n"
+		"2. Save and restore the altitude offset.\n"
+		"\n"
+		"3. Write debug information to ColorVario.log."
+	);
+	return Message::warning("Storage Not Permitted", text);
+}
+
 Kystsoft::Message Kystsoft::ColorVario::Controller::variometerStartError()
 {
 	std::string text
@@ -295,6 +331,19 @@ Kystsoft::Message Kystsoft::ColorVario::Controller::gpsNotSupportedWarning()
 		"However, climb values are valid and you can manually calibrate the altitude."
 	);
 	return Message::warning("GPS Not Supported", text);
+}
+
+Kystsoft::Message Kystsoft::ColorVario::Controller::gpsNotPermittedWarning()
+{
+	std::string text
+	(
+		"ColorVario is not allowed to use the GPS.\n"
+		"\n"
+		"If you deny access to the GPS, "
+		"ground speed will never be displayed and altitude will not get calibrated. "
+		"However, climb values are valid and you can manually calibrate the altitude."
+	);
+	return Message::warning("GPS Not Permitted", text);
 }
 
 Kystsoft::Message Kystsoft::ColorVario::Controller::gpsNotAvailableWarning()
@@ -343,6 +392,23 @@ void Kystsoft::ColorVario::Controller::onDisplayStateChanged(display_state_e sta
 {
 	if (state == DISPLAY_STATE_NORMAL)
 		app.GetWindow().Activate();
+}
+
+void Kystsoft::ColorVario::Controller::onPermissionGranted(std::string privilege)
+{
+	if (privilege == "privilege/mediastorage")
+	{
+		ui.removeMessage(storageNotPermittedWarning());
+		load(settingsFromFiles()); // reload settings
+	}
+	else if (privilege == "privilege/location")
+		startGps();
+}
+
+void Kystsoft::ColorVario::Controller::onPermissionDenied(std::string privilege)
+{
+	if (privilege == "privilege/mediastorage")
+		ui.addMessage(storageNotPermittedWarning());
 }
 
 void Kystsoft::ColorVario::Controller::onLocationEnabled(bool enabled)
