@@ -8,6 +8,10 @@ void Kystsoft::ColorVario::UserInterface::create()
 	createMenuLayer();
 	createDialogLayer();
 
+	// quit timer to allow the user interface to update before quitting
+	quitTimer = Dali::Timer::New(100);
+	quitTimer.TickSignal().Connect(this, &UserInterface::onQuitTimer);
+
 	// gestures for showing and hiding the menu
 	tapDetector = Dali::TapGestureDetector::New();
 	tapDetector.Attach(menu);
@@ -361,8 +365,14 @@ bool Kystsoft::ColorVario::UserInterface::onMessageButtonClicked(Dali::Toolkit::
 
 bool Kystsoft::ColorVario::UserInterface::onQuitButtonClicked(Dali::Toolkit::Button /*button*/)
 {
-	quitSignl.emit();
+	quitTimer.Start();
 	return true;
+}
+
+bool Kystsoft::ColorVario::UserInterface::onQuitTimer()
+{
+	quitSignl.emit();
+	return false;
 }
 
 void Kystsoft::ColorVario::UserInterface::onTapDetected(Dali::Actor actor, const Dali::TapGesture& gesture)

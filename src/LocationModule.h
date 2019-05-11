@@ -4,6 +4,7 @@
 #include "GeodeticDatum.h"
 #include "Geoid.h"
 #include "LocationManager.h"
+#include "PrivilegeManager.h"
 #include "SystemInfo.h"
 #include <memory>
 
@@ -22,6 +23,7 @@ public:
 	static bool isWpsSupported() { return SystemInfo::platformBool("feature/location.wps"); }
 	static bool isLocationMethodSupported(location_method_e method);
 	bool isLocationMethodSupported() const { return isLocationMethodSupported(locationMethod); }
+	static bool hasPermission() { return PrivilegeManager::hasPermission("privilege/location"); }
 	int samplingInterval() const { return interval_s; }
 	bool loadGeoid(const std::string& fileName) { return geoid.load(fileName); }
 	double geoidHeight(double latitude, double longitude) const { return geoid.height(latitude, longitude); }
