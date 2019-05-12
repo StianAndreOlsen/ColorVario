@@ -41,7 +41,7 @@ private:
 		int sound_behavior,
 		const char* extra_info,
 		void* user_data);
-	void onFocusChanged() { focusChangedSignl.emit(focus()); }
+	void onFocusChanged(int newFocus) { focusChangedSignl.emit(newFocus); }
 	sound_stream_info_h streamInfo = nullptr;
 	Signal<int> focusChangedSignl;
 };

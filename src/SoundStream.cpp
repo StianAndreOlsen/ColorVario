@@ -29,7 +29,7 @@ void Kystsoft::SoundStream::acquireFocus(sound_stream_focus_mask_e focusMask)
 		throw TizenError("sound_manager_acquire_focus", error);
 	int newFocus = focus();
 	if (newFocus != oldFocus)
-		focusChangedSignl.emit(newFocus); // required since sound_manager_acquire_focus does not trigger the focusChangedCallback
+		onFocusChanged(newFocus); // required since sound_manager_acquire_focus does not trigger the focusChangedCallback
 }
 
 void Kystsoft::SoundStream::releaseFocus(sound_stream_focus_mask_e focusMask)
@@ -42,7 +42,7 @@ void Kystsoft::SoundStream::releaseFocus(sound_stream_focus_mask_e focusMask)
 		throw TizenError("sound_manager_release_focus", error);
 	int newFocus = focus();
 	if (newFocus != oldFocus)
-		focusChangedSignl.emit(newFocus); // required since sound_manager_release_focus does not trigger the focusChangedCallback
+		onFocusChanged(newFocus); // required since sound_manager_release_focus does not trigger the focusChangedCallback
 }
 
 void Kystsoft::SoundStream::releaseFocus()
@@ -83,8 +83,8 @@ void Kystsoft::SoundStream::destroy()
 
 void Kystsoft::SoundStream::focusChangedCallback(
 	sound_stream_info_h /*stream_info*/,
-	sound_stream_focus_mask_e /*focus_mask*/,
-	sound_stream_focus_state_e /*focus_state*/,
+	sound_stream_focus_mask_e focus_mask,
+	sound_stream_focus_state_e focus_state,
 	sound_stream_focus_change_reason_e /*reason*/,
 	int /*sound_behavior*/,
 	const char* /*extra_info*/,
@@ -92,5 +92,10 @@ void Kystsoft::SoundStream::focusChangedCallback(
 {
 	SoundStream* soundStream = static_cast<SoundStream*>(user_data);
 	if (soundStream)
-		soundStream->onFocusChanged();
+	{
+		int newFocus = 0;
+		if (focus_state == SOUND_STREAM_FOCUS_STATE_ACQUIRED)
+			newFocus |= focus_mask;
+		soundStream->onFocusChanged(newFocus);
+	}
 }

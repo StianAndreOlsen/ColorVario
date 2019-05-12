@@ -12,6 +12,11 @@ void Kystsoft::ColorVario::UserInterface::create()
 	quitTimer = Dali::Timer::New(100);
 	quitTimer.TickSignal().Connect(this, &UserInterface::onQuitTimer);
 
+	// mute audio button timer to synchronize the mute audio button
+	muteAudioButtonTimer = Dali::Timer::New(1000);
+	muteAudioButtonTimer.TickSignal().Connect(this, &UserInterface::onMuteAudioButtonTimer);
+	muteAudioButtonTimer.Start();
+
 	// gestures for showing and hiding the menu
 	tapDetector = Dali::TapGestureDetector::New();
 	tapDetector.Attach(menu);
@@ -96,13 +101,6 @@ void Kystsoft::ColorVario::UserInterface::setAltitudeOffset(double offset)
 
 void Kystsoft::ColorVario::UserInterface::setAltitude(double altitude)
 {
-	// synchronize mute audio button
-	// TODO: Consider a separate timer and callback for this
-	if (pageView.currentPageIndex() == 0 && altitudeAudio.isStartedOrStopped())
-		menu.muteAudioButton().setChecked(!altitudeAudio.isStarted());
-	else if (pageView.currentPageIndex() > 0 && climbAudio.isStartedOrStopped())
-		menu.muteAudioButton().setChecked(!climbAudio.isStarted());
-
 	// TODO: Enable when creating new icon
 //	setAltitudeAccuracy(5);
 //	altitude = 1298;
@@ -344,6 +342,7 @@ bool Kystsoft::ColorVario::UserInterface::onLockDisplayButtonClicked(Dali::Toolk
 
 bool Kystsoft::ColorVario::UserInterface::onMuteAudioButtonClicked(Dali::Toolkit::Button /*button*/)
 {
+	muteAudioButtonClicked = true;
 	if (menu.muteAudioButton().isChecked())
 		ValueAudio::mute();
 	else
@@ -373,6 +372,18 @@ bool Kystsoft::ColorVario::UserInterface::onQuitTimer()
 {
 	quitSignl.emit();
 	return false;
+}
+
+bool Kystsoft::ColorVario::UserInterface::onMuteAudioButtonTimer()
+{
+	// synchronize mute audio button (required if audio has been interrupted
+	// by someone else, or if audio didn't start after a button click
+	if (pageView.currentPageIndex() == 0 && (muteAudioButtonClicked || altitudeAudio.isStartedOrStopped()))
+		menu.muteAudioButton().setChecked(!altitudeAudio.isStarted());
+	else if (pageView.currentPageIndex() > 0 && (muteAudioButtonClicked || climbAudio.isStartedOrStopped()))
+		menu.muteAudioButton().setChecked(!climbAudio.isStarted());
+	muteAudioButtonClicked = false;
+	return true;
 }
 
 void Kystsoft::ColorVario::UserInterface::onTapDetected(Dali::Actor actor, const Dali::TapGesture& gesture)

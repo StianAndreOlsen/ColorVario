@@ -52,7 +52,7 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 	try
 	{
 		// create user interface
-		createUi();
+		ui.create();
 		ui.addMessage(aboutMessage());
 
 		// get required permissions
@@ -86,16 +86,6 @@ void Kystsoft::ColorVario::Controller::create(Dali::Application& /*application*/
 		dlog(DLOG_FATAL) << "Unknown error";
 		app.Quit();
 	}
-}
-
-void Kystsoft::ColorVario::Controller::createUi()
-{
-	ui.create();
-
-	// connect stage signals
-	auto stage = Dali::Stage::GetCurrent();
-	stage.ContextLostSignal().Connect(this, &Controller::onContextLost);
-	stage.ContextRegainedSignal().Connect(this, &Controller::onContextRegained);
 }
 
 void Kystsoft::ColorVario::Controller::load(const Settings& settings)
@@ -191,8 +181,6 @@ bool Kystsoft::ColorVario::Controller::startVariometer()
 	try
 	{
 		vario.start();
-		// TODO: Remove when finished testing!
-//		throw std::runtime_error("Just testing!");
 	}
 	catch (std::exception& e)
 	{
@@ -221,8 +209,6 @@ bool Kystsoft::ColorVario::Controller::startGps()
 	try
 	{
 		gps.start();
-		// TODO: Remove when finished testing!
-//		throw std::runtime_error("Just testing!");
 	}
 	catch (std::exception& e)
 	{
@@ -376,16 +362,6 @@ void Kystsoft::ColorVario::Controller::onResume(Dali::Application& /*application
 		display.lock();
 		displayLockPaused = false;
 	}
-}
-
-void Kystsoft::ColorVario::Controller::onContextLost()
-{
-	dlog(DLOG_INFO) << "Context lost!";
-}
-
-void Kystsoft::ColorVario::Controller::onContextRegained()
-{
-	dlog(DLOG_INFO) << "Context regained!";
 }
 
 void Kystsoft::ColorVario::Controller::onDisplayStateChanged(display_state_e state)

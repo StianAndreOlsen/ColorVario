@@ -20,7 +20,6 @@ public:
 	Controller(Dali::Application& application);
 private:
 	void create(Dali::Application& application);
-	void createUi();
 	void load(const Settings& settings);
 	Settings settingsFromFiles();
 	void saveAltitudeOffset();
@@ -38,8 +37,6 @@ private:
 	static Message gpsNotAvailableWarning();
 	void onPause(Dali::Application& application);
 	void onResume(Dali::Application& application);
-	void onContextLost(); // TODO: Remove after testing
-	void onContextRegained(); // TODO: Remove after testing
 	void onPageTapDetected() { startVariometer(); }
 	void onDisplayStateChanged(display_state_e state);
 	void onAltitudeOffsetChanged(double offset) { vario.setAltitudeOffset(offset); }

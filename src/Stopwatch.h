@@ -5,7 +5,6 @@
 
 namespace Kystsoft {
 
-// TODO: Remove if not used!
 class Stopwatch
 {
 public:
