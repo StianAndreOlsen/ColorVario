@@ -33,7 +33,7 @@ public:
 	void setValueSound(const ValueSound& valueSound) { sound = valueSound; }
 	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
 	void setAveragingInterval(double interval) { averageValue.setAveragingInterval(interval); }
-	void setValue(double value);
+	void setValue(double value) { averageValue += value; }
 protected:
 	void load(const Settings& settings, const std::string& section);
 private:
@@ -47,7 +47,6 @@ private:
 	AudioOutput audioOutput;
 	double lastCyclePhase = 0;
 	double lastTonePhase = 0;
-	time_t lastWriteTime = 0;
 	ValueSound sound;
 	Averager<double> averageValue;
 };

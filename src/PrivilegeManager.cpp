@@ -1,11 +1,6 @@
 #include "PrivilegeManager.h"
 #include "TizenError.h"
 
-namespace
-{
-	std::string prefix("http://tizen.org/");
-}
-
 bool Kystsoft::PrivilegeManager::hasPermission(const std::string& privilege)
 {
 	auto result = checkPermission(privilege);
@@ -26,6 +21,11 @@ bool Kystsoft::PrivilegeManager::getPermission(const std::string& privilege)
 		break; // no permission yet
 	}
 	return false;
+}
+
+namespace
+{
+	std::string prefix("http://tizen.org/");
 }
 
 ppm_check_result_e Kystsoft::PrivilegeManager::checkPermission(const std::string& privilege)

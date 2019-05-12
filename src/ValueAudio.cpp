@@ -87,31 +87,6 @@ bool Kystsoft::ValueAudio::isStartedOrStopped() const
 	return false;
 }
 
-void Kystsoft::ValueAudio::setValue(double value)
-{
-	averageValue += value;
-
-	if (isStarted())
-	{
-		// Note: If audio is muted while the sound stream focus is temporarily
-		// lost we might get the focus again, even if we no longer want it.
-		if (muted)
-			stop();
-		else if (!audioOutput.isPrepared())
-			audioOutput.prepare();
-	}
-
-	// TODO: Remove if this never happens (check log file after a long period of testing)
-	// restart audio if it has stopped (for some mysterious reason)
-	if (isStarted() && lastWriteTime > 0 && std::difftime(std::time(nullptr), lastWriteTime) > 2)
-	{
-		lastWriteTime = 0;
-		stop();
-		start();
-		dlog(DLOG_INFO) << "Audio is restarted!";
-	}
-}
-
 void Kystsoft::ValueAudio::load(const Settings& settings, const std::string& section)
 {
 	sound.load(settings, section);
@@ -121,16 +96,15 @@ void Kystsoft::ValueAudio::load(const Settings& settings, const std::string& sec
 void Kystsoft::ValueAudio::onSoundStreamFocusChanged(int focus)
 {
 	startedOrStopped = true;
-	lastWriteTime = 0;
 	if (focus & SOUND_STREAM_FOCUS_FOR_PLAYBACK)
 	{
 		// focus gained --> start audio if we are not muted in the meantime
 		if (!muted)
 			audioOutput.prepare();
-		// Note: It's not allowed to release the focus in this callback
-		// TODO: Starting with Tizen 4.0 it is allowed to release the focus --> Consider doing so if muted!
-//		else
-//			stop();
+
+		// or stop audio (release focus) if we are muted
+		else
+			stop(); // Note: Starting with Tizen 4.0 it is allowed to release the focus in this callback
 	}
 	else
 	{
@@ -141,9 +115,6 @@ void Kystsoft::ValueAudio::onSoundStreamFocusChanged(int focus)
 
 void Kystsoft::ValueAudio::onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested)
 {
-	// save the last write time
-	lastWriteTime = std::time(nullptr);
-
 	// get audio characteristics
 	int sampleRate = audioOutput.sampleRate();
 	audio_channel_e channel = audioOutput.channel();
