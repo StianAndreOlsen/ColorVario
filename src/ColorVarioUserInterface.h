@@ -65,7 +65,6 @@ private:
 	bool onMessageButtonClicked(Dali::Toolkit::Button button);
 	bool onQuitButtonClicked(Dali::Toolkit::Button button);
 	bool onQuitTimer();
-	bool onMuteAudioButtonTimer();
 	void onTapDetected(Dali::Actor actor, const Dali::TapGesture& gesture);
 	void onVerticalPanDetected(Dali::Actor actor, const Dali::PanGesture& gesture);
 	void onLongPressDetected(Dali::Actor actor, const Dali::LongPressGesture& gesture);
@@ -84,8 +83,6 @@ private:
 	MessageDialog messageDialog;
 	AltitudeOffsetDialog altitudeOffsetDialog;
 	Dali::Timer quitTimer;
-	Dali::Timer muteAudioButtonTimer;
-	bool muteAudioButtonClicked = false;
 	Dali::TapGestureDetector tapDetector;
 	Dali::PanGestureDetector verticalPanDetector;
 	Dali::LongPressGestureDetector longPressDetector;
