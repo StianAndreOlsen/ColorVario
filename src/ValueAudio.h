@@ -23,12 +23,11 @@ public:
 	static void mute();
 	static void unmute() { muted = false; }
 	static void toggleMuteUnmute();
-	bool isStarted() const { return soundStream.hasPlaybackFocus(); }
+	bool isStarted() const { return audioOutput.isPrepared(); }
 	void setStarted(bool started);
-	void start();
-	void stop() { soundStream.releasePlaybackFocus(); }
+	void start() { if (!muted) audioOutput.prepare(); }
+	void stop() { audioOutput.unprepare(); }
 	void toggleStartStop();
-	bool isStartedOrStopped() const; // returns true if audio is started or stopped since the last call to this function
 	const ValueSound& valueSound() const { return sound; }
 	void setValueSound(const ValueSound& valueSound) { sound = valueSound; }
 	void setSamplingInterval(double interval) { averageValue.setSamplingInterval(interval); }
@@ -37,11 +36,9 @@ public:
 protected:
 	void load(const Settings& settings, const std::string& section);
 private:
-	void onSoundStreamFocusChanged(int focus);
 	void onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested);
 	static bool muted;
 	static Signal<> mutedSignal;
-	mutable bool startedOrStopped = false;
 	Signal<>::ConnectionId mutedId = 0;
 	SoundStream soundStream;
 	AudioOutput audioOutput;

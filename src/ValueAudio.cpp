@@ -11,7 +11,6 @@ Kystsoft::ValueAudio::ValueAudio()
 //	, audioOutput(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_U8)
 	, audioOutput(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_S16_LE)
 {
-	soundStream.focusChangedSignal().connect(this, &ValueAudio::onSoundStreamFocusChanged);
 	audioOutput.setSoundStreamInfo(soundStream);
 	audioOutput.writeCallback().connect(this, &ValueAudio::onAudioRequested);
 	mutedId = mutedSignal.connect(this, &ValueAudio::stop);
@@ -63,12 +62,6 @@ void Kystsoft::ValueAudio::setStarted(bool started)
 		stop();
 }
 
-void Kystsoft::ValueAudio::start()
-{
-	if (!muted)
-		soundStream.acquirePlaybackFocus();
-}
-
 void Kystsoft::ValueAudio::toggleStartStop()
 {
 	if (isStarted())
@@ -77,40 +70,10 @@ void Kystsoft::ValueAudio::toggleStartStop()
 		start();
 }
 
-bool Kystsoft::ValueAudio::isStartedOrStopped() const
-{
-	if (startedOrStopped)
-	{
-		startedOrStopped = false;
-		return true;
-	}
-	return false;
-}
-
 void Kystsoft::ValueAudio::load(const Settings& settings, const std::string& section)
 {
 	sound.load(settings, section);
 	setAveragingInterval(settings.value(section + ".averagingInterval", 1.0));
-}
-
-void Kystsoft::ValueAudio::onSoundStreamFocusChanged(int focus)
-{
-	startedOrStopped = true;
-	if (focus & SOUND_STREAM_FOCUS_FOR_PLAYBACK)
-	{
-		// focus gained --> start audio if we are not muted in the meantime
-		if (!muted)
-			audioOutput.prepare();
-
-		// or stop audio (release focus) if we are muted
-		else
-			stop(); // Note: Starting with Tizen 4.0 it is allowed to release the focus in this callback
-	}
-	else
-	{
-		// focus lost --> always stop audio
-		audioOutput.unprepare();
-	}
 }
 
 void Kystsoft::ValueAudio::onAudioRequested(AudioOutput& audioOutput, size_t bytesRequested)
