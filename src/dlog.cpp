@@ -29,7 +29,7 @@ Kystsoft::dlog::~dlog() noexcept
 					error += " to string stream";
 				else if (os == &ofs)
 					error += " to file stream";
-				throw std::ios_base::failure(error);
+				throw std::runtime_error(error);
 			}
 		}
 		catch (std::exception& e)
