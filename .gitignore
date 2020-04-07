@@ -1,0 +1,6 @@
+# Build folders
+Debug/*
+Release/*
+
+# Windows thumbnails
+Thumbs.db
